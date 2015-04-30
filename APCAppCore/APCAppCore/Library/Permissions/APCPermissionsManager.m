@@ -85,8 +85,9 @@ typedef NS_ENUM(NSUInteger, APCPermissionsErrorCode) {
         _locationManager.delegate = self;
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidRegisterForRemoteNotifications:) name:APCAppDidRegisterUserNotification object:nil];
-		
+
         _coreMotionPermissionStatus = kPermissionStatusNotDetermined;
+                
     }
     return self;
 }
@@ -267,8 +268,7 @@ typedef NS_ENUM(NSUInteger, APCPermissionsErrorCode) {
             if ([[UIApplication sharedApplication] currentUserNotificationSettings].types == UIUserNotificationTypeNone) {
                 UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeAlert
                                                                                                      |UIUserNotificationTypeBadge
-                                                                                                     |UIUserNotificationTypeSound)
-																						 categories:[APCTasksReminderManager taskReminderCategories]];
+                                                                                                     |UIUserNotificationTypeSound) categories:[APCTasksReminderManager taskReminderCategories]];
                 
                 [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
                 [[NSUserDefaults standardUserDefaults]synchronize];
@@ -484,13 +484,13 @@ typedef NS_ENUM(NSUInteger, APCPermissionsErrorCode) {
             self.completionBlock(YES, nil);
             self.completionBlock = nil;
         }
-    }
-	else {
+    }else{
         if (self.completionBlock) {
             self.completionBlock(NO, [self permissionDeniedErrorForType:kAPCSignUpPermissionsTypeLocalNotifications]);
             self.completionBlock = nil;
         }
     }
+
 }
 
 #pragma mark - Dealloc
