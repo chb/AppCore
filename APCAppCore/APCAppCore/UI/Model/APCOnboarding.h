@@ -38,6 +38,8 @@
 #import "APCSignUpTask.h"
 #import "APCSignInTask.h"
 
+extern NSString * const kOnboardingStoryboardName;
+
 typedef NS_ENUM(NSUInteger, APCOnboardingTaskType) {
     kAPCOnboardingTaskTypeSignUp,
     kAPCOnboardingTaskTypeSignIn,
@@ -75,6 +77,9 @@ typedef NS_ENUM(NSUInteger, APCOnboardingTaskType) {
 @protocol APCOnboardingDelegate <NSObject>
 
 @required
+
+/** Delegate must return a dictionary with string keys and APCScene values. */
+- (NSDictionary *)scenesForOnboarding:(APCOnboarding *)onboarding;
 
 - (APCScene *)inclusionCriteriaSceneForOnboarding:(APCOnboarding *)onboarding;
 

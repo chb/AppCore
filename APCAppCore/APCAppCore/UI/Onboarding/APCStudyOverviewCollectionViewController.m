@@ -32,8 +32,16 @@
 // 
  
 #import "APCStudyOverviewCollectionViewController.h"
-#import "APCAppCore.h"
 #import "APCWebViewController.h"
+#import "APCAppDelegateTasks.h"
+#import "APCLog.h"
+#import "APCDataSubstrate.h"
+#import "APCIntroVideoViewController.h"
+
+#import "UIFont+APCAppearance.h"
+#import "UIColor+APCAppearance.h"
+
+#import <ResearchKit/ResearchKit.h>
 
 static NSString *kConsentEmailSubject = @"Consent Document";
 
@@ -137,7 +145,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
 {
     [super viewDidLayoutSubviews];
     
-    if ([self user].consented) {
+    if ([self isUserConsented]) {
         self.joinButtonLeadingConstraint.constant = CGRectGetWidth(self.view.frame)/2;
         [self.view layoutIfNeeded];
     }
@@ -174,12 +182,12 @@ static NSString *kConsentEmailSubject = @"Consent Document";
 
 - (APCOnboarding *)onboarding
 {
-    return ((APCAppDelegate *)[UIApplication sharedApplication].delegate).onboarding;
+    return ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).onboarding;
 }
 
-- (APCUser *)user
+- (BOOL)isUserConsented
 {
-    return ((APCAppDelegate*) [UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
+    return ((id<APCAppDelegateTasks>) [UIApplication sharedApplication].delegate).dataSubstrate.isUserConsented;
 }
 
 #pragma mark - UICollectionViewDataSource methods
@@ -280,7 +288,9 @@ static NSString *kConsentEmailSubject = @"Consent Document";
 
 - (NSArray *)studyDetailsFromJSONFile:(NSString *)jsonFileName
 {
+	NSParameterAssert(jsonFileName);
     NSString *filePath = [[NSBundle mainBundle] pathForResource:jsonFileName ofType:@"json"];
+	NSAssert(filePath, @"Must include file \"%@.json\" in bundle", jsonFileName);
     NSString *JSONString = [[NSString alloc] initWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:NULL];
     
     NSError *parseError;
@@ -351,7 +361,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
 
 - (void) signInTapped: (id) __unused sender
 {
-    [((APCAppDelegate *)[UIApplication sharedApplication].delegate) instantiateOnboardingForType:kAPCOnboardingTaskTypeSignIn];
+    [((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate) instantiateOnboardingForType:kAPCOnboardingTaskTypeSignIn];
     
     UIViewController *viewController = [[self onboarding] nextScene];
     [self.navigationController pushViewController:viewController animated:YES];
@@ -360,7 +370,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
 
 - (void) signUpTapped: (id) __unused sender
 {
-    [((APCAppDelegate *)[UIApplication sharedApplication].delegate) instantiateOnboardingForType:kAPCOnboardingTaskTypeSignUp];
+    [((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate) instantiateOnboardingForType:kAPCOnboardingTaskTypeSignUp];
     
     UIViewController *viewController = [[self onboarding] nextScene];
     [self.navigationController pushViewController:viewController animated:YES];
@@ -391,7 +401,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
 
 - (void)studyVideoCollectionViewCellReadConsent:(APCStudyVideoCollectionViewCell *) __unused cell
 {
-    APCWebViewController *webViewController = [[UIStoryboard storyboardWithName:@"APCOnboarding" bundle:[NSBundle appleCoreBundle]] instantiateViewControllerWithIdentifier:@"APCWebViewController"];
+    APCWebViewController *webViewController = [[UIStoryboard storyboardWithName:@"APCOnboarding" bundle:[NSBundle bundleForClass:[self class]]] instantiateViewControllerWithIdentifier:@"APCWebViewController"];
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"consent" ofType:@"pdf"];
     NSData *data = [NSData dataWithContentsOfFile:filePath];
     [webViewController.webview setDataDetectorTypes:UIDataDetectorTypeAll];
@@ -461,7 +471,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
 
 - (void)studyLandingCollectionViewCellReadConsent:(APCStudyLandingCollectionViewCell *) __unused cell
 {
-    APCWebViewController *webViewController = [[UIStoryboard storyboardWithName:@"APCOnboarding" bundle:[NSBundle appleCoreBundle]] instantiateViewControllerWithIdentifier:@"APCWebViewController"];
+    APCWebViewController *webViewController = [[UIStoryboard storyboardWithName:@"APCOnboarding" bundle:[NSBundle bundleForClass:[self class]]] instantiateViewControllerWithIdentifier:@"APCWebViewController"];
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"consent" ofType:@"pdf"];
     NSData *data = [NSData dataWithContentsOfFile:filePath];
     [webViewController.webview setDataDetectorTypes:UIDataDetectorTypeAll];

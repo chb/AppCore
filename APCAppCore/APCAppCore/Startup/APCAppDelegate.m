@@ -34,16 +34,17 @@
 #import "APCAppDelegate.h"
 #import "APCAppCore.h"
 #import "APCDebugWindow.h"
-#import "APCPasscodeViewController.h"
-#import <AVFoundation/AVFoundation.h>
-#import <AudioToolbox/AudioToolbox.h>
-#import "APCOnboarding.h"
 #import "APCTasksReminderManager.h"
-#import "UIView+Helper.h"
 #import "APCTabBarViewController.h"
-#import "UIAlertController+Helper.h"
 #import "APCHealthKitDataCollector.h"
 #import "APCConstants.h"
+
+#import "UIView+Helper.h"
+#import "UIAlertController+Helper.h"
+
+#import <AVFoundation/AVFoundation.h>
+#import <AudioToolbox/AudioToolbox.h>
+
 
 /*
  Be sure to set the CORRECT current version before releasing to production
@@ -1123,16 +1124,6 @@ static NSUInteger const kIndexOfProfileTab = 3;
                     completion:nil];
 }
 
-- (void)instantiateOnboardingForType:(APCOnboardingTaskType)type
-{
-    if (self.onboarding) {
-        self.onboarding = nil;
-        self.onboarding.delegate = nil;
-    }
-    
-    self.onboarding = [[APCOnboarding alloc] initWithDelegate:self taskType:type];
-}
-
 - (ORKTaskViewController *)consentViewController
 {
     NSAssert(FALSE, @"Override this method to return a valid Consent Task View Controller.");
@@ -1147,30 +1138,6 @@ static NSUInteger const kIndexOfProfileTab = 3;
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *basePath = ([paths count] > 0) ? paths[0] : nil;
     return basePath;
-}
-
-#pragma mark - APCOnboardingDelegate methods
-
-- (APCScene *) inclusionCriteriaSceneForOnboarding: (APCOnboarding *) __unused onboarding
-{
-    NSAssert(FALSE, @"Cannot retun nil. Override this delegate method to return a valid APCScene.");
-    
-    return nil;
-}
-
-#pragma mark - APCOnboardingTaskDelegate methods
-
-- (APCUser *) userForOnboardingTask: (APCOnboardingTask *) __unused task
-{
-    return self.dataSubstrate.currentUser;
-}
-
-- (NSInteger) numberOfServicesInPermissionsListForOnboardingTask: (APCOnboardingTask *) __unused task
-{
-    NSDictionary *initialOptions = ((APCAppDelegate *)[UIApplication sharedApplication].delegate).initializationOptions;
-    NSArray *servicesArray = initialOptions[kAppServicesListRequiredKey];
-    
-    return servicesArray.count;
 }
 
 #pragma mark - APCPasscodeViewControllerDelegate methods
@@ -1194,7 +1161,7 @@ static NSUInteger const kIndexOfProfileTab = 3;
         UIImage *blurredImage = [viewForSnapshot blurredSnapshot];
         UIImage *appIcon = [UIImage imageNamed:@"logo_disease_large" inBundle:[NSBundle mainBundle] compatibleWithTraitCollection:nil];
         UIImageView *blurredImageView = [[UIImageView alloc] initWithImage:blurredImage];
-        UIImageView *appIconImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0,0, 180, 180)];
+        UIImageView *appIconImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 180, 180)];
 
         appIconImageView.image = appIcon;
         appIconImageView.center = blurredImageView.center;

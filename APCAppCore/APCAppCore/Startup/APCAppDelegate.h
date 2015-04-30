@@ -112,6 +112,4 @@ extern NSUInteger   const kTheEntireDataModelOfTheApp;
 - (ORKTaskViewController *)consentViewController;
 - (NSMutableArray*)consentSectionsAndHtmlContent:(NSString**)htmlContent;
 
-- (void)instantiateOnboardingForType:(APCOnboardingTaskType)type;
-
 @end

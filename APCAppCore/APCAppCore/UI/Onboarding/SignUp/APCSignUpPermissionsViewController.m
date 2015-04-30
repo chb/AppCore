@@ -35,11 +35,12 @@
 #import "APCSignUpPermissionsViewController.h"
 #import "APCTableViewItem.h"
 #import "APCPermissionsCell.h"
-#import "NSBundle+Helper.h"
 #import "APCPermissionsManager.h"
-#import "UIAlertController+Helper.h"
+#import "APCAppDelegateTasks.h"
+
+#import "NSBundle+Helper.h"
 #import "UIView+Helper.h"
-#import "APCAppDelegate.h"
+#import "UIAlertController+Helper.h"
 
 #import <CoreMotion/CoreMotion.h>
 

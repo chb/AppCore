@@ -33,8 +33,10 @@
  
 #import "APCIntroVideoViewController.h"
 #import "APCStudyOverviewViewController.h"
+#import "APCLog.h"
+
 #import "NSBundle+Helper.h"
-#import "APCAppCore.h"
+
 #import <AVFoundation/AVFoundation.h>
 
 static NSString *const kVideoShownKey = @"VideoShown";

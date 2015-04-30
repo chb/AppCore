@@ -1,8 +1,8 @@
 //
-//  APCAppDelegateTasks.h
+//  APCAppDelegate+Onboarding.h
 //  APCAppCore
 //
-// Copyright (c) 2015 Boston Children's Hospital. All rights reserved.
+//  Copyright (c) 2015 Boston Children's Hospital, Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
 // are permitted provided that the following conditions are met:
@@ -31,24 +31,9 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <Foundation/Foundation.h>
-#import "APCOnboarding.h"
-
-@class APCDataSubstrate;
+#import "APCAppDelegate.h"
 
 
-/**
- *  Protocol, typically implemented by the AppDelegate, to enable use of custom app delegates.
- */
-@protocol APCAppDelegateTasks <NSObject>
-
-@required
-@property (copy, nonatomic, readonly) NSDictionary *__nullable initializationOptions;
-
-@property (strong, nonatomic, readonly) APCDataSubstrate *__nullable dataSubstrate;
-
-@property (strong, nonatomic, readonly) APCOnboarding *__nullable onboarding;
-
-- (void)instantiateOnboardingForType:(APCOnboardingTaskType)type;
+@interface APCAppDelegate (Onboarding)
 
 @end

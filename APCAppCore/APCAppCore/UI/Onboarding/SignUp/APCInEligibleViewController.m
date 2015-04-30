@@ -32,13 +32,15 @@
 // 
  
 #import "APCInEligibleViewController.h"
+#import "APCShareViewController.h"
+#import "APCAppDelegateTasks.h"
+#import "APCLog.h"
+#import "APCCustomBackButton.h"
+
+#import "NSBundle+Helper.h"
 #import "UIColor+APCAppearance.h"
 #import "UIFont+APCAppearance.h"
 #import "UIImage+APCHelper.h"
-#import "APCShareViewController.h"
-#import "NSBundle+Helper.h"
-#import "APCAppDelegate.h"
-#import "APCAppCore.h"
 
 @interface APCInEligibleViewController ()
 
@@ -81,7 +83,7 @@
 
 - (APCOnboarding *)onboarding
 {
-    return ((APCAppDelegate *)[UIApplication sharedApplication].delegate).onboarding;
+    return ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).onboarding;
 }
 
 #pragma mark - Selectors

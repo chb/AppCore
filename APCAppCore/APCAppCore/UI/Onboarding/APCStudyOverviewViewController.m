@@ -44,7 +44,8 @@
 #import "APCUser.h"
 #import "UIAlertController+Helper.h"
 #import "APCDeviceHardware+APCHelper.h"
-#import "APCAppCore.h"
+#import "APCLog.h"
+#import "APCTintedTableViewCell.h"
 
 static NSString * const kStudyOverviewCellIdentifier = @"kStudyOverviewCellIdentifier";
 

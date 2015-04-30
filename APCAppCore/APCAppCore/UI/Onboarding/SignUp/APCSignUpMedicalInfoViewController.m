@@ -33,12 +33,12 @@
  
 #import "APCSignUpMedicalInfoViewController.h"
 #import "APCSpinnerViewController.h"
-#import "UIAlertController+Helper.h"
-#import "APCUser+Bridge.h"
-#import "APCAppDelegate.h"
+#import "APCAppDelegateTasks.h"
 #import "APCPermissionButton.h"
 #import "APCPermissionsManager.h"
-#import "APCAppCore.h"
+
+#import "UIAlertController+Helper.h"
+#import "APCUser+Bridge.h"
 
 @interface APCSignUpMedicalInfoViewController ()
 
