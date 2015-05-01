@@ -36,7 +36,6 @@
 #import "APCDataSubstrate.h"
 #import "APCPasscodeViewController.h"
 #import "APCProfileViewController.h"
-#import "APCConsentTask.h"
 
 extern NSUInteger   const kTheEntireDataModelOfTheApp;
 
@@ -54,7 +53,6 @@ extern NSUInteger   const kTheEntireDataModelOfTheApp;
 @property (strong, nonatomic) APCTasksReminderManager * tasksReminder;
 @property (strong, nonatomic) APCPassiveDataCollector * passiveDataCollector;
 @property (strong, nonatomic) APCProfileViewController * profileViewController;
-@property (nonatomic) BOOL disableSignatureInConsent;
 
 //Initialization Methods
 @property (nonatomic, getter=doesPersisteStoreExist) BOOL persistentStoreExistence;
@@ -97,7 +95,6 @@ extern NSUInteger   const kTheEntireDataModelOfTheApp;
 
 - (NSArray *)offsetForTaskSchedules;
 - (void)afterOnBoardProcessIsFinished;
-- (NSArray *)reviewConsentActions;
 - (NSArray *)allSetTextBlocks;
 - (NSDictionary *)configureTasksForActivities;
 
@@ -107,8 +104,5 @@ extern NSUInteger   const kTheEntireDataModelOfTheApp;
 - (id <APCProfileViewControllerDelegate>) profileExtenderDelegate;
 
 - (void)showPasscodeIfNecessary;
-
-- (ORKTaskViewController *)consentViewController;
-- (NSMutableArray*)consentSectionsAndHtmlContent:(NSString**)htmlContent;
 
 @end

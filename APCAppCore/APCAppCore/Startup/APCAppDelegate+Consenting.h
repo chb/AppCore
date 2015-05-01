@@ -1,5 +1,5 @@
 //
-//  APCAppDelegate+Onboarding.h
+//  APCAppDelegate+Consenting.h
 //  APCAppCore
 //
 //  Copyright (c) 2015 Boston Children's Hospital, Inc. All rights reserved.
@@ -32,9 +32,10 @@
 //
 
 #import "APCAppDelegate.h"
-#import "APCOnboarding.h"
+#import "APCAppDelegateTasks.h"
+#import "APCConsentTask.h"
 
 
-@interface APCAppDelegate (Onboarding) <APCOnboardingTasks, APCOnboardingDelegate, APCOnboardingTaskDelegate>
+@interface APCAppDelegate (Consenting) <APCConsentingTasks>
 
 @end

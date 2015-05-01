@@ -38,7 +38,9 @@
 #import "APCConsentInstructionQuestion.h"
 #import "APCConsentTextChoiceQuestion.h"
 #import "APCConsentRedirector.h"
-#import "APCAppDelegate.h"
+#import "APCAppDelegateTasks.h"
+#import "APCDataSubstrate.h"
+#import "APCUser.h"
 
 
 static NSString*    kDocumentHtmlTag                    = @"htmlDocument";
@@ -189,8 +191,7 @@ static NSString*    kStepIdentifierSuffixStart          = @"+X";
                                          investigatorLongDescription:self.investigatorLongDescription
                                        localizedLearnMoreHTMLContent:self.sharingHtmlLearnMoreContent];
     
-    APCAppDelegate* delegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
-    BOOL disableSignatureInConsent = delegate.disableSignatureInConsent;
+    BOOL disableSignatureInConsent = ((id<APCConsentingTasks>)[UIApplication sharedApplication].delegate).disableSignatureInConsent;
     
     if (disableSignatureInConsent) {
         signature.requiresSignatureImage = NO;
@@ -359,19 +360,19 @@ static NSString*    kStepIdentifierSuffixStart          = @"+X";
                 
                 if (sharingAnswer != nil)
                 {
-                    APCAppDelegate* delegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
-                    NSInteger       selected = -1;
+                    id<APCAppDelegateTasks> delegate = (id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate;
+                    NSInteger selected = -1;
                     
                     if ([sharingAnswer integerValue] == 0)
                     {
-                        selected = SBBConsentShareScopeStudy;
+                        selected = 1;		// TODO: this represents Sage's `SBBConsentShareScopeStudy`, as defined in SBBConsentManager.h
                     }
                     else if ([sharingAnswer integerValue] == 1)
                     {
-                        selected = SBBConsentShareScopeAll;
+                        selected = 2;		// TODO: this represents `SBBConsentShareScopeAll`, as defined in SBBConsentManager.h. Find a better way to define these
                     }
                     
-                    delegate.dataSubstrate.currentUser.sharedOptionSelection = [NSNumber numberWithInteger:selected];
+                    delegate.dataSubstrate.currentUser.sharedOptionSelection = @(selected);
                 }
             }
         }
@@ -483,10 +484,10 @@ static NSString*    kStepIdentifierSuffixStart          = @"+X";
 
 - (void)loadFromJson:(NSString*)fileName
 {
-    NSString*       filePath = [[NSBundle mainBundle] pathForResource:fileName ofType:@"json"];
-    NSAssert(filePath != nil, @"Unable to location file with Consent Section in main bundle");
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:fileName ofType:@"json"];
+    NSAssert(filePath != nil, @"Unable to locate JSON file named \"%@\" with Consent Section in main bundle", fileName);
     
-    NSData*         fileContent = [NSData dataWithContentsOfFile:filePath];
+    NSData *fileContent = [NSData dataWithContentsOfFile:filePath];
     NSAssert(fileContent != nil, @"Unable to create NSData with file content (Consent data)");
     
     NSError*        error             = nil;

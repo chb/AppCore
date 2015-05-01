@@ -70,7 +70,7 @@
 
 - (APCOnboarding *)onboarding
 {
-    return ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).onboarding;
+    return ((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate).onboarding;
 }
 
 /*********************************************************************************/

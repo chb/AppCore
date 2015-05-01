@@ -96,7 +96,7 @@ static NSString *kreturnControlOfTaskDelegate = @"returnControlOfTaskDelegate";
 
 - (APCOnboarding *)onboarding
 {
-    return ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).onboarding;
+    return ((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate).onboarding;
 }
 
 - (APCUser *) user {
@@ -106,8 +106,7 @@ static NSString *kreturnControlOfTaskDelegate = @"returnControlOfTaskDelegate";
 
 - (void)showConsent
 {
-	// TODO: refactor!!
-    self.consentVC = nil;//[((APCAppDelegate *)[UIApplication sharedApplication].delegate) consentViewController];
+    self.consentVC = [((id<APCConsentingTasks>)[UIApplication sharedApplication].delegate) consentViewController];
     
     self.consentVC.delegate = self;
     self.consentVC.navigationBar.topItem.title = NSLocalizedString(@"Consent", nil);
@@ -180,7 +179,7 @@ static NSString *kreturnControlOfTaskDelegate = @"returnControlOfTaskDelegate";
             NSDateFormatter *dateFormatter = [NSDateFormatter new];
             dateFormatter.dateFormat = consentResult.signature.signatureDateFormatString;
             user.consentSignatureDate = [dateFormatter dateFromString:consentResult.signature.signatureDate];
-            [((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate) dataSubstrate].currentUser.userConsented = YES;
+            ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).dataSubstrate.currentUser.userConsented = YES;
             
             [self.consentVC dismissViewControllerAnimated:YES completion:^
              {

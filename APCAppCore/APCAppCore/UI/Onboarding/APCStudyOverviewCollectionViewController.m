@@ -76,7 +76,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES animated:YES];
 	
-	if (![((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).onboarding isSignInSupported]) {
+	if (![((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate).onboarding isSignInSupported]) {
 		_loginButton.hidden = YES;
 		_loginButton.enabled = NO;
 	}
@@ -186,7 +186,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
 
 - (APCOnboarding *)onboarding
 {
-    return ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).onboarding;
+    return ((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate).onboarding;
 }
 
 - (BOOL)isUserConsented
@@ -366,7 +366,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
 
 - (void)signInTapped: (id) __unused sender
 {
-    [((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate) instantiateOnboardingForType:kAPCOnboardingTaskTypeSignIn];
+    [((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate) instantiateOnboardingForType:kAPCOnboardingTaskTypeSignIn];
     
     UIViewController *viewController = [[self onboarding] nextScene];
 	NSAssert(viewController, @"Need the sign in view controller in the SignIn onboarding scene");
@@ -376,7 +376,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
 
 - (void)signUpTapped: (id) __unused sender
 {
-    [((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate) instantiateOnboardingForType:kAPCOnboardingTaskTypeSignUp];
+    [((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate) instantiateOnboardingForType:kAPCOnboardingTaskTypeSignUp];
     
     UIViewController *viewController = [[self onboarding] nextScene];
 	NSAssert(viewController, @"Need the inclusion criteria view controller in the SignUp onboarding scene");

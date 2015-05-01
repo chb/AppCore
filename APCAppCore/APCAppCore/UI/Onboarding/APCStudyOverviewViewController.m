@@ -312,22 +312,20 @@ static NSString * const kStudyOverviewCellIdentifier = @"kStudyOverviewCellIdent
     return studyItemType;
 }
 
-- (void) signInTapped: (id) __unused sender
+- (void)signInTapped:(id) __unused sender
 {
-    [((APCAppDelegate *)[UIApplication sharedApplication].delegate) instantiateOnboardingForType:kAPCOnboardingTaskTypeSignIn];
+    [((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate) instantiateOnboardingForType:kAPCOnboardingTaskTypeSignIn];
     
     UIViewController *viewController = [[self onboarding] nextScene];
     [self.navigationController pushViewController:viewController animated:YES];
-    
 }
 
-- (void) signUpTapped: (id) __unused sender
+- (void)signUpTapped:(id) __unused sender
 {
-    [((APCAppDelegate *)[UIApplication sharedApplication].delegate) instantiateOnboardingForType:kAPCOnboardingTaskTypeSignUp];
+    [((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate) instantiateOnboardingForType:kAPCOnboardingTaskTypeSignUp];
     
     UIViewController *viewController = [[self onboarding] nextScene];
     [self.navigationController pushViewController:viewController animated:YES];
-    
 }
 
 

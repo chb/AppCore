@@ -35,20 +35,52 @@
 #import "APCOnboarding.h"
 
 @class APCDataSubstrate;
+@class ORKTaskViewController;
 
 
 /**
- *  Protocol, typically implemented by the AppDelegate, to enable use of custom app delegates.
+ *  Protocol, typically implemented by the AppDelegate, to handle init and data management tasks.
  */
 @protocol APCAppDelegateTasks <NSObject>
 
 @required
-@property (copy, nonatomic, readonly) NSDictionary *__nullable initializationOptions;
+@property (copy, nonatomic, readonly, nullable) NSDictionary *initializationOptions;
 
-@property (strong, nonatomic, readonly) APCDataSubstrate *__nullable dataSubstrate;
+@property (strong, nonatomic, readonly, nullable) APCDataSubstrate *dataSubstrate;
 
-@property (strong, nonatomic, readonly) APCOnboarding *__nullable onboarding;
+@end
+
+
+#pragma mark -
+
+/**
+ *  Protocol, typically implemented by the AppDelegate, to handle onboarding.
+ */
+@protocol APCOnboardingTasks <NSObject>
+
+@required
+@property (strong, nonatomic, readonly, nullable) APCOnboarding *onboarding;
 
 - (void)instantiateOnboardingForType:(APCOnboardingTaskType)type;
+
+@end
+
+
+#pragma mark -
+
+/**
+ *  Protocol, typically implemented by the AppDelegate, to handle consenting.
+ */
+@protocol APCConsentingTasks <NSObject>
+
+@required
+@property (nonatomic, readonly) BOOL disableSignatureInConsent;
+
+- (nonnull ORKTaskViewController *)consentViewController;
+
+- (nonnull NSArray *)consentSectionsAndHtmlContent:(NSString *__nullable *__nullable)htmlContent;
+
+@optional
+- (nullable NSArray *)reviewConsentActions;
 
 @end
