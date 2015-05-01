@@ -1898,7 +1898,6 @@
                                                                 <constraint firstAttribute="centerX" secondItem="JKF-q1-PXq" secondAttribute="centerX" constant="-0.5" id="bsp-SC-Olt"/>
                                                                 <constraint firstAttribute="trailing" secondItem="uxw-oh-YJl" secondAttribute="trailing" constant="16" id="gUg-iU-aBl"/>
                                                                 <constraint firstAttribute="centerY" secondItem="pWv-hc-Gq4" secondAttribute="centerY" constant="120" id="iQ0-Bo-boU"/>
-                                                                <constraint firstAttribute="height" constant="343" id="lcw-ow-lnm"/>
                                                                 <constraint firstAttribute="centerX" secondItem="Okl-v3-pRl" secondAttribute="centerX" constant="-0.5" id="o53-47-1wp"/>
                                                                 <constraint firstAttribute="centerX" secondItem="8qu-gd-IIq" secondAttribute="centerX" constant="-0.5" id="pBI-M1-YVF"/>
                                                                 <constraint firstAttribute="centerX" secondItem="pWv-hc-Gq4" secondAttribute="centerX" constant="-2.5" id="qQy-pe-Rtz"/>
@@ -2040,6 +2039,7 @@
                         <outlet property="gradientCollectionView" destination="QiS-6G-IB1" id="i3a-kD-LB2"/>
                         <outlet property="headerView" destination="dOr-00-ZDv" id="tNV-vH-TAv"/>
                         <outlet property="joinButton" destination="Srh-gC-C98" id="8XR-jK-5hG"/>
+                        <outlet property="loginButton" destination="bc0-QL-BYl" id="HPe-cL-cmk"/>
                         <outlet property="pageControl" destination="aLS-jv-EqI" id="Szo-fz-Q06"/>
                         <outlet property="researchInstituteImageView" destination="yIK-TZ-poi" id="bXo-Hj-XmE"/>
                     </connections>

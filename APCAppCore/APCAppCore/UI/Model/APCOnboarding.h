@@ -74,6 +74,8 @@ typedef NS_ENUM(NSUInteger, APCOnboardingTaskType) {
 
 - (void)popScene;
 
+- (BOOL)isSignInSupported;
+
 @end
 
 @protocol APCOnboardingDelegate <NSObject>

@@ -75,12 +75,16 @@ static NSString *kConsentEmailSubject = @"Consent Document";
 {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES animated:YES];
-    
+	
+	if (![((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).onboarding isSignInSupported]) {
+		_loginButton.hidden = YES;
+		_loginButton.enabled = NO;
+	}
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(goBackToSignUpJoin:)
                                                  name:APCConsentCompletedWithDisagreeNotification
                                                object:nil];
-  APCLogViewControllerAppeared();
+    APCLogViewControllerAppeared();
 }
 
 -(void)viewDidAppear:(BOOL)animated {
@@ -204,14 +208,12 @@ static NSString *kConsentEmailSubject = @"Consent Document";
     return sectionItem.rows.count;
 }
 
-- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
     UICollectionViewCell *cell;
-    
     APCTableViewStudyDetailsItem *studyDetails = [self itemForIndexPath:indexPath];
 
     if (indexPath.row == 0) {
-        
         APCStudyLandingCollectionViewCell *landingCell = (APCStudyLandingCollectionViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:kAPCStudyLandingCollectionViewCellIdentifier forIndexPath:indexPath];
         landingCell.delegate = self;
         landingCell.titleLabel.text = studyDetails.caption;
@@ -221,7 +223,8 @@ static NSString *kConsentEmailSubject = @"Consent Document";
         if ([MFMailComposeViewController canSendMail]) {
             [landingCell.emailConsentButton setTitleColor:[UIColor appPrimaryColor] forState:UIControlStateNormal];
             [landingCell.emailConsentButton setUserInteractionEnabled:YES];
-        }else{
+        }
+		else {
             [landingCell.emailConsentButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
             [landingCell.emailConsentButton setUserInteractionEnabled:NO];
         }
@@ -232,17 +235,19 @@ static NSString *kConsentEmailSubject = @"Consent Document";
         
         cell = landingCell;
         
-    }else if (studyDetails.videoName.length > 0) {
-        
+    }
+	else if (studyDetails.videoName.length > 0) {
         APCStudyVideoCollectionViewCell *videoCell = (APCStudyVideoCollectionViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:kAPCStudyVideoCollectionViewCellIdentifier forIndexPath:indexPath];
         videoCell.delegate = self;
         videoCell.titleLabel.text = studyDetails.caption;
         videoCell.videoMessageLabel.text = studyDetails.detailText;
         cell = videoCell;
         
-    } else {
+    }
+	else {
         APCStudyOverviewCollectionViewCell *webViewCell = (APCStudyOverviewCollectionViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:kAPCStudyOverviewCollectionViewCellIdentifier forIndexPath:indexPath];
-        
+        webViewCell.webView.scrollView.decelerationRate = UIScrollViewDecelerationRateNormal;
+		
         NSString *filePath = [[NSBundle mainBundle] pathForResource: studyDetails.detailText ofType:@"html" inDirectory:@"HTMLContent"];
 		NSAssert(filePath, @"Expecting file \"%@.html\" to be present in the \"HTMLContent\" directory, but didn't find it", studyDetails.detailText);
         NSURL *targetURL = [NSURL URLWithString:filePath];
@@ -251,7 +256,6 @@ static NSString *kConsentEmailSubject = @"Consent Document";
         
         cell = webViewCell;
     }
-    
     
     return cell;
 }
@@ -360,16 +364,17 @@ static NSString *kConsentEmailSubject = @"Consent Document";
     return studyItemType;
 }
 
-- (void) signInTapped: (id) __unused sender
+- (void)signInTapped: (id) __unused sender
 {
     [((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate) instantiateOnboardingForType:kAPCOnboardingTaskTypeSignIn];
     
     UIViewController *viewController = [[self onboarding] nextScene];
+	NSAssert(viewController, @"Need the sign in view controller in the SignIn onboarding scene");
+	NSAssert(self.navigationController, @"Need a navigation controller to show the sign in screen, but I'm not embedded in one: %@", self);
     [self.navigationController pushViewController:viewController animated:YES];
-    
 }
 
-- (void) signUpTapped: (id) __unused sender
+- (void)signUpTapped: (id) __unused sender
 {
     [((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate) instantiateOnboardingForType:kAPCOnboardingTaskTypeSignUp];
     

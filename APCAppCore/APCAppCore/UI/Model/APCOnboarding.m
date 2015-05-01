@@ -72,6 +72,8 @@ NSString * const kOnboardingStoryboardName = @"APCOnboarding";
 }
 
 
+#pragma mark - Scenes
+
 /** Lazy getter for our scenes: asks the delegate for scenes if it hasn't done so yet. */
 - (NSMutableDictionary *)scenes
 {
@@ -175,6 +177,11 @@ NSString * const kOnboardingStoryboardName = @"APCOnboarding";
 - (void)setScene:(APCScene *)scene forIdentifier:(NSString *)identifier
 {
     [self.scenes setObject:scene forKey:identifier];
+}
+
+- (BOOL)isSignInSupported
+{
+	return (nil != self.scenes[kAPCSignInStepIdentifier]);
 }
 
 @end
