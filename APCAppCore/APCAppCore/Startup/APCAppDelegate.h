@@ -34,7 +34,6 @@
 #import <UIKit/UIKit.h>
 #import "APCAppDelegateTasks.h"
 #import "APCDataSubstrate.h"
-#import "APCOnboarding.h"
 #import "APCPasscodeViewController.h"
 #import "APCProfileViewController.h"
 #import "APCConsentTask.h"
@@ -43,7 +42,7 @@ extern NSUInteger   const kTheEntireDataModelOfTheApp;
 
 @class APCDataSubstrate, APCDataMonitor, APCScheduler, APCOnboarding, APCPasscodeViewController, APCTasksReminderManager, APCPassiveDataCollector, APCFitnessAllocation;
 
-@interface APCAppDelegate : UIResponder <UIApplicationDelegate, APCOnboardingDelegate, APCOnboardingTaskDelegate, APCPasscodeViewControllerDelegate, APCAppDelegateTasks>
+@interface APCAppDelegate : UIResponder <UIApplicationDelegate, APCPasscodeViewControllerDelegate, APCAppDelegateTasks>
 
 @property (nonatomic, strong) APCFitnessAllocation *sevenDayFitnessAllocationData;
 @property (strong, nonatomic) UITabBarController *tabster;

@@ -322,7 +322,7 @@
 		CFFDEDFA1A95734000B25581 /* APCSetupTableViewCell.h in Headers */ = {isa = PBXBuildFile; fileRef = CFFDEDC01A95734000B25581 /* APCSetupTableViewCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CFFDEDFB1A95734000B25581 /* APCSetupTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CFFDEDC11A95734000B25581 /* APCSetupTableViewCell.m */; };
 		CFFDEDFC1A95734000B25581 /* APCSetupTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFFDEDC21A95734000B25581 /* APCSetupTableViewCell.xib */; };
-		EEBCDB821AF2B79A00E77C1F /* APCAppDelegateTasks.h in Headers */ = {isa = PBXBuildFile; fileRef = EEBCDB811AF2B79A00E77C1F /* APCAppDelegateTasks.h */; };
+		EEBCDB821AF2B79A00E77C1F /* APCAppDelegateTasks.h in Headers */ = {isa = PBXBuildFile; fileRef = EEBCDB811AF2B79A00E77C1F /* APCAppDelegateTasks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EEBCDB9A1AF2E5C100E77C1F /* APCAppDelegate+Onboarding.h in Headers */ = {isa = PBXBuildFile; fileRef = EEBCDB981AF2E5C100E77C1F /* APCAppDelegate+Onboarding.h */; };
 		EEBCDB9B1AF2E5C100E77C1F /* APCAppDelegate+Onboarding.m in Sources */ = {isa = PBXBuildFile; fileRef = EEBCDB991AF2E5C100E77C1F /* APCAppDelegate+Onboarding.m */; };
 		F50738C01A682E12004CF100 /* APCDateRange.h in Headers */ = {isa = PBXBuildFile; fileRef = F50738BE1A682E12004CF100 /* APCDateRange.h */; settings = {ATTRIBUTES = (Public, ); }; };

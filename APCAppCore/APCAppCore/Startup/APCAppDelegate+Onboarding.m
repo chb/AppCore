@@ -33,6 +33,7 @@
 
 #import "APCAppDelegate+Onboarding.h"
 #import "APCOnboarding.h"
+#import "APCLog.h"
 
 #import "APCEligibleViewController.h"
 #import "APCInEligibleViewController.h"
@@ -52,8 +53,8 @@
 - (void)instantiateOnboardingForType:(APCOnboardingTaskType)type
 {
     if (self.onboarding) {
-        self.onboarding = nil;
         self.onboarding.delegate = nil;
+        self.onboarding = nil;
     }
     
     self.onboarding = [[APCOnboarding alloc] initWithDelegate:self taskType:type];
@@ -76,103 +77,91 @@
 
 #pragma mark - APCOnboardingDelegate methods
 
-- (NSDictionary *)scenesForOnboarding:(APCOnboarding *)__unused onboarding
+- (APCScene *)onboarding:(APCOnboarding *__unused)onboarding sceneOfType:(NSString *)type
 {
-    NSMutableDictionary *scenes = [NSMutableDictionary new];
+    NSParameterAssert([type length] > 0);
     
-    {
-        if ([self respondsToSelector:@selector(inclusionCriteriaSceneForOnboarding:)]) {
-            APCScene *scene = [self inclusionCriteriaSceneForOnboarding:self];
-            [scenes setObject:scene forKey:kAPCSignUpInclusionCriteriaStepIdentifier];
-        }
+    if ([type isEqualToString:kAPCSignUpInclusionCriteriaStepIdentifier]) {
+        NSAssert(NO, @"Cannot retun nil. Override this delegate method to return a valid signup APCScene.");
+        return nil;
     }
-    {
+    if ([type isEqualToString:kAPCSignUpEligibleStepIdentifier]) {
         APCScene *scene = [APCScene new];
         scene.name = NSStringFromClass([APCEligibleViewController class]);
         scene.storyboardName = kOnboardingStoryboardName;
         scene.bundle = [NSBundle appleCoreBundle];
         
-        [scenes setObject:scene forKey:kAPCSignUpEligibleStepIdentifier];
+        return scene;
     }
-    {
+    if ([type isEqualToString:kAPCSignUpIneligibleStepIdentifier]) {
         APCScene *scene = [APCScene new];
         scene.name = NSStringFromClass([APCInEligibleViewController class]);
         scene.storyboardName = kOnboardingStoryboardName;
         scene.bundle = [NSBundle appleCoreBundle];
         
-        [scenes setObject:scene forKey:kAPCSignUpIneligibleStepIdentifier];
+        return scene;
     }
-    {
+    if ([type isEqualToString:kAPCSignUpPermissionsPrimingStepIdentifier]) {
         APCScene *scene = [APCScene new];
         scene.name = NSStringFromClass([APCPermissionPrimingViewController class]);
         scene.storyboardName = kOnboardingStoryboardName;
         scene.bundle = [NSBundle appleCoreBundle];
         
-        [scenes setObject:scene forKey:kAPCSignUpPermissionsPrimingStepIdentifier];
+        return scene;
     }
-    {
+    if ([type isEqualToString:kAPCSignUpGeneralInfoStepIdentifier]) {
         APCScene *scene = [APCScene new];
         scene.name = NSStringFromClass([APCSignUpGeneralInfoViewController class]);
         scene.storyboardName = kOnboardingStoryboardName;
         scene.bundle = [NSBundle appleCoreBundle];
         
-        [scenes setObject:scene forKey:kAPCSignUpGeneralInfoStepIdentifier];
+        return scene;
     }
-    {
+    if ([type isEqualToString:kAPCSignUpMedicalInfoStepIdentifier]) {
         APCScene *scene = [APCScene new];
         scene.name = NSStringFromClass([APCSignUpMedicalInfoViewController class]);
         scene.storyboardName = kOnboardingStoryboardName;
         scene.bundle = [NSBundle appleCoreBundle];
         
-        [scenes setObject:scene forKey:kAPCSignUpMedicalInfoStepIdentifier];
+        return scene;
     }
-    {
-        if ([self respondsToSelector:@selector(customInfoSceneForOnboarding:)]) {
-            APCScene *scene = [self customInfoSceneForOnboarding:self];
-            [scenes setObject:scene forKey:kAPCSignUpCustomInfoStepIdentifier];
-            self.onboardingTask.customStepIncluded = YES;
-        }
+    if ([type isEqualToString:kAPCSignUpCustomInfoStepIdentifier]) {
+        return nil;
     }
-    {
+    if ([type isEqualToString:kAPCSignUpPasscodeStepIdentifier]) {
         APCScene *scene = [APCScene new];
         scene.name = NSStringFromClass([APCSignupPasscodeViewController class]);
         scene.storyboardName = kOnboardingStoryboardName;
         scene.bundle = [NSBundle appleCoreBundle];
         
-        [scenes setObject:scene forKey:kAPCSignUpPasscodeStepIdentifier];
+        return scene;
     }
-    {
+    if ([type isEqualToString:kAPCSignUpPermissionsStepIdentifier]) {
         APCScene *scene = [APCScene new];
         scene.name = NSStringFromClass([APCSignUpPermissionsViewController class]);
         scene.storyboardName = kOnboardingStoryboardName;
         scene.bundle = [NSBundle appleCoreBundle];
         
-        [scenes setObject:scene forKey:kAPCSignUpPermissionsStepIdentifier];
+        return scene;
     }
-    {
+    if ([type isEqualToString:kAPCSignUpThankYouStepIdentifier]) {
         APCScene *scene = [APCScene new];
         scene.name = NSStringFromClass([APCThankYouViewController class]);
         scene.storyboardName = kOnboardingStoryboardName;
         scene.bundle = [NSBundle appleCoreBundle];
         
-        [scenes setObject:scene forKey:kAPCSignUpThankYouStepIdentifier];
+        return scene;
     }
-    {
+    if ([type isEqualToString:kAPCSignInStepIdentifier]) {
         APCScene *scene = [APCScene new];
         scene.name = NSStringFromClass([APCSignInViewController class]);
         scene.storyboardName = kOnboardingStoryboardName;
         scene.bundle = [NSBundle appleCoreBundle];
         
-        [scenes setObject:scene forKey:kAPCSignInStepIdentifier];
+        return scene;
     }
     
-    return scenes;
-}
-
-- (APCScene *) inclusionCriteriaSceneForOnboarding: (APCOnboarding *) __unused onboarding
-{
-    NSAssert(FALSE, @"Cannot retun nil. Override this delegate method to return a valid APCScene.");
-    
+    APCLogDebug(@"Unknown onboarding scene type: \"%@\"", type);
     return nil;
 }
 

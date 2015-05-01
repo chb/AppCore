@@ -244,6 +244,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
         APCStudyOverviewCollectionViewCell *webViewCell = (APCStudyOverviewCollectionViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:kAPCStudyOverviewCollectionViewCellIdentifier forIndexPath:indexPath];
         
         NSString *filePath = [[NSBundle mainBundle] pathForResource: studyDetails.detailText ofType:@"html" inDirectory:@"HTMLContent"];
+		NSAssert(filePath, @"Expecting file \"%@.html\" to be present in the \"HTMLContent\" directory, but didn't find it", studyDetails.detailText);
         NSURL *targetURL = [NSURL URLWithString:filePath];
         NSURLRequest *request = [NSURLRequest requestWithURL:targetURL];
         [webViewCell.webView loadRequest:request];
@@ -373,8 +374,9 @@ static NSString *kConsentEmailSubject = @"Consent Document";
     [((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate) instantiateOnboardingForType:kAPCOnboardingTaskTypeSignUp];
     
     UIViewController *viewController = [[self onboarding] nextScene];
+	NSAssert(viewController, @"Need the inclusion criteria view controller in the SignUp onboarding scene");
+	NSAssert(self.navigationController, @"Need a navigation controller to show the first step for sign up, but I'm not embedded in one: %@", self);
     [self.navigationController pushViewController:viewController animated:YES];
-    
 }
 
 - (IBAction)pageClicked:(UIPageControl *)sender {

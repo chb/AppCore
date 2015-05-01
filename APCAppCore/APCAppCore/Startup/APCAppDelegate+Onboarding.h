@@ -32,8 +32,9 @@
 //
 
 #import "APCAppDelegate.h"
+#import "APCOnboarding.h"
 
 
-@interface APCAppDelegate (Onboarding)
+@interface APCAppDelegate (Onboarding) <APCOnboardingDelegate, APCOnboardingTaskDelegate>
 
 @end
