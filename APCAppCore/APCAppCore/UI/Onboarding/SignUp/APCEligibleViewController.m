@@ -39,7 +39,9 @@
 #import "APCDataSubstrate.h"
 #import "APCUser.h"
 
+#ifndef APC_HAVE_CONSENT
 #import "APCExampleLabel.h"
+#endif
 #import "APCCustomBackButton.h"
 
 #import "UIFont+APCAppearance.h"
@@ -110,13 +112,12 @@ static NSString *kreturnControlOfTaskDelegate = @"returnControlOfTaskDelegate";
     
     self.consentVC.delegate = self;
     self.consentVC.navigationBar.topItem.title = NSLocalizedString(@"Consent", nil);
-    
-    NSUInteger subviewsCount = self.consentVC.view.subviews.count;
+#ifndef APC_HAVE_CONSENT
+#warning Adding watermark label until you define "APC_HAVE_CONSENT" to indicate that you have a real consenting document
     UILabel *watermarkLabel = [APCExampleLabel watermarkInRect:self.consentVC.view.bounds
                                                     withCenter:self.consentVC.view.center];
-    
-    [self.consentVC.view insertSubview:watermarkLabel atIndex:subviewsCount];
-    
+    [self.consentVC.view insertSubview:watermarkLabel atIndex:NSIntegerMax];
+#endif
     [self presentViewController:self.consentVC animated:YES completion:nil];
     
 }
