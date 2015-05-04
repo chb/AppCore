@@ -32,10 +32,13 @@
 // 
  
 #import "APCPermissionPrimingViewController.h"
+#import "APCAppDelegateTasks.h"
+#import "APCCustomBackButton.h"
+#import "APCConstants.h"
+
 #import "UIFont+APCAppearance.h"
 #import "UIColor+APCAppearance.h"
-#import "APCAppDelegate.h"
-#import "APCCustomBackButton.h"
+
 
 @interface APCPermissionPrimingViewController ()
 
@@ -53,7 +56,7 @@
     
     self.titleLabel.text = NSLocalizedString(@"What to Expect", @"What to Expect");
     
-    NSDictionary *initialOptions = ((APCAppDelegate *)[UIApplication sharedApplication].delegate).initializationOptions;
+    NSDictionary *initialOptions = ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).initializationOptions;
     NSDictionary *servicesDescrtiptions = initialOptions[kAppServicesDescriptionsKey];
     self.detailTextLabel.text = servicesDescrtiptions[@(kAPCSignUpPermissionsTypeHealthKit)];
 }
@@ -83,7 +86,7 @@
 
 - (APCOnboarding *)onboarding
 {
-    return ((APCAppDelegate *)[UIApplication sharedApplication].delegate).onboarding;
+    return ((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate).onboarding;
 }
 
 - (IBAction)next:(id) __unused sender

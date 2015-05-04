@@ -37,7 +37,7 @@
 #import "NSBundle+Helper.h"
 #import "APCStudyDetailsViewController.h"
 #import "APCLearnStudyDetailsViewController.h"
-#import "APCAppCore.h"
+#import "APCTintedTableViewCell.h"
 #import "APCShareViewController.h"
 
 static CGFloat kSectionHeaderHeight = 40.f;

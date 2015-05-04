@@ -52,6 +52,7 @@
 @property (assign) BOOL justJoined;
 @property (strong, nonatomic) NSString *logDirectory;
 @property (nonatomic, strong) APCUser * currentUser;
+@property (nonatomic, readonly) BOOL isUserConsented;
 
 /*********************************************************************************/
 #pragma mark - Core Data Subsystem Public Properties

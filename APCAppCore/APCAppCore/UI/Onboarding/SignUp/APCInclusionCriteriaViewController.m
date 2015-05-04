@@ -32,7 +32,13 @@
 // 
  
 #import "APCInclusionCriteriaViewController.h"
-#import "APCAppCore.h"
+#import "APCAppDelegateTasks.h"
+#import "APCLog.h"
+#import "APCOnboarding.h"
+#import "APCCustomBackButton.h"
+
+#import "UIColor+APCAppearance.h"
+
 
 @implementation APCInclusionCriteriaViewController
 
@@ -64,7 +70,7 @@
 
 - (APCOnboarding *)onboarding
 {
-    return ((APCAppDelegate *)[UIApplication sharedApplication].delegate).onboarding;
+    return ((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate).onboarding;
 }
 
 /*********************************************************************************/

@@ -71,6 +71,11 @@ static int dateCheckTimeInterval = 60;
     }
 }
 
+- (BOOL)isUserConsented
+{
+	return self.currentUser.consented;
+}
+
 - (void) setupParameters {
     self.parameters = [[APCParameters alloc] initWithFileName:@"APCParameters.json"];
     [self.parameters setDelegate:self];

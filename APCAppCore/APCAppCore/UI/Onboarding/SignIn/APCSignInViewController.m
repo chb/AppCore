@@ -31,12 +31,16 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 // 
  
-#import "APCAppCore.h"
 #import "APCSignInViewController.h"
+#import "APCEmailVerifyViewController.h"
+#import "APCAppDelegateTasks.h"
+#import "APCLog.h"
+
 #import "UIColor+APCAppearance.h"
 #import "UIFont+APCAppearance.h"
-#import "APCEmailVerifyViewController.h"
 #import "UIAlertController+Helper.h"
+
+#import <ResearchKit/ResearchKit.h>
 
 static NSString * const kServerInvalidEmailErrorString = @"Invalid username or password.";
 
@@ -144,7 +148,7 @@ static NSString * const kServerInvalidEmailErrorString = @"Invalid username or p
 
 - (APCOnboarding *)onboarding
 {
-    return ((APCAppDelegate *)[UIApplication sharedApplication].delegate).onboarding;
+    return ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).onboarding;
 }
 
 - (void)back

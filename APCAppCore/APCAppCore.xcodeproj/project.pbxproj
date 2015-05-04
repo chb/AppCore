@@ -322,7 +322,9 @@
 		CFFDEDFA1A95734000B25581 /* APCSetupTableViewCell.h in Headers */ = {isa = PBXBuildFile; fileRef = CFFDEDC01A95734000B25581 /* APCSetupTableViewCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CFFDEDFB1A95734000B25581 /* APCSetupTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CFFDEDC11A95734000B25581 /* APCSetupTableViewCell.m */; };
 		CFFDEDFC1A95734000B25581 /* APCSetupTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFFDEDC21A95734000B25581 /* APCSetupTableViewCell.xib */; };
-		EEBCDB821AF2B79A00E77C1F /* APCAppDelegateTasks.h in Headers */ = {isa = PBXBuildFile; fileRef = EEBCDB811AF2B79A00E77C1F /* APCAppDelegateTasks.h */; };
+		EEBCDB821AF2B79A00E77C1F /* APCAppDelegateTasks.h in Headers */ = {isa = PBXBuildFile; fileRef = EEBCDB811AF2B79A00E77C1F /* APCAppDelegateTasks.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		EEBCDB9A1AF2E5C100E77C1F /* APCAppDelegate+Onboarding.h in Headers */ = {isa = PBXBuildFile; fileRef = EEBCDB981AF2E5C100E77C1F /* APCAppDelegate+Onboarding.h */; };
+		EEBCDB9B1AF2E5C100E77C1F /* APCAppDelegate+Onboarding.m in Sources */ = {isa = PBXBuildFile; fileRef = EEBCDB991AF2E5C100E77C1F /* APCAppDelegate+Onboarding.m */; };
 		F50738C01A682E12004CF100 /* APCDateRange.h in Headers */ = {isa = PBXBuildFile; fileRef = F50738BE1A682E12004CF100 /* APCDateRange.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F50738C11A682E12004CF100 /* APCDateRange.m in Sources */ = {isa = PBXBuildFile; fileRef = F50738BF1A682E12004CF100 /* APCDateRange.m */; };
 		F5306CCD1A8BE7F600732E60 /* ORKQuestionResult+APCHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = F5306CCB1A8BE7F600732E60 /* ORKQuestionResult+APCHelper.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1007,6 +1009,8 @@
 		CFFDEDC11A95734000B25581 /* APCSetupTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APCSetupTableViewCell.m; sourceTree = "<group>"; };
 		CFFDEDC21A95734000B25581 /* APCSetupTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = APCSetupTableViewCell.xib; sourceTree = "<group>"; };
 		EEBCDB811AF2B79A00E77C1F /* APCAppDelegateTasks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APCAppDelegateTasks.h; sourceTree = "<group>"; };
+		EEBCDB981AF2E5C100E77C1F /* APCAppDelegate+Onboarding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "APCAppDelegate+Onboarding.h"; sourceTree = "<group>"; };
+		EEBCDB991AF2E5C100E77C1F /* APCAppDelegate+Onboarding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "APCAppDelegate+Onboarding.m"; sourceTree = "<group>"; };
 		F50738BE1A682E12004CF100 /* APCDateRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APCDateRange.h; sourceTree = "<group>"; };
 		F50738BF1A682E12004CF100 /* APCDateRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APCDateRange.m; sourceTree = "<group>"; };
 		F5179B2919D09128001DCCB7 /* APCAppCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = APCAppCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2428,6 +2432,8 @@
 				EEBCDB811AF2B79A00E77C1F /* APCAppDelegateTasks.h */,
 				F5F129201A2F78490015982C /* APCAppDelegate.h */,
 				F5F129211A2F78490015982C /* APCAppDelegate.m */,
+				EEBCDB981AF2E5C100E77C1F /* APCAppDelegate+Onboarding.h */,
+				EEBCDB991AF2E5C100E77C1F /* APCAppDelegate+Onboarding.m */,
 				F5F129221A2F78490015982C /* TabBar.storyboard */,
 				084302A11AB8D4550039C861 /* APCHealthKitDataCollector.h */,
 				084302A21AB8D4550039C861 /* APCHealthKitDataCollector.m */,
@@ -3058,6 +3064,7 @@
 				F5B9462B1A7309A20034C522 /* ZZConstants.h in Headers */,
 				F5B9480A1A73272C0034C522 /* APCScheduleExpressionToken.h in Headers */,
 				F5F12AD01A2F78490015982C /* APCWithdrawSurveyViewController.h in Headers */,
+				EEBCDB9A1AF2E5C100E77C1F /* APCAppDelegate+Onboarding.h in Headers */,
 				368BAFE91A9AD91A00F04ABB /* APCMedTrackerDailyDosageRecord.h in Headers */,
 				F5F129E61A2F78490015982C /* APCDataSubstrate+CoreData.h in Headers */,
 				F5B947F61A73272C0034C522 /* APCParametersDashboardTableViewController.h in Headers */,
@@ -3618,6 +3625,7 @@
 				F5F12ACD1A2F78490015982C /* APCSettingsViewController.m in Sources */,
 				F5B946251A7309A20034C522 /* ZZArchive.mm in Sources */,
 				368BAFEA1A9AD91A00F04ABB /* APCMedTrackerDailyDosageRecord.m in Sources */,
+				EEBCDB9B1AF2E5C100E77C1F /* APCAppDelegate+Onboarding.m in Sources */,
 				F5B946301A7309A20034C522 /* ZZDataChannelOutput.m in Sources */,
 				F5F12AA51A2F78490015982C /* APCSignInViewController.m in Sources */,
 				F5F12ADB1A2F78490015982C /* APCPickerTableViewCell.m in Sources */,

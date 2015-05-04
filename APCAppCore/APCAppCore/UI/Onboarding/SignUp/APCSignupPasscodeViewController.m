@@ -37,11 +37,11 @@
 #import "APCSignupPasscodeViewController.h"
 #import "APCSignUpPermissionsViewController.h"
 #import "APCAppDelegate.h"
+#import "APCKeychainStore.h"
+
+#import "UIView+Helper.h"
 #import "UIColor+APCAppearance.h"
 #import "UIFont+APCAppearance.h"
-#import "APCKeychainStore.h"
-#import "UIView+Helper.h"
-#import "APCAppCore.h"
 
 @import LocalAuthentication;
 

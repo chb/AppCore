@@ -1,8 +1,8 @@
 //
-//  APCAppDelegateTasks.h
+//  APCAppDelegate+Consenting.h
 //  APCAppCore
 //
-// Copyright (c) 2015 Boston Children's Hospital. All rights reserved.
+//  Copyright (c) 2015 Boston Children's Hospital, Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
 // are permitted provided that the following conditions are met:
@@ -31,56 +31,11 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <Foundation/Foundation.h>
-#import "APCOnboarding.h"
-
-@class APCDataSubstrate;
-@class ORKTaskViewController;
+#import "APCAppDelegate.h"
+#import "APCAppDelegateTasks.h"
+#import "APCConsentTask.h"
 
 
-/**
- *  Protocol, typically implemented by the AppDelegate, to handle init and data management tasks.
- */
-@protocol APCAppDelegateTasks <NSObject>
-
-@required
-@property (copy, nonatomic, readonly, nullable) NSDictionary *initializationOptions;
-
-@property (strong, nonatomic, readonly, nullable) APCDataSubstrate *dataSubstrate;
-
-@end
-
-
-#pragma mark -
-
-/**
- *  Protocol, typically implemented by the AppDelegate, to handle onboarding.
- */
-@protocol APCOnboardingTasks <NSObject>
-
-@required
-@property (strong, nonatomic, readonly, nullable) APCOnboarding *onboarding;
-
-- (void)instantiateOnboardingForType:(APCOnboardingTaskType)type;
-
-@end
-
-
-#pragma mark -
-
-/**
- *  Protocol, typically implemented by the AppDelegate, to handle consenting.
- */
-@protocol APCConsentingTasks <NSObject>
-
-@required
-@property (nonatomic, readonly) BOOL disableSignatureInConsent;
-
-- (nonnull ORKTaskViewController *)consentViewController;
-
-- (nonnull NSArray *)consentSectionsAndHtmlContent:(NSString *__nullable *__nullable)htmlContent;
-
-@optional
-- (nullable NSArray *)reviewConsentActions;
+@interface APCAppDelegate (Consenting) <APCConsentingTasks>
 
 @end

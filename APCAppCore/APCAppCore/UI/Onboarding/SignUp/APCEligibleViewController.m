@@ -33,7 +33,20 @@
  
 #import "APCEligibleViewController.h"
 #import "APCConsentTaskViewController.h"
-#import "APCAppCore.h"
+#import "APCAppDelegateTasks.h"
+#import "APCConstants.h"
+#import "APCLog.h"
+#import "APCDataSubstrate.h"
+#import "APCUser.h"
+
+#ifndef APC_HAVE_CONSENT
+#import "APCExampleLabel.h"
+#endif
+#import "APCCustomBackButton.h"
+
+#import "UIFont+APCAppearance.h"
+#import "UIColor+APCAppearance.h"
+#import "UIImage+APCHelper.h"
 
 
 static NSString *kreturnControlOfTaskDelegate = @"returnControlOfTaskDelegate";
@@ -85,27 +98,26 @@ static NSString *kreturnControlOfTaskDelegate = @"returnControlOfTaskDelegate";
 
 - (APCOnboarding *)onboarding
 {
-    return ((APCAppDelegate *)[UIApplication sharedApplication].delegate).onboarding;
+    return ((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate).onboarding;
 }
 
 - (APCUser *) user {
-    return ((APCAppDelegate*) [UIApplication sharedApplication].delegate).dataSubstrate.currentUser;;
+    return ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
 }
 
 
 - (void)showConsent
 {
-    self.consentVC = [((APCAppDelegate *)[UIApplication sharedApplication].delegate) consentViewController];
+    self.consentVC = [((id<APCConsentingTasks>)[UIApplication sharedApplication].delegate) consentViewController];
     
     self.consentVC.delegate = self;
     self.consentVC.navigationBar.topItem.title = NSLocalizedString(@"Consent", nil);
-    
-    NSUInteger subviewsCount = self.consentVC.view.subviews.count;
+#ifndef APC_HAVE_CONSENT
+#warning Adding watermark label until you define "APC_HAVE_CONSENT" to indicate that you have a real consenting document
     UILabel *watermarkLabel = [APCExampleLabel watermarkInRect:self.consentVC.view.bounds
                                                     withCenter:self.consentVC.view.center];
-    
-    [self.consentVC.view insertSubview:watermarkLabel atIndex:subviewsCount];
-    
+    [self.consentVC.view insertSubview:watermarkLabel atIndex:NSIntegerMax];
+#endif
     [self presentViewController:self.consentVC animated:YES completion:nil];
     
 }
@@ -168,7 +180,7 @@ static NSString *kreturnControlOfTaskDelegate = @"returnControlOfTaskDelegate";
             NSDateFormatter *dateFormatter = [NSDateFormatter new];
             dateFormatter.dateFormat = consentResult.signature.signatureDateFormatString;
             user.consentSignatureDate = [dateFormatter dateFromString:consentResult.signature.signatureDate];
-            [((APCAppDelegate*)[UIApplication sharedApplication].delegate) dataSubstrate].currentUser.userConsented = YES;
+            ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).dataSubstrate.currentUser.userConsented = YES;
             
             [self.consentVC dismissViewControllerAnimated:YES completion:^
              {
@@ -210,7 +222,7 @@ static NSString *kreturnControlOfTaskDelegate = @"returnControlOfTaskDelegate";
 #if DEVELOPMENT
     [self startSignUp];
 #else
-    if (((APCAppDelegate*)[UIApplication sharedApplication].delegate).dataSubstrate.parameters.hideConsent)
+    if (((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).dataSubstrate.parameters.hideConsent)
     {
         [self startSignUp];
     }

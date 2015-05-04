@@ -32,13 +32,12 @@
 // 
  
 #import "APCSignUpInfoViewController.h"
-#import "APCAppDelegate.h"
+#import "APCAppDelegateTasks.h"
 #import "APCUserInfoConstants.h"
+
 #import "NSString+Helper.h"
 #import "UIColor+APCAppearance.h"
 #import "UIFont+APCAppearance.h"
-#import "APCAppDelegate.h"
-#import "APCAppCore.h"
 
 static CGFloat const kHeaderHeight = 127.0f;
 
