@@ -63,6 +63,25 @@
 
 - (void)instantiateOnboardingForType:(APCOnboardingTaskType)type;
 
+/**
+ *  Use this to provide custom text on the All Set screen.
+ *
+ *  You must return an array full of dictionaries, each with the main text keyed with `kAllSetActivitiesTextOriginal`
+ *  and supplementary text keyed with `kAllSetActivitiesTextAdditional` or `kAllSetDashboardTextOriginal` and
+ *  `kAllSetDashboardTextAdditional`.
+ *
+ *  Please don't be glutenous, don't use four words when one would suffice.
+ */
+- (nonnull NSArray *)allSetTextBlocks;
+
+@optional
+
+/**
+ *  Use this as a hook to post-process anything that is needed to be processed right after the 'finishOnboarding' method
+ *  is invoked.
+ */
+- (void)afterOnBoardProcessIsFinished;
+
 @end
 
 

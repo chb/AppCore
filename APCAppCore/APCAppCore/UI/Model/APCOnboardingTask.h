@@ -56,14 +56,14 @@ FOUNDATION_EXPORT NSString *const kAPCSignUpPermissionsPrimingStepIdentifier;
 
 @property (nonatomic) BOOL eligible;
 
-@property (nonatomic) BOOL customStepIncluded;
+@property (nonatomic, readonly) BOOL customStepIncluded;
 
 @property (nonatomic) APCUser *user;
 
 /**
- *  When the list of Services required in zero, we can skip
+ *  When the list of Services required is zero, we can skip
  */
-@property (nonatomic,readonly) BOOL permissionScreenSkipped;
+@property (nonatomic,readonly) BOOL skipPermissionsStep;
 
 @property (nonatomic) NSInteger currentStepNumber;
 

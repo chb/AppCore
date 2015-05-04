@@ -38,4 +38,6 @@
 
 - (NSArray *)prepareContent;
 
+- (IBAction)next:(id)sender;
+
 @end

@@ -37,6 +37,6 @@
 
 @interface APCSignupPasscodeViewController : UIViewController <APCSignUpProgressing>
 
-- (void)next;
+- (void)next:(id)sender;
 
 @end

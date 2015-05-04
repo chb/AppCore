@@ -56,8 +56,6 @@ typedef NS_ENUM(NSUInteger, APCOnboardingTaskType) {
 
 @property (nonatomic, strong) ORKStep *__nullable currentStep;
 
-@property (nonatomic, strong) NSMutableDictionary *__nullable scenes;
-
 @property (nonatomic, strong) NSMutableDictionary *sceneData;
 
 @property (nonatomic, weak) id <APCOnboardingDelegate> __nullable delegate;
@@ -105,6 +103,9 @@ typedef NS_ENUM(NSUInteger, APCOnboardingTaskType) {
 @property (nonatomic, strong) NSBundle *bundle;
 
 - (instancetype)initWithName:(NSString *)name inStoryboard:(NSString *)storyboardName;
+
+/** Instantiates the view controller as defined by this scene. */
+- (nullable UIViewController *)instantiateViewController;
 
 @end
 

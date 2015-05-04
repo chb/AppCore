@@ -32,15 +32,17 @@
 // 
  
 #import "APCAllSetContentViewController.h"
-#import "APCAppCore.h"
+#import "APCAppDelegateTasks.h"
+#import "APCUtilities.h"
+#import "APCConstants.h"
 #import "APCAllSetTableViewCell.h"
 
 static NSString *kAllSetCellIdentifier = @"AllSetCell";
 
 typedef NS_ENUM(NSUInteger, APCAllSetRows)
 {
-    APCAllSetRowActivities = 0,
-    APCAllSetRowDashboard,
+    APCAllSetRowsActivities = 0,
+    APCAllSetRowsDashboard,
     APCAllSetRowsTotalNumberOfRows
 };
 
@@ -54,7 +56,8 @@ typedef NS_ENUM(NSUInteger, APCAllSetRows)
 
 @implementation APCAllSetContentViewController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     
     self.appName.text = [APCUtilities appName];
@@ -63,21 +66,14 @@ typedef NS_ENUM(NSUInteger, APCAllSetRows)
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     
     [self configureTextBlocks];
-    
     [self.tableView reloadData];
 }
 
 - (void)configureTextBlocks
 {
-    APCAppDelegate *appDelegate = ((APCAppDelegate*) [UIApplication sharedApplication].delegate);
-    
-    self.textBlocks = [appDelegate allSetTextBlocks];
+    self.textBlocks = [(id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate allSetTextBlocks];
 }
 
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *) __unused tableView
 {
@@ -95,7 +91,7 @@ typedef NS_ENUM(NSUInteger, APCAllSetRows)
                                                                  forIndexPath:indexPath];
     
     switch (indexPath.row) {
-        case APCAllSetRowActivities:
+        case APCAllSetRowsActivities:
         {
             NSString *original = NSLocalizedString(@"You’ll find your list of daily surveys and tasks on the “Activities” tab. New surveys and tasks will appear over the next few weeks.",
                                                    @"You’ll find your list of daily surveys and tasks on the “Activities” tab. New surveys and tasks will appear over the next few weeks.");
@@ -104,17 +100,20 @@ typedef NS_ENUM(NSUInteger, APCAllSetRows)
                 for (NSDictionary *textBlock in self.textBlocks) {
                     if (textBlock[kAllSetActivitiesTextOriginal]) {
                         cell.originalText = textBlock[kAllSetActivitiesTextOriginal];
-                    } else {
+                    }
+                    else {
                         cell.originalText = original;
                     }
                     
                     if (textBlock[kAllSetActivitiesTextAdditional]) {
                         cell.additonalText = textBlock[kAllSetActivitiesTextAdditional];
-                    } else {
+                    }
+                    else {
                         cell.additonalText = nil;
                     }
                 }
-            } else {
+            }
+            else {
                 cell.originalText = original;
             }
             
@@ -131,17 +130,20 @@ typedef NS_ENUM(NSUInteger, APCAllSetRows)
                 for (NSDictionary *textBlock in self.textBlocks) {
                     if (textBlock[kAllSetDashboardTextOriginal]) {
                         cell.originalText = textBlock[kAllSetDashboardTextOriginal];
-                    } else {
+                    }
+                    else {
                         cell.originalText = original;
                     }
                     
                     if (textBlock[kAllSetDashboardTextAdditional]) {
                         cell.additonalText = textBlock[kAllSetDashboardTextAdditional];
-                    } else {
+                    }
+                    else {
                         cell.additonalText = nil;
                     }
                 }
-            } else {
+            }
+            else {
                 cell.originalText = original;
             }
             cell.icon = [UIImage imageNamed:@"tab_dashboard_selected"];

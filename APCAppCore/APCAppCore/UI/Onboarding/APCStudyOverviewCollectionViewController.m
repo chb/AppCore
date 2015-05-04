@@ -364,7 +364,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
     return studyItemType;
 }
 
-- (void)signInTapped: (id) __unused sender
+- (void)signInTapped:(id) __unused sender
 {
     [((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate) instantiateOnboardingForType:kAPCOnboardingTaskTypeSignIn];
     
@@ -374,7 +374,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
     [self.navigationController pushViewController:viewController animated:YES];
 }
 
-- (void)signUpTapped: (id) __unused sender
+- (void)signUpTapped:(id) __unused sender
 {
     [((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate) instantiateOnboardingForType:kAPCOnboardingTaskTypeSignUp];
     
@@ -466,6 +466,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
         mailComposeVC.mailComposeDelegate = self;
         
         NSString *filePath = [[NSBundle mainBundle] pathForResource:@"consent" ofType:@"pdf"];
+		NSAssert(filePath, @"Must include the consent PDF with filename \"consent.pdf\" in the app bundle");
         NSData *fileData = [NSData dataWithContentsOfFile:filePath];
         [mailComposeVC addAttachmentData:fileData mimeType:@"application/pdf" fileName:@"Consent"];
         [mailComposeVC setSubject:kConsentEmailSubject];
@@ -480,6 +481,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
 {
     APCWebViewController *webViewController = [[UIStoryboard storyboardWithName:@"APCOnboarding" bundle:[NSBundle bundleForClass:[self class]]] instantiateViewControllerWithIdentifier:@"APCWebViewController"];
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"consent" ofType:@"pdf"];
+	NSAssert(filePath, @"Must include the consent PDF with filename \"consent.pdf\" in the app bundle");
     NSData *data = [NSData dataWithContentsOfFile:filePath];
     [webViewController.webview setDataDetectorTypes:UIDataDetectorTypeAll];
     webViewController.title = NSLocalizedString(@"Consent", @"Consent");

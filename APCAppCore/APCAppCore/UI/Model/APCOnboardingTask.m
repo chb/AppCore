@@ -63,20 +63,14 @@ NSString *const kAPCSignUpPermissionsPrimingStepIdentifier  = @"PermissionsPrimi
 
 - (ORKStep *)stepAfterStep:(ORKStep *) __unused step withResult:(ORKTaskResult *) __unused result
 {
-    ORKStep *nextStep;
-    
     NSAssert(FALSE, @"Override this delegate method by using either APCSignUpTask or APCSignInTask");
-    
-    return nextStep;
+    return nil;
 }
 
 - (ORKStep *)stepBeforeStep:(ORKStep *) __unused step withResult:(ORKTaskResult *) __unused result
 {
-    ORKStep *prevStep;
-    
     NSAssert(FALSE, @"Override this delegate method by using either APCSignUpTask or APCSignInTask");
-    
-    return prevStep;
+    return nil;
 }
 
 - (NSString *)identifier
@@ -86,7 +80,12 @@ NSString *const kAPCSignUpPermissionsPrimingStepIdentifier  = @"PermissionsPrimi
 
 #pragma mark - Getter methods
 
-- (BOOL)permissionScreenSkipped
+- (BOOL)customStepIncluded
+{
+	return (nil != self.customInfoStep);
+}
+
+- (BOOL)skipPermissionsStep
 {
     BOOL skip = NO;
     
@@ -100,113 +99,10 @@ NSString *const kAPCSignUpPermissionsPrimingStepIdentifier  = @"PermissionsPrimi
 
 - (APCUser *)user
 {
-    if ([self.delegate respondsToSelector:@selector(userForOnboardingTask:)]) {
-        _user = [self.delegate userForOnboardingTask:self];
+    if (!_user && [self.delegate respondsToSelector:@selector(userForOnboardingTask:)]) {
+        self.user = [self.delegate userForOnboardingTask:self];
     }
-    
     return _user;
 }
-
-#pragma mark Steps
-
-- (ORKStep *)inclusionCriteriaStep
-{
-    if (!_inclusionCriteriaStep) {
-        _inclusionCriteriaStep = [[ORKStep alloc] initWithIdentifier:kAPCSignUpInclusionCriteriaStepIdentifier];
-    }
-    
-    return _inclusionCriteriaStep;
-}
-
-- (ORKStep *)eligibleStep
-{
-    if (!_eligibleStep) {
-        _eligibleStep = [[ORKStep alloc] initWithIdentifier:kAPCSignUpEligibleStepIdentifier];
-    }
-    
-    return _eligibleStep;
-}
-
-- (ORKStep *)ineligibleStep
-{
-    if (!_ineligibleStep) {
-        _ineligibleStep = [[ORKStep alloc] initWithIdentifier:kAPCSignUpIneligibleStepIdentifier];
-    }
-    
-    return _ineligibleStep;
-}
-
-- (ORKStep *)permissionsPrimingStep
-{
-    if (!_permissionsPrimingStep) {
-        _permissionsPrimingStep = [[ORKStep alloc] initWithIdentifier:kAPCSignUpPermissionsPrimingStepIdentifier];
-    }
-    
-    return _permissionsPrimingStep;
-}
-
-- (ORKStep *)generalInfoStep
-{
-    if (!_generalInfoStep) {
-        _generalInfoStep = [[ORKStep alloc] initWithIdentifier:kAPCSignUpGeneralInfoStepIdentifier];
-    }
-    
-    return _generalInfoStep;
-}
-
-- (ORKStep *)medicalInfoStep
-{
-    if (!_medicalInfoStep) {
-        _medicalInfoStep = [[ORKStep alloc] initWithIdentifier:kAPCSignUpMedicalInfoStepIdentifier];
-    }
-    
-    return _medicalInfoStep;
-}
-
-- (ORKStep *)customInfoStep
-{
-    if (!_customInfoStep) {
-        _customInfoStep = [[ORKStep alloc] initWithIdentifier:kAPCSignUpCustomInfoStepIdentifier];
-    }
-    
-    return _customInfoStep;
-}
-
-- (ORKStep *)passcodeStep
-{
-    if (!_passcodeStep) {
-        _passcodeStep = [[ORKStep alloc] initWithIdentifier:kAPCSignUpPasscodeStepIdentifier];
-    }
-    
-    return _passcodeStep;
-}
-
-- (ORKStep *)permissionsStep
-{
-    if (!_permissionsStep) {
-        _permissionsStep = [[ORKStep alloc] initWithIdentifier:kAPCSignUpPermissionsStepIdentifier];
-    }
-    
-    return _permissionsStep;
-}
-
-- (ORKStep *)thankyouStep
-{
-    if (!_thankyouStep) {
-        _thankyouStep = [[ORKStep alloc] initWithIdentifier:kAPCSignUpThankYouStepIdentifier];
-    }
-    
-    return _thankyouStep;
-}
-
-- (ORKStep *)signInStep
-{
-    if (!_signInStep) {
-        _signInStep = [[ORKStep alloc] initWithIdentifier:kAPCSignInStepIdentifier];
-    }
-    
-    return _signInStep;
-}
-
 
 @end
