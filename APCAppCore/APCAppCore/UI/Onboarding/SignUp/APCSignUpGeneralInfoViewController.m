@@ -32,26 +32,21 @@
 // 
  
 #import "APCSignUpGeneralInfoViewController.h"
-#import "APCAppDelegateTasks.h"
-#import "APCOnboarding.h"
+#import "APCPermissionButton.h"
 #import "APCPermissionsManager.h"
+#import "APCTermsAndConditionsViewController.h"
 #import "APCOnboarding.h"
+#import "APCAppDelegate.h"
+#import "UIColor+APCAppearance.h"
+#import "NSDate+Helper.h"
+#import "NSString+Helper.h"
+#import "UIFont+APCAppearance.h"
+#import "UIAlertController+Helper.h"
+#import "NSBundle+Helper.h"
+#import "APCSpinnerViewController.h"
 #import "APCUser+Bridge.h"
 #import "APCLog.h"
-
-#import "APCPermissionButton.h"
-#import "APCSpinnerViewController.h"
-#import "APCTermsAndConditionsViewController.h"
-
-#import "UIColor+APCAppearance.h"
-#import "UIFont+APCAppearance.h"
-#import "NSString+Helper.h"
-#import "NSDate+Helper.h"
 #import "NSError+APCAdditions.h"
-#import "UIAlertController+Helper.h"
-
-#import <ResearchKit/ResearchKit.h>
-
 
 static NSString *kInternetNotAvailableErrorMessage1 = @"Internet Not Connected";
 static NSString *kInternetNotAvailableErrorMessage2 = @"BackendServer Not Reachable";
@@ -77,8 +72,7 @@ static CGFloat kHeaderHeight = 157.0f;
 
 #pragma mark - View Life Cycle
 
-- (void)viewDidLoad
-{
+- (void) viewDidLoad {
     [super viewDidLoad];
     
     [self setupNavAppearance];
@@ -136,9 +130,10 @@ static CGFloat kHeaderHeight = 157.0f;
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    
     [self restoreSceneData];
     
-    APCLogViewControllerAppeared();
+  APCLogViewControllerAppeared();
 }
 
 - (void)setupAppearance
@@ -164,9 +159,9 @@ static CGFloat kHeaderHeight = 157.0f;
 - (void)saveSceneData
 {
     NSDictionary *generalInfoSceneData = @{
-        @"email": self.emailTextField.text ?:[NSNull null],
-        @"photo": self.profileImage ?:[NSNull null]
-    };
+                                           @"email": self.emailTextField.text ?:[NSNull null],
+                                           @"photo": self.profileImage ?:[NSNull null]
+                                           };
     
     [self.onboarding.sceneData setObject:generalInfoSceneData forKey:self.onboarding.currentStep.identifier];
 }
@@ -188,9 +183,9 @@ static CGFloat kHeaderHeight = 157.0f;
     }
 }
 
-- (NSArray *)prepareContent
-{
-    NSDictionary *initialOptions = ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).initializationOptions;
+- (NSArray *)prepareContent {
+    
+    NSDictionary *initialOptions = ((APCAppDelegate *)[UIApplication sharedApplication].delegate).initializationOptions;
     NSArray *profileElementsList = initialOptions[kAppProfileElementsListKey];
     
     NSMutableArray *items = [NSMutableArray new];
@@ -235,8 +230,7 @@ static CGFloat kHeaderHeight = 157.0f;
                 
                 if (self.user.birthDate) {
                     field.date = self.user.birthDate;
-                }
-                else{
+                } else{
                     [comps setYear:-30];
                     NSDate *defaultDate = [gregorian dateByAddingComponents: comps toDate: currentDate options: 0];
                     field.date = defaultDate;
@@ -281,7 +275,7 @@ static CGFloat kHeaderHeight = 157.0f;
 
 - (APCOnboarding *)onboarding
 {
-    return ((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate).onboarding;
+    return ((APCAppDelegate *)[UIApplication sharedApplication].delegate).onboarding;
 }
 
 #pragma mark - UITextFieldDelegate methods
@@ -293,9 +287,10 @@ static CGFloat kHeaderHeight = 157.0f;
     }];
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
+- (BOOL) textFieldShouldReturn:(UITextField *)textField
 {
     [super textFieldShouldReturn:textField];
+    
     [self.nextBarButton setEnabled:[self isContentValid:nil]];
     
     return YES;
@@ -308,12 +303,14 @@ static CGFloat kHeaderHeight = 157.0f;
     }];
     
     [self validateFieldForTextField:textField];
+    
     [self.nextBarButton setEnabled:[self isContentValid:nil]];
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
     self.nextBarButton.enabled = [self isContentValid:nil];
+    
     [self validateFieldForTextField:textField];
 }
 
@@ -333,11 +330,11 @@ static CGFloat kHeaderHeight = 157.0f;
     NSString *errorMessage = @"";
     
     if (textField == self.emailTextField) {
+        
         BOOL valid = [self isFieldValid:nil forType:kAPCUserInfoItemTypeEmail errorMessage:&errorMessage];
         self.emailTextField.valid = valid;
         
-    }
-    else if (textField == self.nameTextField) {
+    } else if (textField == self.nameTextField) {
         BOOL valid = [self isFieldValid:nil forType:kAPCUserInfoItemTypeName errorMessage:&errorMessage];
         self.nameTextField.valid = valid;
     }
@@ -393,6 +390,7 @@ static CGFloat kHeaderHeight = 157.0f;
 - (void)textFieldTableViewCellDidReturn:(APCTextFieldTableViewCell *)cell
 {
     [super textFieldTableViewCellDidReturn:cell];
+    
     self.nextBarButton.enabled = [self isContentValid:nil];
 }
 
@@ -432,10 +430,12 @@ static CGFloat kHeaderHeight = 157.0f;
 
 #pragma mark - Private Methods
 
-- (BOOL)isContentValid:(NSString **)errorMessage
-{
+- (BOOL) isContentValid:(NSString **)errorMessage {
+    
     BOOL isContentValid = [super isContentValid:errorMessage];
+    
     if (isContentValid) {
+        
         for (NSUInteger j=0; j<self.items.count; j++) {
             
             APCTableViewSection *section = self.items[j];
@@ -514,39 +514,35 @@ static CGFloat kHeaderHeight = 157.0f;
             if (errorMessage && !fieldValid) {
                 *errorMessage = NSLocalizedString(@"Please enter a valid email address.", @"");
             }
-        }
-        else {
+        } else {
             if (errorMessage && !fieldValid) {
                 *errorMessage = NSLocalizedString(@"Email address cannot be left empty.", @"");
             }
         }
         
-    }
-    else if (type == kAPCUserInfoItemTypeName) {
+    } else if (type == kAPCUserInfoItemTypeName) {
         
         if (self.nameTextField.text.length == 0) {
             if (errorMessage && !fieldValid) {
                 *errorMessage = NSLocalizedString(@"Name cannot be left empty.", @"");
             }
-        }
-        else {
+        } else {
             fieldValid = YES;
         }
-    }
-    else {
+    } else {
         switch (type) {
             case kAPCUserInfoItemTypePassword:
                 if ([[item value] length] == 0) {
+                    
                     if (errorMessage) {
                         *errorMessage = NSLocalizedString(@"Please enter a Password.", @"");
                     }
-                }
-                else if ([[item value] length] < kAPCPasswordMinimumLength) {
+                } else if ([[item value] length] < kAPCPasswordMinimumLength) {
+                    
                     if (errorMessage) {
                         *errorMessage = [NSString stringWithFormat:NSLocalizedString(@"Password should be at least %d characters", ), kAPCPasswordMinimumLength];
                     }
-                }
-                else {
+                } else {
                     fieldValid = YES;
                 }
                 break;
@@ -559,8 +555,8 @@ static CGFloat kHeaderHeight = 157.0f;
     return fieldValid;
 }
 
-- (void)loadProfileValuesInModel
-{
+- (void) loadProfileValuesInModel {
+    
     if (self.tableView.tableHeaderView) {
         self.user.name = self.nameTextField.text;
         self.user.email = self.emailTextField.text;
@@ -569,12 +565,16 @@ static CGFloat kHeaderHeight = 157.0f;
             self.user.profileImage = UIImageJPEGRepresentation(self.profileImage, 1.0);
         }
     }
-	
+    
+    
     for (NSUInteger j=0; j<self.items.count; j++) {
+        
         APCTableViewSection *section = self.items[j];
         
         for (NSUInteger i = 0; i < section.rows.count; i++) {
+            
             APCTableViewRow *row = section.rows[i];
+            
             APCTableViewItem *item = row.item;
             APCTableViewItemType itemType = row.itemType;
             
@@ -598,10 +598,10 @@ static CGFloat kHeaderHeight = 157.0f;
             }
         }
     }
+    
 }
 
-- (void)validateContent
-{
+- (void) validateContent {
     [self.tableView endEditing:YES];
     
     NSString *message;
@@ -633,8 +633,8 @@ static CGFloat kHeaderHeight = 157.0f;
 
 #pragma mark - UIImagePickerControllerDelegate
 
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
-{
+- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    
     UIImage *image = info[UIImagePickerControllerEditedImage];
     if (!image) {
         image = info[UIImagePickerControllerOriginalImage];
@@ -648,32 +648,33 @@ static CGFloat kHeaderHeight = 157.0f;
     [picker dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
-{
+- (void) imagePickerControllerDidCancel:(UIImagePickerController *)picker {
     picker.delegate = nil;
     [picker dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - IBActions
 
-- (IBAction)termsAndConditions:(UIButton *) __unused sender
+- (IBAction) termsAndConditions: (UIButton *) __unused sender
 {
-    APCTermsAndConditionsViewController *termsViewController =  [[UIStoryboard storyboardWithName:@"APCOnboarding" bundle:[NSBundle bundleForClass:[self class]]] instantiateViewControllerWithIdentifier:@"APCTermsAndConditionsViewController"];
+    APCTermsAndConditionsViewController *termsViewController =  [[UIStoryboard storyboardWithName:@"APCOnboarding" bundle:[NSBundle appleCoreBundle]] instantiateViewControllerWithIdentifier:@"APCTermsAndConditionsViewController"];
     termsViewController.delegate = self;
     [self.navigationController presentViewController:termsViewController animated:YES completion:nil];
 }
 
-- (void)secretButton
+- (void) secretButton
 {
     // Disable the secret button to do nothing.
     return;
 }
 
-- (IBAction)next:(id)__unused sender
+- (IBAction)next
 {
     NSString *errorMessage = @"";
     if ([self isContentValid:&errorMessage]) {
+        
         [self saveSceneData];
+        
         [self loadProfileValuesInModel];
         
         APCSpinnerViewController *spinnerController = [[APCSpinnerViewController alloc] init];
@@ -682,6 +683,7 @@ static CGFloat kHeaderHeight = 157.0f;
         typeof(self) __weak weakSelf = self;
         [self.user signUpOnCompletion:^(NSError *error) {
             if (error) {
+                
                 APCLogError2 (error);
             
                 if ([error.message isEqualToString:kInternetNotAvailableErrorMessage1] || [error.message isEqualToString:kInternetNotAvailableErrorMessage2] || [error.message rangeOfString:kInternalMaxParticipantsMessage].location != NSNotFound) {
@@ -697,8 +699,7 @@ static CGFloat kHeaderHeight = 157.0f;
                         [alertView addAction:defaultAction];
                         [self presentViewController:alertView animated:YES completion:nil];
                     }];
-                }
-                else {
+                } else {
                     [spinnerController dismissViewControllerAnimated:NO completion:^{
                         
                         UIAlertController *alertView = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Sign Up", @"")
@@ -719,7 +720,8 @@ static CGFloat kHeaderHeight = 157.0f;
                     }];
                 }
             }
-            else {
+            else
+            {
                 [spinnerController dismissViewControllerAnimated:NO completion:^{
                     
                     UIViewController *viewController = [[self onboarding] nextScene];
@@ -751,8 +753,7 @@ static CGFloat kHeaderHeight = 157.0f;
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [weakSelf openCamera];
                 });
-            }
-			else {
+            }else {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [weakSelf presentSettingsAlert:error];
                 });
@@ -769,8 +770,7 @@ static CGFloat kHeaderHeight = 157.0f;
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [weakSelf openPhotoLibrary];
                 });
-            }
-            else {
+            } else {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [weakSelf presentSettingsAlert:error];
                 });
