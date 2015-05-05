@@ -32,7 +32,9 @@
 // 
  
 #import "APCAllSetContentViewController.h"
-#import "APCAppCore.h"
+#import "APCAppDelegateTasks.h"
+#import "APCUtilities.h"
+#import "APCConstants.h"
 #import "APCAllSetTableViewCell.h"
 
 static NSString *kAllSetCellIdentifier = @"AllSetCell";
@@ -64,19 +66,17 @@ typedef NS_ENUM(NSUInteger, APCAllSetRows)
     
     [self configureTextBlocks];
     
-    self.demographicUploader = [[APCDemographicUploader alloc] init];
-    [self.demographicUploader uploadNonIdentifiableDemographicData];
-    
-    [(APCAppDelegate *)[UIApplication sharedApplication].delegate configureObserverQueries];
-    
+//    self.demographicUploader = [[APCDemographicUploader alloc] init];
+//    [self.demographicUploader uploadNonIdentifiableDemographicData];
+	
+//    [(APCAppDelegate *)[UIApplication sharedApplication].delegate configureObserverQueries];
+	
     [self.tableView reloadData];
 }
 
 - (void)configureTextBlocks
 {
-    APCAppDelegate *appDelegate = ((APCAppDelegate*) [UIApplication sharedApplication].delegate);
-    
-    self.textBlocks = [appDelegate allSetTextBlocks];
+    self.textBlocks = [(id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate allSetTextBlocks];
 }
 
 
