@@ -34,7 +34,6 @@
 #import "APCSignupPasscodeViewController.h"
 #import "APCSignUpPermissionsViewController.h"
 #import "APCAppDelegateTasks.h"
-#import "APCKeychainStore.h"
 #import "APCDataSubstrate.h"
 #import "APCConstants.h"
 #import "APCUser.h"
@@ -48,6 +47,7 @@
 #import "UIColor+APCAppearance.h"
 #import "UIFont+APCAppearance.h"
 #import "UIAlertController+Helper.h"
+#import "APCKeychainStore+Passcode.h"
 
 @import LocalAuthentication;
 
@@ -156,8 +156,8 @@
     if (viewController) {
 		[self.navigationController pushViewController:viewController animated:YES];
     }
-	else {
-		[self finishOnboarding];
+    else {
+        [self finishOnboarding];
     }
 }
 
@@ -196,7 +196,9 @@
 
 - (void)savePasscode
 {
-    [APCKeychainStore setString:self.retryPasscodeView.code forKey:kAPCPasscodeKey];
+    if (self.retryPasscodeView.code) {
+        [APCKeychainStore setPasscode:self.retryPasscodeView.code];
+    }
     [self next:nil];
 }
 
