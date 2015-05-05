@@ -46,7 +46,8 @@
 
 @implementation APCPermissionPrimingViewController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 
     [self setupAppearance];
@@ -79,7 +80,8 @@
                                                                                        target:self
                                                                                        action:@selector(back)];
         [self.navigationItem setLeftBarButtonItem:backBarButton];
-    } else {
+    }
+    else {
         [self.navigationItem setHidesBackButton:YES];
     }
 }
@@ -98,7 +100,6 @@
 - (void)back
 {
     [[self onboarding] popScene];
-    
     [self.navigationController popViewControllerAnimated:YES];
 }
 

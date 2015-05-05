@@ -39,7 +39,7 @@
 
 @implementation APCDeviceHardware
 
-+ (NSString *) platform
++ (NSString *)platform
 {
     size_t size;
     sysctlbyname("hw.machine", NULL, &size, NULL, 0);
@@ -50,7 +50,7 @@
     return platform;
 }
 
-+ (NSString *) platformString
++ (NSString *)platformString
 {
     NSString *platform = [APCDeviceHardware platform];
     
@@ -104,7 +104,5 @@
 {
     return [CMMotionActivityManager isActivityAvailable];
 }
-
-
 
 @end

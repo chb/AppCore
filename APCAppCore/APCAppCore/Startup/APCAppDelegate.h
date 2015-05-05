@@ -95,8 +95,6 @@ extern NSUInteger   const kTheEntireDataModelOfTheApp;
 - (void) logOutNotification:(NSNotification *)notification;
 
 - (NSArray *)offsetForTaskSchedules;
-- (void)afterOnBoardProcessIsFinished;
-- (NSArray *)allSetTextBlocks;
 - (NSDictionary *)configureTasksForActivities;
 
 //To be called from Datasubstrate

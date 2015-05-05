@@ -46,21 +46,18 @@
 - (void)setIcon:(UIImage *)icon
 {
     _icon = icon;
-    
     self.imageViewIcon.image = [icon imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
 }
 
 - (void)setOriginalText:(NSString *)originalText
 {
     _originalText = originalText;
-    
     self.originalTextBlock.text  = originalText;
 }
 
 - (void)setAdditonalText:(NSString *)additonalText
 {
     _additonalText = additonalText;
-    
     self.additionalTextBlock.text = additonalText;
 }
 

@@ -31,13 +31,19 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 // 
  
-#import "APCAppCore.h"
 #import "APCSignUpPermissionsViewController.h"
-#import "APCTableViewItem.h"
-#import "APCPermissionsCell.h"
 #import "APCPermissionsManager.h"
 #import "APCAppDelegateTasks.h"
+#import "APCDataSubstrate.h"
+#import "APCUser.h"
+#import "APCLog.h"
 
+#import "APCTableViewItem.h"
+#import "APCPermissionsCell.h"
+#import "APCStepProgressBar.h"
+#import "APCCustomBackButton.h"
+
+#import "UIColor+APCAppearance.h"
 #import "NSBundle+Helper.h"
 #import "UIView+Helper.h"
 #import "UIAlertController+Helper.h"
@@ -93,13 +99,13 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
     
 }
 
-- (void) viewDidAppear:(BOOL)animated {
+- (void)viewDidAppear:(BOOL)animated
+{
     [super viewDidAppear:animated];
     [self.stepProgressBar setCompletedSteps:([self onboarding].onboardingTask.currentStepNumber - 1) animation:YES];
     
     [self.tableView reloadData];
-  APCLogViewControllerAppeared();
-
+    APCLogViewControllerAppeared();
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -110,7 +116,8 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidBecomeActive:) name:UIApplicationWillEnterForegroundNotification object:nil];
 }
 
--(void)dealloc{
+-(void)dealloc
+{
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -120,7 +127,7 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
 {
     NSMutableArray *items = [NSMutableArray new];
     
-    NSDictionary *initialOptions = ((APCAppDelegate *)[UIApplication sharedApplication].delegate).initializationOptions;
+    NSDictionary *initialOptions = ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).initializationOptions;
     NSArray *servicesArray = initialOptions[kAppServicesListRequiredKey];
     NSDictionary *servicesDescrtiptions = initialOptions[kAppServicesDescriptionsKey];
     
@@ -198,22 +205,22 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
     [self.navigationItem setLeftBarButtonItem:backster];
 }
 
-- (APCUser *) user {
+- (APCUser *)user
+{
     if (!_user) {
-        _user = ((APCAppDelegate*) [UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
+        self.user = ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
     }
     return _user;
 }
 
 - (APCOnboarding *)onboarding
 {
-    return ((APCAppDelegate *)[UIApplication sharedApplication].delegate).onboarding;
+    return ((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate).onboarding;
 }
 
 #pragma mark - UITableViewDataSource methods
 
-- (NSInteger) tableView: (UITableView *) __unused tableView
-  numberOfRowsInSection: (NSInteger) __unused section
+- (NSInteger)tableView:(UITableView *) __unused tableView numberOfRowsInSection: (NSInteger) __unused section
 {
     return self.permissions.count;
 }
@@ -238,8 +245,7 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
 
 #pragma mark - UITableViewDelegate methods
 
-- (CGFloat)       tableView: (UITableView *) __unused tableView
-    heightForRowAtIndexPath: (NSIndexPath *) __unused indexPath
+- (CGFloat)tableView:(UITableView *) __unused tableView heightForRowAtIndexPath:(NSIndexPath *) __unused indexPath
 {
     return kTableViewRowHeight;
 }
@@ -300,16 +306,21 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
     }
 }
 
-- (void) setUserSignedUp
+- (void)setUserSignedUp
 {
     self.user.signedUp = YES;
+	[[NSNotificationCenter defaultCenter] postNotificationName:(NSString *)APCUserSignedUpNotification object:nil];
 }
 
 - (void)setUserSignedIn
 {
     self.user.signedIn = YES;
-    
-    [(APCAppDelegate *)[UIApplication sharedApplication].delegate afterOnBoardProcessIsFinished];
+	[[NSNotificationCenter defaultCenter] postNotificationName:(NSString *)APCUserSignedInNotification object:nil];
+	
+	id<APCAppDelegateTasks> appDelegate = (id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate;
+	if ([appDelegate respondsToSelector:@selector(afterOnBoardProcessIsFinished)]) {
+		[appDelegate performSelector:@selector(afterOnBoardProcessIsFinished)];
+	}
 }
 
 - (void)back
@@ -320,7 +331,7 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
 
 #pragma mark - UIApplication notification methods
 
-- (void) appDidBecomeActive: (NSNotification *) __unused notification
+- (void)appDidBecomeActive:(NSNotification *) __unused notification
 {
     self.permissions = [self prepareData].mutableCopy;
     [self.tableView reloadData];
@@ -328,14 +339,15 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
 
 #pragma mark - Permissions
 
-- (IBAction) next: (id) __unused sender
+- (IBAction)next:(id) __unused sender
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
-    if (self.onboarding.taskType == kAPCOnboardingTaskTypeSignIn) {
-        UIViewController *viewController = [[self onboarding] nextScene];
+	UIViewController *viewController = [[self onboarding] nextScene];
+    if (viewController) {
         [self.navigationController pushViewController:viewController animated:YES];
-    } else {
+    }
+	else {
         [self finishOnboarding];
     }
 }

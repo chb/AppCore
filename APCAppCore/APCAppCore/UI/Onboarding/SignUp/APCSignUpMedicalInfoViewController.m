@@ -32,10 +32,13 @@
 // 
  
 #import "APCSignUpMedicalInfoViewController.h"
-#import "APCSpinnerViewController.h"
 #import "APCAppDelegateTasks.h"
 #import "APCPermissionButton.h"
 #import "APCPermissionsManager.h"
+#import "APCLog.h"
+
+#import "APCSpinnerViewController.h"
+#import "APCStepProgressBar.h"
 
 #import "UIAlertController+Helper.h"
 #import "APCUser+Bridge.h"
@@ -51,17 +54,15 @@
 
 #pragma mark - View Life Cycle
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     
     self.tableView.tableHeaderView = nil;
-    
     self.items = [self prepareContent];
-    
     self.navigationItem.hidesBackButton = YES;
-    
+	
     self.permissionManager = [[APCPermissionsManager alloc] init];
-    
     self.permissionGranted = [self.permissionManager isPermissionsGrantedForType:kAPCSignUpPermissionsTypeHealthKit];
     
     __weak typeof(self) weakSelf = self;
@@ -80,263 +81,255 @@
     self.title = NSLocalizedString(@"Additional Information", @"Additional Information");
 }
 
-- (void) viewDidAppear:(BOOL)animated {
+- (void)viewDidAppear:(BOOL)animated
+{
     [super viewDidAppear:animated];
     
     [self.stepProgressBar setCompletedSteps:([self onboarding].onboardingTask.currentStepNumber - 1) animation:YES];
-  APCLogViewControllerAppeared();
-    
+    APCLogViewControllerAppeared();
 }
 
-- (NSArray *)prepareContent {
-    
-    NSDictionary *initialOptions = ((APCAppDelegate *)[UIApplication sharedApplication].delegate).initializationOptions;
+- (NSArray *)prepareContent
+{
+    NSDictionary *initialOptions = ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).initializationOptions;
     NSArray *profileElementsList = initialOptions[kAppProfileElementsListKey];
     
-    NSMutableArray *items = [NSMutableArray new];
+    NSMutableArray *rowItems = [NSMutableArray new];
     
-    {
-        NSMutableArray *rowItems = [NSMutableArray new];
+    for (NSNumber *type in profileElementsList) {
         
-        for (NSNumber *type in profileElementsList) {
-            
-            APCUserInfoItemType itemType = type.integerValue;
-            
-            switch (itemType) {
-                case kAPCUserInfoItemTypeBloodType:
-                {
-                    APCTableViewCustomPickerItem *field = [APCTableViewCustomPickerItem new];
-                    field.caption = NSLocalizedString(@"Blood Type", @"");
-                    field.identifier = kAPCDefaultTableViewCellIdentifier;
-                    field.selectionStyle = UITableViewCellSelectionStyleGray;
-                    field.detailDiscloserStyle = YES;
-                    
-                    if (self.user.bloodType) {
-                        field.selectedRowIndices = @[ @(self.user.bloodType) ];
-                        field.editable = NO;
-                    }
-                    
-                    field.textAlignnment = NSTextAlignmentRight;
-                    field.pickerData = @[ [APCUser bloodTypeInStringValues] ];
-                    
-                    APCTableViewRow *row = [APCTableViewRow new];
-                    row.item = field;
-                    row.itemType = kAPCUserInfoItemTypeBloodType;
-                    [rowItems addObject:row];
-                    
+        APCUserInfoItemType itemType = type.integerValue;
+        
+        switch (itemType) {
+            case kAPCUserInfoItemTypeBloodType:
+            {
+                APCTableViewCustomPickerItem *field = [APCTableViewCustomPickerItem new];
+                field.caption = NSLocalizedString(@"Blood Type", @"");
+                field.identifier = kAPCDefaultTableViewCellIdentifier;
+                field.selectionStyle = UITableViewCellSelectionStyleGray;
+                field.detailDiscloserStyle = YES;
+                
+                if (self.user.bloodType) {
+                    field.selectedRowIndices = @[ @(self.user.bloodType) ];
+                    field.editable = NO;
                 }
-                    break;
-                    
-                case kAPCUserInfoItemTypeMedicalCondition:
-                {
-                    APCTableViewCustomPickerItem *field = [APCTableViewCustomPickerItem new];
-                    field.caption = NSLocalizedString(@"Medical Conditions", @"");
-                    field.identifier = kAPCDefaultTableViewCellIdentifier;
-                    field.selectionStyle = UITableViewCellSelectionStyleGray;
-                    field.detailDiscloserStyle = YES;
-                    field.pickerData = @[ [APCUser medicalConditions] ];
-                    field.textAlignnment = NSTextAlignmentRight;
-                    if (self.user.medicalConditions) {
-                        field.selectedRowIndices = @[ @([field.pickerData[0] indexOfObject:self.user.medicalConditions]) ];
-                    }
-                    else {
-                        field.selectedRowIndices = @[ @(0) ];
-                    }
-                    
-                    APCTableViewRow *row = [APCTableViewRow new];
-                    row.item = field;
-                    row.itemType = kAPCUserInfoItemTypeMedicalCondition;
-                    [rowItems addObject:row];
-                }
-                    break;
-                    
-                case kAPCUserInfoItemTypeMedication:
-                {
-                    APCTableViewCustomPickerItem *field = [APCTableViewCustomPickerItem new];
-                    field.caption = NSLocalizedString(@"Medications", @"");
-                    field.identifier = kAPCDefaultTableViewCellIdentifier;
-                    field.selectionStyle = UITableViewCellSelectionStyleGray;
-                    field.detailDiscloserStyle = YES;
-                    field.textAlignnment = NSTextAlignmentRight;
-                    field.pickerData = @[ [APCUser medications] ];
-                    
-                    if (self.user.medications) {
-                        field.selectedRowIndices = @[ @([field.pickerData[0] indexOfObject:self.user.medications]) ];
-                    }
-                    else {
-                        field.selectedRowIndices = @[ @(0) ];
-                    }
-                    
-                    APCTableViewRow *row = [APCTableViewRow new];
-                    row.item = field;
-                    row.itemType = kAPCUserInfoItemTypeMedication;
-                    [rowItems addObject:row];
-                }
-                    break;
-                    
-                case kAPCUserInfoItemTypeHeight:
-                {
-                    APCTableViewCustomPickerItem *field = [APCTableViewCustomPickerItem new];
-                    field.caption = NSLocalizedString(@"Height", @"");
-                    field.identifier = kAPCDefaultTableViewCellIdentifier;
-                    field.selectionStyle = UITableViewCellSelectionStyleGray;
-                    field.detailDiscloserStyle = YES;
-                    field.textAlignnment = NSTextAlignmentRight;
-                    field.pickerData = [APCUser heights];
-
-					NSInteger indexOfMyHeightInFeet = 0;
-                    NSInteger indexOfMyHeightInInches = 0;
-
-                    if (self.user.height) {
-                        double heightInInches = round([APCUser heightInInches:self.user.height]);
-                        
-                        NSString *feet = [NSString stringWithFormat:@"%d'", (int)heightInInches/12];
-                        NSString *inches = [NSString stringWithFormat:@"%d''", (int)heightInInches%12];
-
-						NSArray *allPossibleHeightsInFeet = field.pickerData [0];
-						NSArray *allPossibleHeightsInInches = field.pickerData [1];
-
-                        //107 inches i.e. 8'11" is the max. height.
-                        if (heightInInches <= 107) {
-                            indexOfMyHeightInFeet = [allPossibleHeightsInFeet indexOfObject: feet];
-                            indexOfMyHeightInInches = [allPossibleHeightsInInches indexOfObject: inches];
-                        } else {
-                            indexOfMyHeightInFeet = allPossibleHeightsInFeet.count-1;
-                            indexOfMyHeightInInches = allPossibleHeightsInInches.count-1;
-                        }
-						
-                    }
-
-                    if (indexOfMyHeightInFeet && indexOfMyHeightInInches) {
-                        field.selectedRowIndices = @[ @(indexOfMyHeightInFeet), @(indexOfMyHeightInInches) ];
-                    }
-
-                    APCTableViewRow *row = [APCTableViewRow new];
-                    row.item = field;
-                    row.itemType = kAPCUserInfoItemTypeHeight;
-                    [rowItems addObject:row];
-                }
-                    break;
-                    
-                case kAPCUserInfoItemTypeWeight:
-                {
-                    APCTableViewTextFieldItem *field = [APCTableViewTextFieldItem new];
-                    field.caption = NSLocalizedString(@"Weight", @"");
-                    field.placeholder = NSLocalizedString(@"add weight (lb)", @"");
-                    field.style = UITableViewCellStyleValue1;
-                    field.identifier = kAPCTextFieldTableViewCellIdentifier;
-                    field.regularExpression = kAPCMedicalInfoItemWeightRegEx;
-                    field.keyboardType = UIKeyboardTypeDecimalPad;
-                    field.textAlignnment = NSTextAlignmentRight;
-                    
-                    if (self.user.weight) {
-                        field.value = [NSString stringWithFormat:@"%.0f", [APCUser weightInPounds:self.user.weight]];
-                    }
-                    
-                    APCTableViewRow *row = [APCTableViewRow new];
-                    row.item = field;
-                    row.itemType = kAPCUserInfoItemTypeWeight;
-                    [rowItems addObject:row];
-                }
-                    break;
-                    
-                case kAPCUserInfoItemTypeWakeUpTime:
-                {
-                    APCTableViewDatePickerItem *field = [APCTableViewDatePickerItem new];
-                    field.caption = NSLocalizedString(@"What time do you generally wake up?", @"");
-                    field.placeholder = @"07:00 AM";
-                    field.identifier = kAPCDefaultTableViewCellIdentifier;
-                    field.selectionStyle = UITableViewCellSelectionStyleGray;
-                    field.datePickerMode = UIDatePickerModeTime;
-                    field.dateFormat = kAPCMedicalInfoItemSleepTimeFormat;
-                    field.textAlignnment = NSTextAlignmentRight;
-                    field.detailDiscloserStyle = YES;
-                    
-                    if (self.user.sleepTime) {
-                        field.date = self.user.sleepTime;
-                    } else {
-                        field.date = [[NSCalendar currentCalendar] dateBySettingHour:7
-                                                                              minute:0
-                                                                              second:0
-                                                                              ofDate:[NSDate date]
-                                                                             options:0];
-                    }
-                    
-                    APCTableViewRow *row = [APCTableViewRow new];
-                    row.item = field;
-                    row.itemType = kAPCUserInfoItemTypeWakeUpTime;
-                    [rowItems addObject:row];
-                }
-                    break;
-                    
-                case kAPCUserInfoItemTypeSleepTime:
-                {
-                    APCTableViewDatePickerItem *field = [APCTableViewDatePickerItem new];
-                    field.caption = NSLocalizedString(@"What time do you generally go to sleep?", @"");
-                    field.placeholder = @"09:30 PM";
-                    field.style = UITableViewCellStyleValue1;
-                    field.identifier = kAPCDefaultTableViewCellIdentifier;
-                    field.selectionStyle = UITableViewCellSelectionStyleGray;
-                    field.datePickerMode = UIDatePickerModeTime;
-                    field.dateFormat = kAPCMedicalInfoItemSleepTimeFormat;
-                    field.textAlignnment = NSTextAlignmentRight;
-                    field.detailDiscloserStyle = YES;
-                    
-                    if (self.user.wakeUpTime) {
-                        field.date = self.user.wakeUpTime;
-                    } else {
-                        field.date = [[NSCalendar currentCalendar] dateBySettingHour:21
-                                                                              minute:30
-                                                                              second:0
-                                                                              ofDate:[NSDate date]
-                                                                             options:0];
-                    }
-                    
-                    APCTableViewRow *row = [APCTableViewRow new];
-                    row.item = field;
-                    row.itemType = kAPCUserInfoItemTypeSleepTime;
-                    [rowItems addObject:row];;
-                }
-                    break;
-                    
-                default:
-                    break;
+                
+                field.textAlignnment = NSTextAlignmentRight;
+                field.pickerData = @[ [APCUser bloodTypeInStringValues] ];
+                
+                APCTableViewRow *row = [APCTableViewRow new];
+                row.item = field;
+                row.itemType = kAPCUserInfoItemTypeBloodType;
+                [rowItems addObject:row];
+                
             }
+                break;
+                
+            case kAPCUserInfoItemTypeMedicalCondition:
+            {
+                APCTableViewCustomPickerItem *field = [APCTableViewCustomPickerItem new];
+                field.caption = NSLocalizedString(@"Medical Conditions", @"");
+                field.identifier = kAPCDefaultTableViewCellIdentifier;
+                field.selectionStyle = UITableViewCellSelectionStyleGray;
+                field.detailDiscloserStyle = YES;
+                field.pickerData = @[ [APCUser medicalConditions] ];
+                field.textAlignnment = NSTextAlignmentRight;
+                if (self.user.medicalConditions) {
+                    field.selectedRowIndices = @[ @([field.pickerData[0] indexOfObject:self.user.medicalConditions]) ];
+                }
+                else {
+                    field.selectedRowIndices = @[ @(0) ];
+                }
+                
+                APCTableViewRow *row = [APCTableViewRow new];
+                row.item = field;
+                row.itemType = kAPCUserInfoItemTypeMedicalCondition;
+                [rowItems addObject:row];
+            }
+                break;
+                
+            case kAPCUserInfoItemTypeMedication:
+            {
+                APCTableViewCustomPickerItem *field = [APCTableViewCustomPickerItem new];
+                field.caption = NSLocalizedString(@"Medications", @"");
+                field.identifier = kAPCDefaultTableViewCellIdentifier;
+                field.selectionStyle = UITableViewCellSelectionStyleGray;
+                field.detailDiscloserStyle = YES;
+                field.textAlignnment = NSTextAlignmentRight;
+                field.pickerData = @[ [APCUser medications] ];
+                
+                if (self.user.medications) {
+                    field.selectedRowIndices = @[ @([field.pickerData[0] indexOfObject:self.user.medications]) ];
+                }
+                else {
+                    field.selectedRowIndices = @[ @(0) ];
+                }
+                
+                APCTableViewRow *row = [APCTableViewRow new];
+                row.item = field;
+                row.itemType = kAPCUserInfoItemTypeMedication;
+                [rowItems addObject:row];
+            }
+                break;
+                
+            case kAPCUserInfoItemTypeHeight:
+            {
+                APCTableViewCustomPickerItem *field = [APCTableViewCustomPickerItem new];
+                field.caption = NSLocalizedString(@"Height", @"");
+                field.identifier = kAPCDefaultTableViewCellIdentifier;
+                field.selectionStyle = UITableViewCellSelectionStyleGray;
+                field.detailDiscloserStyle = YES;
+                field.textAlignnment = NSTextAlignmentRight;
+                field.pickerData = [APCUser heights];
+                
+                NSInteger indexOfMyHeightInFeet = 0;
+                NSInteger indexOfMyHeightInInches = 0;
+                
+                if (self.user.height) {
+                    double heightInInches = round([APCUser heightInInches:self.user.height]);
+                    
+                    NSString *feet = [NSString stringWithFormat:@"%d'", (int)heightInInches/12];
+                    NSString *inches = [NSString stringWithFormat:@"%d''", (int)heightInInches%12];
+                    
+                    NSArray *allPossibleHeightsInFeet = field.pickerData [0];
+                    NSArray *allPossibleHeightsInInches = field.pickerData [1];
+                    
+                    //107 inches i.e. 8'11" is the max. height.
+                    if (heightInInches <= 107) {
+                        indexOfMyHeightInFeet = [allPossibleHeightsInFeet indexOfObject: feet];
+                        indexOfMyHeightInInches = [allPossibleHeightsInInches indexOfObject: inches];
+                    } else {
+                        indexOfMyHeightInFeet = allPossibleHeightsInFeet.count-1;
+                        indexOfMyHeightInInches = allPossibleHeightsInInches.count-1;
+                    }
+                    
+                }
+                
+                if (indexOfMyHeightInFeet && indexOfMyHeightInInches) {
+                    field.selectedRowIndices = @[ @(indexOfMyHeightInFeet), @(indexOfMyHeightInInches) ];
+                }
+                
+                APCTableViewRow *row = [APCTableViewRow new];
+                row.item = field;
+                row.itemType = kAPCUserInfoItemTypeHeight;
+                [rowItems addObject:row];
+            }
+                break;
+                
+            case kAPCUserInfoItemTypeWeight:
+            {
+                APCTableViewTextFieldItem *field = [APCTableViewTextFieldItem new];
+                field.caption = NSLocalizedString(@"Weight", @"");
+                field.placeholder = NSLocalizedString(@"add weight (lb)", @"");
+                field.style = UITableViewCellStyleValue1;
+                field.identifier = kAPCTextFieldTableViewCellIdentifier;
+                field.regularExpression = kAPCMedicalInfoItemWeightRegEx;
+                field.keyboardType = UIKeyboardTypeDecimalPad;
+                field.textAlignnment = NSTextAlignmentRight;
+                
+                if (self.user.weight) {
+                    field.value = [NSString stringWithFormat:@"%.0f", [APCUser weightInPounds:self.user.weight]];
+                }
+                
+                APCTableViewRow *row = [APCTableViewRow new];
+                row.item = field;
+                row.itemType = kAPCUserInfoItemTypeWeight;
+                [rowItems addObject:row];
+            }
+                break;
+                
+            case kAPCUserInfoItemTypeWakeUpTime:
+            {
+                APCTableViewDatePickerItem *field = [APCTableViewDatePickerItem new];
+                field.caption = NSLocalizedString(@"What time do you generally wake up?", @"");
+                field.placeholder = @"07:00 AM";
+                field.identifier = kAPCDefaultTableViewCellIdentifier;
+                field.selectionStyle = UITableViewCellSelectionStyleGray;
+                field.datePickerMode = UIDatePickerModeTime;
+                field.dateFormat = kAPCMedicalInfoItemSleepTimeFormat;
+                field.textAlignnment = NSTextAlignmentRight;
+                field.detailDiscloserStyle = YES;
+                
+                if (self.user.sleepTime) {
+                    field.date = self.user.sleepTime;
+                } else {
+                    field.date = [[NSCalendar currentCalendar] dateBySettingHour:7
+                                                                          minute:0
+                                                                          second:0
+                                                                          ofDate:[NSDate date]
+                                                                         options:0];
+                }
+                
+                APCTableViewRow *row = [APCTableViewRow new];
+                row.item = field;
+                row.itemType = kAPCUserInfoItemTypeWakeUpTime;
+                [rowItems addObject:row];
+            }
+                break;
+                
+            case kAPCUserInfoItemTypeSleepTime:
+            {
+                APCTableViewDatePickerItem *field = [APCTableViewDatePickerItem new];
+                field.caption = NSLocalizedString(@"What time do you generally go to sleep?", @"");
+                field.placeholder = @"09:30 PM";
+                field.style = UITableViewCellStyleValue1;
+                field.identifier = kAPCDefaultTableViewCellIdentifier;
+                field.selectionStyle = UITableViewCellSelectionStyleGray;
+                field.datePickerMode = UIDatePickerModeTime;
+                field.dateFormat = kAPCMedicalInfoItemSleepTimeFormat;
+                field.textAlignnment = NSTextAlignmentRight;
+                field.detailDiscloserStyle = YES;
+                
+                if (self.user.wakeUpTime) {
+                    field.date = self.user.wakeUpTime;
+                } else {
+                    field.date = [[NSCalendar currentCalendar] dateBySettingHour:21
+                                                                          minute:30
+                                                                          second:0
+                                                                          ofDate:[NSDate date]
+                                                                         options:0];
+                }
+                
+                APCTableViewRow *row = [APCTableViewRow new];
+                row.item = field;
+                row.itemType = kAPCUserInfoItemTypeSleepTime;
+                [rowItems addObject:row];;
+            }
+                break;
+                
+            default:
+                break;
         }
-        
-        APCTableViewSection *section = [APCTableViewSection new];
-        section.rows = [NSArray arrayWithArray:rowItems];
-        [items addObject:section];
-        
     }
     
-    return [NSArray arrayWithArray:items];
+    APCTableViewSection *section = [APCTableViewSection new];
+    section.rows = [NSArray arrayWithArray:rowItems];
+    NSArray *items = @[section];
+    
+    return @[items];
 }
 
 - (APCOnboarding *)onboarding
 {
-    return ((APCAppDelegate *)[UIApplication sharedApplication].delegate).onboarding;
+    return ((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate).onboarding;
 }
 
 #pragma mark - UIMethods
 
-- (void) setupProgressBar {
+- (void)setupProgressBar
+{
     [self.stepProgressBar setCompletedSteps:([self onboarding].onboardingTask.currentStepNumber - 2) animation:NO];
 }
 
-
 #pragma mark - Private Methods
 
-- (void) loadProfileValuesInModel {
-    
+- (void)loadProfileValuesInModel
+{
     for (NSUInteger j=0; j<self.items.count; j++) {
-        
         APCTableViewSection *section = self.items[j];
         
         for (NSUInteger i = 0; i < section.rows.count; i++) {
-            
             APCTableViewRow *row = section.rows[i];
-            
             APCTableViewItem *item = row.item;
             APCTableViewItemType itemType = row.itemType;
             
@@ -391,10 +384,10 @@
             }
         }
     }
-    
 }
 
-- (IBAction) next {
+- (IBAction)next:(id) __unused sender
+{
     [self loadProfileValuesInModel];
     
     UIViewController *viewController = [[self onboarding] nextScene];

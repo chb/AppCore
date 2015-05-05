@@ -452,27 +452,12 @@ static NSUInteger const kIndexOfProfileTab = 3;
 
 - (void)afterOnBoardProcessIsFinished
 {
-    /* Abstract implementation. Subclass to override 
-     *
-     * Use this as a hook to post-process anything that is needed
-     * to be processed right after the 'finishOnboarding' method
-     * is invoked.
-     */
 }
 
 
 // The block of text for the All Set
 - (NSArray *)allSetTextBlocks
 {
-    /* Abstract implementaion. Subclass to override.
-     *
-     * Use this to provide custom text on the All Set
-     * screen.
-     *
-     * Please don't be glutenous, don't use four words
-     * when one would suffice.
-     */
-    
     return nil;
 }
 
@@ -618,7 +603,8 @@ static NSUInteger const kIndexOfProfileTab = 3;
 /*********************************************************************************/
 #pragma mark - Respond to Notifications
 /*********************************************************************************/
-- (void) registerNotifications {
+- (void)registerNotifications
+{
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(signedUpNotification:) name:(NSString *)APCUserSignedUpNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(signedInNotification:) name:(NSString *)APCUserSignedInNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logOutNotification:) name:(NSString *)APCUserLogOutNotification object:nil];
@@ -631,19 +617,19 @@ static NSUInteger const kIndexOfProfileTab = 3;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void) signedUpNotification: (NSNotification*) __unused notification
+- (void)signedUpNotification:(NSNotification*) __unused notification
 {
     [self showNeedsEmailVerification];
 }
 
-- (void) signedInNotification: (NSNotification*) __unused notification
+- (void)signedInNotification:(NSNotification*) __unused notification
 {
     [self.dataMonitor userConsented];
     [self.tasksReminder updateTasksReminder];
     [self showTabBar];
 }
 
-- (void) userConsented: (NSNotification*) __unused notification
+- (void)userConsented:(NSNotification*) __unused notification
 {
 
 }

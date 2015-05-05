@@ -32,9 +32,10 @@
 // 
  
 #import "APCTermsAndConditionsViewController.h"
+#import "APCLog.h"
+
 #import "UIColor+APCAppearance.h"
 #import "UIFont+APCAppearance.h"
-#import "APCAppCore.h"
 
 @interface APCTermsAndConditionsViewController ()
 
@@ -45,19 +46,18 @@
 
 @implementation APCTermsAndConditionsViewController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    
+	
+	[self setupAppearance];
     self.textView.text = [self prepareContent];
-    
-    [self setupAppearance];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-  APCLogViewControllerAppeared();
+    APCLogViewControllerAppeared();
 }
 
 #pragma mark - Prepare content
@@ -91,9 +91,7 @@
     NSDictionary *jsonDictionary = [NSJSONSerialization JSONObjectWithData:[JSONString dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&parseError];
     
     NSString *termsString = @"";
-    
     if (!parseError) {
-        
         termsString = jsonDictionary[@"terms"];
     }
     
@@ -102,14 +100,14 @@
 
 #pragma mark - IBActions
 
-- (IBAction) agree: (id) __unused sender
+- (IBAction)agree: (id) __unused sender
 {
     if ([self.delegate respondsToSelector:@selector(termsAndConditionsViewControllerDidAgree)]) {
         [self.delegate termsAndConditionsViewControllerDidAgree];
     }
 }
 
-- (IBAction) close: (id) __unused sender
+- (IBAction)close: (id) __unused sender
 {
     if ([self.delegate respondsToSelector:@selector(termsAndConditionsViewControllerDidCancel)]) {
         [self.delegate termsAndConditionsViewControllerDidCancel];

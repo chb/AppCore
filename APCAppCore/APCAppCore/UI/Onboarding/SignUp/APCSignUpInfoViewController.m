@@ -34,6 +34,10 @@
 #import "APCSignUpInfoViewController.h"
 #import "APCAppDelegateTasks.h"
 #import "APCUserInfoConstants.h"
+#import "APCDataSubstrate.h"
+#import "APCLog.h"
+
+#import "APCStepProgressBar.h"
 
 #import "NSString+Helper.h"
 #import "UIColor+APCAppearance.h"
@@ -53,15 +57,15 @@ static CGFloat const kHeaderHeight = 127.0f;
 @synthesize stepProgressBar;
 @synthesize user = _user;
 
-- (void)dealloc {
+- (void)dealloc
+{
     _nameTextField.delegate = nil;
     _emailTextField.delegate = nil;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    
     [self setupAppearance];
     
     self.nameTextField.delegate = self;
@@ -87,7 +91,7 @@ static CGFloat const kHeaderHeight = 127.0f;
         
         self.tableView.tableHeaderView = self.tableView.tableHeaderView;
     }
-  APCLogViewControllerAppeared();
+    APCLogViewControllerAppeared();
 }
 
 #pragma mark -
@@ -105,17 +109,17 @@ static CGFloat const kHeaderHeight = 127.0f;
     self.stepProgressBar.leftLabel.attributedText = attributedString;
 }
 
-- (APCUser *) user {
+- (APCUser *)user
+{
     if (!_user) {
-        _user = ((APCAppDelegate*) [UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
+        self.user = ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
     }
-    
     return _user;
 }
 
 - (APCOnboarding *)onboarding
 {
-    return ((APCAppDelegate *)[UIApplication sharedApplication].delegate).onboarding;
+    return ((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate).onboarding;
 }
 
 #pragma mark - Appearance
@@ -173,7 +177,8 @@ static CGFloat const kHeaderHeight = 127.0f;
     
     if (textField == self.nameTextField) {
         self.name = text;
-    } else if (textField == self.emailTextField){
+    }
+    else if (textField == self.emailTextField){
         self.email = text;
     }
     
@@ -184,16 +189,18 @@ static CGFloat const kHeaderHeight = 127.0f;
 {
     if (textField == self.nameTextField) {
         self.name = textField.text;
-    } else if (textField == self.emailTextField){
+    }
+    else if (textField == self.emailTextField){
         self.email = textField.text;
     }
 }
 
-- (BOOL) textFieldShouldReturn:(UITextField *)textField {
-    
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
     if ((textField == self.nameTextField) && self.emailTextField) {
         [self.emailTextField becomeFirstResponder];
-    } else {
+    }
+	else {
         [self nextResponderForIndexPath:nil];
     }
     
@@ -203,8 +210,8 @@ static CGFloat const kHeaderHeight = 127.0f;
 
 #pragma mark - Private Methods
 
-- (BOOL) isContentValid:(NSString **)errorMessage {
-    
+- (BOOL)isContentValid:(NSString **)errorMessage
+{
     BOOL isContentValid = YES;
     
     if (self.tableView.tableHeaderView) {
@@ -220,9 +227,9 @@ static CGFloat const kHeaderHeight = 127.0f;
     return isContentValid;
 }
 
-- (void)next{
+- (IBAction)next:(id) __unused sender
+{
     
 }
-
 
 @end

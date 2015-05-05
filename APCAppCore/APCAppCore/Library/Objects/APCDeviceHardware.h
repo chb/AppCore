@@ -35,9 +35,9 @@
 
 @interface APCDeviceHardware : NSObject
 
-+ (NSString *) platform;
++ (NSString *)platform;
 
-+ (NSString *) platformString;
++ (NSString *)platformString;
 
 + (BOOL)isMotionActivityAvailable;
 

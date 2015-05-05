@@ -34,7 +34,8 @@
 #import "APCPermissionsManager.h"
 #import "APCUserInfoConstants.h"
 #import "APCTasksReminderManager.h"
-#import "APCAppDelegate.h"
+#import "APCAppDelegateTasks.h"
+#import "APCDataSubstrate.h"
 
 #import <UIKit/UIKit.h>
 #import <CoreMotion/CoreMotion.h>
@@ -93,7 +94,7 @@ typedef NS_ENUM(NSUInteger, APCPermissionsErrorCode) {
 
 - (HKHealthStore *)healthStore
 {
-    return [[(APCAppDelegate*) ([UIApplication sharedApplication].delegate) dataSubstrate] healthStore];
+    return [[(id<APCAppDelegateTasks>)([UIApplication sharedApplication].delegate) dataSubstrate] healthStore];
 }
 
 - (BOOL)isPermissionsGrantedForType:(APCSignUpPermissionsType)type
@@ -188,7 +189,7 @@ typedef NS_ENUM(NSUInteger, APCPermissionsErrorCode) {
             NSMutableArray *dataTypesToRead = [NSMutableArray new];
             
             // Add Characteristic types
-            NSDictionary *initialOptions = ((APCAppDelegate *)[UIApplication sharedApplication].delegate).initializationOptions;
+            NSDictionary *initialOptions = ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).initializationOptions;
             NSArray *profileElementsList = initialOptions[kAppProfileElementsListKey];
             
             for (NSNumber *profileType in profileElementsList) {
@@ -267,8 +268,7 @@ typedef NS_ENUM(NSUInteger, APCPermissionsErrorCode) {
             if ([[UIApplication sharedApplication] currentUserNotificationSettings].types == UIUserNotificationTypeNone) {
                 UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeAlert
                                                                                                      |UIUserNotificationTypeBadge
-                                                                                                     |UIUserNotificationTypeSound)
-																						 categories:[APCTasksReminderManager taskReminderCategories]];
+                                                                                                     |UIUserNotificationTypeSound) categories:[APCTasksReminderManager taskReminderCategories]];
                 
                 [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
                 [[NSUserDefaults standardUserDefaults]synchronize];
@@ -484,8 +484,7 @@ typedef NS_ENUM(NSUInteger, APCPermissionsErrorCode) {
             self.completionBlock(YES, nil);
             self.completionBlock = nil;
         }
-    }
-	else {
+    }else{
         if (self.completionBlock) {
             self.completionBlock(NO, [self permissionDeniedErrorForType:kAPCSignUpPermissionsTypeLocalNotifications]);
             self.completionBlock = nil;

@@ -48,7 +48,8 @@
 
 @implementation APCInEligibleViewController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
@@ -61,10 +62,11 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-  APCLogViewControllerAppeared();
+    APCLogViewControllerAppeared();
 }
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
@@ -91,14 +93,14 @@
 - (void)back
 {
     [self.navigationController popViewControllerAnimated:YES];
-    
     [[self onboarding] popScene];
 }
 
 
 - (IBAction)next:(id) __unused sender
 {
-    APCShareViewController *shareViewController = [[UIStoryboard storyboardWithName:@"APCOnboarding" bundle:[NSBundle appleCoreBundle]] instantiateViewControllerWithIdentifier:@"ShareVC"];
+    APCShareViewController *shareViewController = [[UIStoryboard storyboardWithName:@"APCOnboarding" bundle:[NSBundle bundleForClass:[self class]]] instantiateViewControllerWithIdentifier:@"ShareVC"];
     [self.navigationController pushViewController:shareViewController animated:YES];
 }
+
 @end
