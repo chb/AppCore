@@ -199,7 +199,7 @@
     if (self.retryPasscodeView.code) {
         [APCKeychainStore setPasscode:self.retryPasscodeView.code];
     }
-    [self next:nil];
+    [self next];
 }
 
 #pragma mark - Selectors

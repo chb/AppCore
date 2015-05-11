@@ -43,7 +43,7 @@
 #import "APCSettingsViewController.h"
 #import "APCSpinnerViewController.h"
 #import "APCTableViewItem.h"
-#import "APCAppDelegate.h"				// should be removed
+#import "APCAppDelegate.h"
 #import "APCUserInfoConstants.h"
 #import "APCDataSubstrate.h"
 #import "APCConstants.h"
@@ -196,22 +196,16 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
     if ((NSUInteger)indexPath.section >= self.items.count) {
         
         if (!cell) {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+            cell = [tableView dequeueReusableCellWithIdentifier:kAPCDefaultTableViewCellIdentifier forIndexPath:indexPath];
         }
         
-        UITableViewCell *view = nil;
-        if ([self.delegate respondsToSelector:@selector(cellForRowAtAdjustedIndexPath:)]) {
-            NSInteger adjustedSectionForExtender = indexPath.section - self.items.count;
-            
-            NSIndexPath *newIndex = [NSIndexPath indexPathForRow:indexPath.row inSection:adjustedSectionForExtender];
-            
-            cell = [self.delegate cellForRowAtAdjustedIndexPath:newIndex];
+        if ([self.delegate respondsToSelector:@selector(decorateCell:atIndexPath:)])
+        {
+            //the delegate should set fields on the cell as required for any preparedContent
+            cell = [self.delegate decorateCell:cell atIndexPath:indexPath];
         }
-        if (view) {
-            [cell.contentView addSubview:view];
-        }
-    }
-    else {
+
+    } else {
         
         if (self.pickerIndexPath && [self.pickerIndexPath isEqual:indexPath]) {
             cell = [tableView dequeueReusableCellWithIdentifier:kAPCPickerTableViewCellIdentifier];
