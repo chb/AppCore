@@ -43,7 +43,8 @@
 #import "APCSettingsViewController.h"
 #import "APCSpinnerViewController.h"
 #import "APCTableViewItem.h"
-#import "APCAppDelegate.h"
+#import "APCConsentManager.h"
+#import "APCTasksReminderManager.h"
 #import "APCUserInfoConstants.h"
 #import "APCDataSubstrate.h"
 #import "APCConstants.h"
@@ -62,6 +63,11 @@
 #import "UIAlertController+Helper.h"
 
 #import <ResearchKit/ResearchKit.h>
+
+// the following dependencies should be removed when refactoring
+#import "APCAppDelegate.h"
+#import "APCUser+Bridge.h"
+#import <BridgeSDK/BridgeSDK.h>
 
 static CGFloat const kSectionHeaderHeight = 40.f;
 static CGFloat const kStudyDetailsViewHeightConstant = 48.f;
@@ -1588,24 +1594,23 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
 
 - (void)showConsentSlides
 {
-    APCAppDelegate * appDelegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
+    APCConsentManager *manager = [(APCAppDelegate *)[UIApplication sharedApplication].delegate consentManager];
+    NSArray *sections = [manager consentSectionsAndHtmlContent:nil];
     
-    NSArray*                sections  = [appDelegate consentSectionsAndHtmlContent:nil];
-    ORKConsentDocument*     consent   = [[ORKConsentDocument alloc] init];
-    ORKConsentSignature*    signature = [ORKConsentSignature signatureForPersonWithTitle:NSLocalizedString(@"Participant", nil)
-                                                                        dateFormatString:nil
-                                                                              identifier:@"participant"];
-    
-    consent.title                = NSLocalizedString(@"Consent", nil);
-    consent.signaturePageTitle   = NSLocalizedString(@"Consent", nil);
+    ORKConsentDocument *consent = [[ORKConsentDocument alloc] init];
+    consent.title = NSLocalizedString(@"Consent", nil);
+    consent.signaturePageTitle = NSLocalizedString(@"Consent", nil);
     consent.signaturePageContent = NSLocalizedString(@"I agree to participate in this research Study.", nil);
-    consent.sections             = sections;
+    consent.sections = sections;
     
+    ORKConsentSignature *signature = [ORKConsentSignature signatureForPersonWithTitle:NSLocalizedString(@"Participant", nil)
+                                                                     dateFormatString:nil
+                                                                           identifier:@"participant"];
     [consent addSignature:signature];
     
-    ORKVisualConsentStep*   step         = [[ORKVisualConsentStep alloc] initWithIdentifier:@"visual" document:consent];
-    ORKOrderedTask* task = [[ORKOrderedTask alloc] initWithIdentifier:@"consent" steps:@[step]];
-    ORKTaskViewController*  consentVC = [[ORKTaskViewController alloc] initWithTask:task taskRunUUID:[NSUUID UUID]];
+    ORKVisualConsentStep *step = [[ORKVisualConsentStep alloc] initWithIdentifier:@"visual" document:consent];
+    ORKOrderedTask *task = [[ORKOrderedTask alloc] initWithIdentifier:@"consent" steps:@[step]];
+    ORKTaskViewController *consentVC = [[ORKTaskViewController alloc] initWithTask:task taskRunUUID:[NSUUID UUID]];
     
     consentVC.navigationBar.topItem.title = NSLocalizedString(@"Consent", nil);
 	consentVC.delegate = self;

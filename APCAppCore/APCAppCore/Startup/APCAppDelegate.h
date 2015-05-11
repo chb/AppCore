@@ -36,13 +36,14 @@
 #import "APCOnboarding.h"
 #import "APCPasscodeViewController.h"
 #import "APCProfileViewController.h"
+#import "APCConsentManager.h"
 #import "APCConsentTask.h"
 
 extern NSUInteger   const kTheEntireDataModelOfTheApp;
 
 @class APCDataSubstrate, APCDataMonitor, APCScheduler, APCOnboarding, APCPasscodeViewController, APCTasksReminderManager, APCPassiveDataCollector, APCFitnessAllocation;
 
-@interface APCAppDelegate : UIResponder <UIApplicationDelegate, APCOnboardingDelegate, APCOnboardingTaskDelegate, APCPasscodeViewControllerDelegate>
+@interface APCAppDelegate : UIResponder <UIApplicationDelegate, APCOnboardingDelegate, APCConsentManagerDelegate, APCOnboardingTaskDelegate, APCPasscodeViewControllerDelegate>
 
 @property (nonatomic, strong) APCFitnessAllocation *sevenDayFitnessAllocationData;
 @property (strong, nonatomic) UITabBarController *tabster;
@@ -89,7 +90,6 @@ extern NSUInteger   const kTheEntireDataModelOfTheApp;
 - (void) setUpInitializationOptions;
 - (void) setUpAppAppearance;
 - (void) registerCatastrophicStartupError: (NSError *) error;
-- (void) configureObserverQueries;
 
 //For User in Subclasses
 - (void) signedInNotification:(NSNotification *)notification;
@@ -110,7 +110,6 @@ extern NSUInteger   const kTheEntireDataModelOfTheApp;
 - (void)showPasscodeIfNecessary;
 
 - (ORKTaskViewController *)consentViewController;
-- (NSMutableArray*)consentSectionsAndHtmlContent:(NSString**)htmlContent;
 
 - (void)instantiateOnboardingForType:(APCOnboardingTaskType)type;
 

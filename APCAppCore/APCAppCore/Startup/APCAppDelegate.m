@@ -645,6 +645,11 @@ static NSUInteger const kIndexOfProfileTab = 3;
     return nil;
 }
 
+- (APCConsentManager *)consentManager
+{
+    return [APCConsentManager new];
+}
+
 // The block of text for the All Set
 - (NSArray *)allSetTextBlocks
 {
