@@ -65,9 +65,9 @@
 #import <ResearchKit/ResearchKit.h>
 
 // the following dependencies should be removed when refactoring
-#import "APCAppDelegate.h"
-#import "APCUser+Bridge.h"
-#import <BridgeSDK/BridgeSDK.h>
+//#import "APCAppDelegate.h"
+//#import "APCUser+Bridge.h"
+//#import <BridgeSDK/BridgeSDK.h>
 
 static CGFloat const kSectionHeaderHeight = 40.f;
 static CGFloat const kStudyDetailsViewHeightConstant = 48.f;
