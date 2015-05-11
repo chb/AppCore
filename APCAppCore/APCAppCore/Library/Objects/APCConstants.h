@@ -146,10 +146,6 @@ FOUNDATION_EXPORT NSString *const kTasksReminderDefaultsTimeKey;
 FOUNDATION_EXPORT NSString *const kScheduleOffsetTaskIdKey;
 FOUNDATION_EXPORT NSString *const kScheduleOffsetOffsetKey;
 
-FOUNDATION_EXPORT NSString *const kReviewConsentActionPDF;
-FOUNDATION_EXPORT NSString *const kReviewConsentActionVideo;
-FOUNDATION_EXPORT NSString *const kReviewConsentActionSlides;
-
 FOUNDATION_EXPORT NSString *const kAllSetActivitiesTextOriginal;
 FOUNDATION_EXPORT NSString *const kAllSetActivitiesTextAdditional;
 FOUNDATION_EXPORT NSString *const kAllSetDashboardTextOriginal;

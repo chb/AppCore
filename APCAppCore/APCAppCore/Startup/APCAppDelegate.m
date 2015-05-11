@@ -639,12 +639,6 @@ static NSUInteger const kIndexOfProfileTab = 3;
      */
 }
 
-// Review Consent Actions
-- (NSArray *)reviewConsentActions
-{
-    return nil;
-}
-
 - (APCConsentManager *)consentManager
 {
     return [APCConsentManager new];

@@ -39,6 +39,17 @@
 @implementation APCConsentManager
 
 
+- (instancetype)init
+{
+    if ((self = [super init])) {
+        _canReviewConsentPDF = YES;
+        _canReviewConsentSlides = YES;
+        _canReviewConsentVideo = NO;
+    }
+    return self;
+}
+
+
 - (NSString *)configurationFileName
 {
     return @"APHConsentSection";        // Keeping "APH" to not break backwards compatibility, should be "APC"

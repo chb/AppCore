@@ -40,7 +40,7 @@
 /**
  *  Protocol to be implemented by the app delegate.
  */
-@protocol APCConsentManagerDelegate <NSObject>
+@protocol APCConsentManagerProvider <NSObject>
 
 @required
 /// The app's consent manager
@@ -53,6 +53,18 @@
  *  The app holds on to an instance of this class to handle consent related tasks.
  */
 @interface APCConsentManager : NSObject
+
+/// Whether the user can review his/her consent as a PDF.
+@property (nonatomic) BOOL canReviewConsentPDF;
+
+/// Whether the user can review the consent as a slideshow.
+@property (nonatomic) BOOL canReviewConsentSlides;
+
+/// Whether the user can review a consent video.
+@property (nonatomic) BOOL canReviewConsentVideo;
+
+
+#pragma mark Configuration File
 
 /** The name of the JSON file, not including the .json extension, of the consent configuration file in the app bundle. */
 - (NSString *)configurationFileName;

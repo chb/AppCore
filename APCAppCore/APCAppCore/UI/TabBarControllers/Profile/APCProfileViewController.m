@@ -1535,16 +1535,10 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
 {
     __weak typeof(self) weakSelf = self;
     
-    APCAppDelegate * appDelegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
-    NSArray *consentReviewActions = [appDelegate reviewConsentActions];
-    
-    if (!consentReviewActions) {
-        consentReviewActions = @[kReviewConsentActionPDF, kReviewConsentActionVideo, kReviewConsentActionSlides];
-    }
-    
+    APCConsentManager *manager = [(id<APCConsentManagerProvider>)[UIApplication sharedApplication].delegate consentManager];
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Review Consent" message:@"" preferredStyle:UIAlertControllerStyleActionSheet];
     
-    if ([consentReviewActions containsObject:kReviewConsentActionPDF]) {
+    if ([manager canReviewConsentPDF]) {
         UIAlertAction *pdfAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"View PDF", @"View PDF") style:UIAlertActionStyleDefault handler:^(UIAlertAction * __unused action) {
             
             APCWebViewController *webViewController = [[UIStoryboard storyboardWithName:@"APCOnboarding" bundle:[NSBundle appleCoreBundle]] instantiateViewControllerWithIdentifier:@"APCWebViewController"];
@@ -1557,12 +1551,11 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
             [weakSelf.navigationController presentViewController:navController animated:YES completion:^{
                 [webViewController.webview loadData:data MIMEType:@"application/pdf" textEncodingName:@"utf-8" baseURL:nil];
             }];
-            
         }];
         [alertController addAction:pdfAction];
     }
     
-    if ([consentReviewActions containsObject:kReviewConsentActionVideo]) {
+    if ([manager canReviewConsentVideo]) {
         UIAlertAction *videoAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Watch Video", @"Watch Video") style:UIAlertActionStyleDefault handler:^(UIAlertAction * __unused action) {
             
             NSURL *fileURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Intro" ofType:@"mp4"]];
@@ -1575,26 +1568,22 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
         [alertController addAction:videoAction];
     }
     
-    if ([consentReviewActions containsObject:kReviewConsentActionSlides]) {
+    if ([manager canReviewConsentSlides]) {
         UIAlertAction *slidesAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"View Slides", @"View Slides") style:UIAlertActionStyleDefault handler:^(UIAlertAction * __unused action) {
             [weakSelf showConsentSlides];
         }];
         [alertController addAction:slidesAction];
     }
     
-    {
-        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction * __unused action) {
-            
-        }];
-        [alertController addAction:cancelAction];
-    }
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"") style:UIAlertActionStyleCancel handler:nil];
+    [alertController addAction:cancelAction];
     
     [self presentViewController:alertController animated:YES completion:nil];
 }
 
 - (void)showConsentSlides
 {
-    APCConsentManager *manager = [(APCAppDelegate *)[UIApplication sharedApplication].delegate consentManager];
+    APCConsentManager *manager = [(id<APCConsentManagerProvider>)[UIApplication sharedApplication].delegate consentManager];
     NSArray *sections = [manager consentSectionsAndHtmlContent:nil];
     
     ORKConsentDocument *consent = [[ORKConsentDocument alloc] init];

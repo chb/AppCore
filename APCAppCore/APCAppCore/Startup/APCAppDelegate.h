@@ -43,7 +43,7 @@ extern NSUInteger   const kTheEntireDataModelOfTheApp;
 
 @class APCDataSubstrate, APCDataMonitor, APCScheduler, APCOnboarding, APCPasscodeViewController, APCTasksReminderManager, APCPassiveDataCollector, APCFitnessAllocation;
 
-@interface APCAppDelegate : UIResponder <UIApplicationDelegate, APCOnboardingDelegate, APCConsentManagerDelegate, APCOnboardingTaskDelegate, APCPasscodeViewControllerDelegate>
+@interface APCAppDelegate : UIResponder <UIApplicationDelegate, APCOnboardingDelegate, APCConsentManagerProvider, APCOnboardingTaskDelegate, APCPasscodeViewControllerDelegate>
 
 @property (nonatomic, strong) APCFitnessAllocation *sevenDayFitnessAllocationData;
 @property (strong, nonatomic) UITabBarController *tabster;
@@ -98,7 +98,6 @@ extern NSUInteger   const kTheEntireDataModelOfTheApp;
 
 - (NSArray *)offsetForTaskSchedules;
 - (void)afterOnBoardProcessIsFinished;
-- (NSArray *)reviewConsentActions;
 - (NSArray *)allSetTextBlocks;
 - (NSDictionary *)configureTasksForActivities;
 
