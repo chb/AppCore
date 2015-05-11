@@ -32,16 +32,18 @@
 // 
  
 #import <UIKit/UIKit.h>
-#import "APCAppDelegateTasks.h"
 #import "APCDataSubstrate.h"
+#import "APCOnboarding.h"
 #import "APCPasscodeViewController.h"
 #import "APCProfileViewController.h"
+#import "APCConsentManager.h"
+#import "APCConsentTask.h"
 
 extern NSUInteger   const kTheEntireDataModelOfTheApp;
 
 @class APCDataSubstrate, APCDataMonitor, APCScheduler, APCOnboarding, APCPasscodeViewController, APCTasksReminderManager, APCPassiveDataCollector, APCFitnessAllocation;
 
-@interface APCAppDelegate : UIResponder <UIApplicationDelegate, APCPasscodeViewControllerDelegate, APCAppDelegateTasks>
+@interface APCAppDelegate : UIResponder <UIApplicationDelegate, APCOnboardingDelegate, APCConsentManagerDelegate, APCOnboardingTaskDelegate, APCPasscodeViewControllerDelegate>
 
 @property (nonatomic, strong) APCFitnessAllocation *sevenDayFitnessAllocationData;
 @property (strong, nonatomic) UITabBarController *tabster;
@@ -53,10 +55,11 @@ extern NSUInteger   const kTheEntireDataModelOfTheApp;
 @property (strong, nonatomic) APCTasksReminderManager * tasksReminder;
 @property (strong, nonatomic) APCPassiveDataCollector * passiveDataCollector;
 @property (strong, nonatomic) APCProfileViewController * profileViewController;
+@property (nonatomic) BOOL disableSignatureInConsent;
 
 //Initialization Methods
 @property (nonatomic, getter=doesPersisteStoreExist) BOOL persistentStoreExistence;
-@property (nonatomic, copy) NSDictionary * initializationOptions;
+@property (nonatomic, strong) NSDictionary * initializationOptions;
 - (NSMutableDictionary*) defaultInitializationOptions;
 
 @property (strong, nonatomic) APCOnboarding *onboarding;
@@ -87,7 +90,6 @@ extern NSUInteger   const kTheEntireDataModelOfTheApp;
 - (void) setUpInitializationOptions;
 - (void) setUpAppAppearance;
 - (void) registerCatastrophicStartupError: (NSError *) error;
-- (void) configureObserverQueries;
 
 //For User in Subclasses
 - (void) signedInNotification:(NSNotification *)notification;
@@ -95,6 +97,9 @@ extern NSUInteger   const kTheEntireDataModelOfTheApp;
 - (void) logOutNotification:(NSNotification *)notification;
 
 - (NSArray *)offsetForTaskSchedules;
+- (void)afterOnBoardProcessIsFinished;
+- (NSArray *)reviewConsentActions;
+- (NSArray *)allSetTextBlocks;
 - (NSDictionary *)configureTasksForActivities;
 
 //To be called from Datasubstrate
@@ -103,5 +108,9 @@ extern NSUInteger   const kTheEntireDataModelOfTheApp;
 - (id <APCProfileViewControllerDelegate>) profileExtenderDelegate;
 
 - (void)showPasscodeIfNecessary;
+
+- (ORKTaskViewController *)consentViewController;
+
+- (void)instantiateOnboardingForType:(APCOnboardingTaskType)type;
 
 @end

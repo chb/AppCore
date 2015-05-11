@@ -61,6 +61,7 @@ FOUNDATION_EXPORT const unsigned char APCAppCoreVersionString[];
 #import <APCAppCore/APCUtilities.h>
 
 //  Tasks
+#import <APCAppCore/APCConsentManager.h>
 #import <APCAppCore/APCConsentTask.h>
 #import <APCAppCore/APCConsentQuestion.h>
 #import <APCAppCore/APCConsentBooleanQuestion.h>
