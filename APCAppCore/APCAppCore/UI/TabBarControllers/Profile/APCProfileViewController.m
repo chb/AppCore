@@ -385,7 +385,7 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
 
 - (NSArray *)prepareContent
 {
-    NSDictionary *initialOptions = ((APCAppDelegate *)[UIApplication sharedApplication].delegate).initializationOptions;
+	NSDictionary *initialOptions = nil;//((APCAppDelegate *)[UIApplication sharedApplication].delegate).initializationOptions;
     NSArray *profileElementsList = initialOptions[kAppProfileElementsListKey];
     
     NSMutableArray *items = [NSMutableArray new];
@@ -723,7 +723,7 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
             [rowItems addObject:row];
         }
         
-        if (self.user.sharedOptionSelection != [NSNumber numberWithInteger:SBBConsentShareScopeNone]) {
+//        if (self.user.sharedOptionSelection != [NSNumber numberWithInteger:SBBConsentShareScopeNone]) {
             //  Instead of prevent the row from being added to the table, a better option would be to
             //  disable the row (grey it out and don't respond to taps)
             APCTableViewItem *field = [APCTableViewItem new];
@@ -737,8 +737,8 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
             row.item = field;
             row.itemType = kAPCSettingsItemTypeSharingOptions;
             [rowItems addObject:row];
-        }
-        
+//        }
+		
         APCTableViewSection *section = [APCTableViewSection new];
         section.rows = [NSArray arrayWithArray:rowItems];
         [items addObject:section];
@@ -840,8 +840,8 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
     NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
     if (indexPath.section == 1 && indexPath.row == 0) {
         // TODO: move to NSUserDefaults category, managed by APCTasksReminderManager
-        APCAppDelegate * appDelegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
-        appDelegate.tasksReminder.reminderOn = on;
+//        APCAppDelegate * appDelegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
+//        appDelegate.tasksReminder.reminderOn = on;
     }
 }
 
@@ -850,7 +850,7 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
 - (APCUser *)user
 {
     if (!_user) {
-        _user = ((APCAppDelegate *)[UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
+//        _user = ((APCAppDelegate *)[UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
     }
     return _user;
 }
@@ -1301,24 +1301,24 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
     APCSpinnerViewController *spinnerController = [[APCSpinnerViewController alloc] init];
     [self presentViewController:spinnerController animated:YES completion:nil];
     
-    typeof(self) __weak weakSelf = self;
-    self.user.sharedOptionSelection = [NSNumber numberWithInteger:SBBConsentShareScopeNone];
-    [self.user withdrawStudyOnCompletion:^(NSError *error) {
-        if (error) {
-            APCLogError2 (error);
-            [spinnerController dismissViewControllerAnimated:NO completion:^{
-                UIAlertController *alert = [UIAlertController simpleAlertWithTitle:NSLocalizedString(@"Withdraw", @"") message:error.message];
-                [weakSelf presentViewController:alert animated:YES completion:nil];
-            }];
-        }
-        else {
-            [spinnerController dismissViewControllerAnimated:NO completion:^{
-                APCWithdrawCompleteViewController *viewController = [[UIStoryboard storyboardWithName:@"APCProfile" bundle:[NSBundle appleCoreBundle]] instantiateViewControllerWithIdentifier:@"APCWithdrawCompleteViewController"];
-                UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:viewController];
-                [weakSelf.navigationController presentViewController:navController animated:YES completion:nil];
-            }];
-        }
-    }];
+//    typeof(self) __weak weakSelf = self;
+//    self.user.sharedOptionSelection = [NSNumber numberWithInteger:SBBConsentShareScopeNone];
+//    [self.user withdrawStudyOnCompletion:^(NSError *error) {
+//        if (error) {
+//            APCLogError2 (error);
+//            [spinnerController dismissViewControllerAnimated:NO completion:^{
+//                UIAlertController *alert = [UIAlertController simpleAlertWithTitle:NSLocalizedString(@"Withdraw", @"") message:error.message];
+//                [weakSelf presentViewController:alert animated:YES completion:nil];
+//            }];
+//        }
+//        else {
+//            [spinnerController dismissViewControllerAnimated:NO completion:^{
+//                APCWithdrawCompleteViewController *viewController = [[UIStoryboard storyboardWithName:@"APCProfile" bundle:[NSBundle appleCoreBundle]] instantiateViewControllerWithIdentifier:@"APCWithdrawCompleteViewController"];
+//                UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:viewController];
+//                [weakSelf.navigationController presentViewController:navController animated:YES completion:nil];
+//            }];
+//        }
+//    }];
 }
 
 #pragma mark - IBActions/Selectors
@@ -1535,16 +1535,10 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
 {
     __weak typeof(self) weakSelf = self;
     
-    APCAppDelegate * appDelegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
-    NSArray *consentReviewActions = [appDelegate reviewConsentActions];
-    
-    if (!consentReviewActions) {
-        consentReviewActions = @[kReviewConsentActionPDF, kReviewConsentActionVideo, kReviewConsentActionSlides];
-    }
-    
+    APCConsentManager *manager = [(id<APCConsentManagerProvider>)[UIApplication sharedApplication].delegate consentManager];
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Review Consent" message:@"" preferredStyle:UIAlertControllerStyleActionSheet];
     
-    if ([consentReviewActions containsObject:kReviewConsentActionPDF]) {
+    if ([manager canReviewConsentPDF]) {
         UIAlertAction *pdfAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"View PDF", @"View PDF") style:UIAlertActionStyleDefault handler:^(UIAlertAction * __unused action) {
             
             APCWebViewController *webViewController = [[UIStoryboard storyboardWithName:@"APCOnboarding" bundle:[NSBundle appleCoreBundle]] instantiateViewControllerWithIdentifier:@"APCWebViewController"];
@@ -1557,12 +1551,11 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
             [weakSelf.navigationController presentViewController:navController animated:YES completion:^{
                 [webViewController.webview loadData:data MIMEType:@"application/pdf" textEncodingName:@"utf-8" baseURL:nil];
             }];
-            
         }];
         [alertController addAction:pdfAction];
     }
     
-    if ([consentReviewActions containsObject:kReviewConsentActionVideo]) {
+    if ([manager canReviewConsentVideo]) {
         UIAlertAction *videoAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Watch Video", @"Watch Video") style:UIAlertActionStyleDefault handler:^(UIAlertAction * __unused action) {
             
             NSURL *fileURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Intro" ofType:@"mp4"]];
@@ -1575,26 +1568,22 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
         [alertController addAction:videoAction];
     }
     
-    if ([consentReviewActions containsObject:kReviewConsentActionSlides]) {
+    if ([manager canReviewConsentSlides]) {
         UIAlertAction *slidesAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"View Slides", @"View Slides") style:UIAlertActionStyleDefault handler:^(UIAlertAction * __unused action) {
             [weakSelf showConsentSlides];
         }];
         [alertController addAction:slidesAction];
     }
     
-    {
-        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction * __unused action) {
-            
-        }];
-        [alertController addAction:cancelAction];
-    }
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"") style:UIAlertActionStyleCancel handler:nil];
+    [alertController addAction:cancelAction];
     
     [self presentViewController:alertController animated:YES completion:nil];
 }
 
 - (void)showConsentSlides
 {
-    APCConsentManager *manager = [(APCAppDelegate *)[UIApplication sharedApplication].delegate consentManager];
+    APCConsentManager *manager = [(id<APCConsentManagerProvider>)[UIApplication sharedApplication].delegate consentManager];
     NSArray *sections = [manager consentSectionsAndHtmlContent:nil];
     
     ORKConsentDocument *consent = [[ORKConsentDocument alloc] init];

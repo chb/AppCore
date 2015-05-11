@@ -97,9 +97,4 @@
 
 - (nonnull ORKTaskViewController *)consentViewController;
 
-- (nonnull NSArray *)consentSectionsAndHtmlContent:(NSString *__nullable *__nullable)htmlContent;
-
-@optional
-- (nullable NSArray *)reviewConsentActions;
-
 @end

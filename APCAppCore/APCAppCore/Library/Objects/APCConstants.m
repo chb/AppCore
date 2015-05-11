@@ -129,10 +129,6 @@ NSString *const kTasksReminderDefaultsTimeKey = @"TasksReminderDefaultsTimeKey";
 NSString *const kScheduleOffsetTaskIdKey = @"scheduleOffsetTaskIdKey";
 NSString *const kScheduleOffsetOffsetKey = @"scheduleOffsetOffsetKey";
 
-NSString *const kReviewConsentActionPDF    = @"PDF";
-NSString *const kReviewConsentActionVideo  = @"VIDEO";
-NSString *const kReviewConsentActionSlides = @"SLIDES";
-
 NSString *const kAllSetActivitiesTextOriginal   = @"allSetActivitiesTextOriginal";
 NSString *const kAllSetActivitiesTextAdditional = @"allSetActivitiesTextAdditional";
 NSString *const kAllSetDashboardTextOriginal    = @"allSetDashboardTextOriginal";
