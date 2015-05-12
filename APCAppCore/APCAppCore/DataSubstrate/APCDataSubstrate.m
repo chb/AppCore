@@ -34,7 +34,6 @@
 #import "APCDataSubstrate.h"
 #import "APCConstants.h"
 #import "APCUser.h"
-#import "APCAppDelegate.h"		// should be replaced
 #import "APCLog.h"
 
 #import "APCDataSubstrate+CoreData.h"

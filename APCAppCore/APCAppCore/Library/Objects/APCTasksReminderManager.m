@@ -32,7 +32,7 @@
 // 
  
 #import "APCTasksReminderManager.h"
-#import "APCAppDelegate.h"
+#import "APCAppDelegateTasks.h"
 #import "APCScheduledTask+AddOn.h"
 #import "APCResult+AddOn.h"
 
@@ -299,7 +299,7 @@ NSString * const kTaskReminderDelayMessage = @"Remind me in 1 hour";
     NSNumber * number = [[NSUserDefaults standardUserDefaults] objectForKey:kTasksReminderDefaultsOnOffKey];
     //Setting up defaults using initialization options
     if (number == nil) {
-        APCAppDelegate * delegate = (APCAppDelegate*)[UIApplication sharedApplication].delegate;
+        id<APCAppDelegateTasks> delegate = (id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate;
         NSNumber * numberDefault = delegate.initializationOptions[kTaskReminderStartupDefaultOnOffKey];
         number = numberDefault?:@NO;
         [[NSUserDefaults standardUserDefaults] setObject:number forKey:kTasksReminderDefaultsOnOffKey];
@@ -324,7 +324,7 @@ NSString * const kTaskReminderDelayMessage = @"Remind me in 1 hour";
 - (NSString *)reminderTime {
     NSString * timeString = [[NSUserDefaults standardUserDefaults] objectForKey:kTasksReminderDefaultsTimeKey];
     if (timeString == nil) {
-        APCAppDelegate * delegate = (APCAppDelegate*)[UIApplication sharedApplication].delegate;
+		id<APCAppDelegateTasks> delegate = (id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate;
         NSString * timeDefault = delegate.initializationOptions[kTaskReminderStartupDefaultTimeKey];
         timeString = timeDefault?:@"5:00 PM";
         [[NSUserDefaults standardUserDefaults] setObject:timeString forKey:kTasksReminderDefaultsTimeKey];
@@ -470,7 +470,7 @@ NSString * const kTaskReminderDelayMessage = @"Remind me in 1 hour";
 {
    
     APCDateRange *dateRange = [[APCDateRange alloc]initWithStartDate:[NSDate todayAtMidnight] endDate:[NSDate tomorrowAtMidnight]];
-    NSManagedObjectContext *context = ((APCAppDelegate *)[UIApplication sharedApplication].delegate).dataSubstrate.mainContext;
+    NSManagedObjectContext *context = ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).dataSubstrate.mainContext;
     
     NSFetchRequest * request = [APCScheduledTask request];
     request.shouldRefreshRefetchedObjects = YES;

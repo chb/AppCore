@@ -33,6 +33,7 @@
  
 #import "APCSettingsViewController.h"
 #import "APCChangePasscodeViewController.h"
+#import "APCDataSubstrate.h"
 #import "APCTasksReminderManager.h"
 #import "APCCustomBackButton.h"
 #import "APCTaskReminder.h"
@@ -242,9 +243,9 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
     [super pickerTableViewCell:cell pickerViewDidSelectIndices:selectedIndices];
     NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
     if (indexPath.section == 0 && indexPath.row == 2) {
-        APCAppDelegate * appDelegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
-        NSInteger index = ((NSNumber *)selectedIndices[0]).integerValue;
-        appDelegate.tasksReminder.reminderTime = [APCTasksReminderManager reminderTimesArray][index];
+//        APCAppDelegate * appDelegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
+//        NSInteger index = ((NSNumber *)selectedIndices[0]).integerValue;
+//        appDelegate.tasksReminder.reminderTime = [APCTasksReminderManager reminderTimesArray][index];
     }
 }
 
@@ -275,11 +276,11 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
     BOOL allReminders = indexPath.section == 0 && indexPath.row == 0;
     if (allReminders) {
         
-        APCAppDelegate * appDelegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
-        appDelegate.tasksReminder.reminderOn = on;
+//        APCAppDelegate * appDelegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
+//        appDelegate.tasksReminder.reminderOn = on;
  
         //turn off each reminder if all reminders off
-        NSArray *reminders = appDelegate.tasksReminder.reminders;
+        NSArray *reminders = nil;//appDelegate.tasksReminder.reminders;
         if (on == NO) {
             for (APCTaskReminder *reminder in reminders) {
                 if ([[NSUserDefaults standardUserDefaults]objectForKey:reminder.reminderIdentifier]) {
@@ -301,8 +302,8 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
         //manage individual task reminders
         
         //add or remove the reminder.taskID to/from NSUserDefaults and set to on/off
-        APCAppDelegate * appDelegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
-        APCTaskReminder *reminder = [appDelegate.tasksReminder.reminders objectAtIndex:indexPath.row];
+//		id<APCAppDelegateTasks> appDelegate = (id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate;
+        APCTaskReminder *reminder = nil;//[appDelegate.tasksReminder.reminders objectAtIndex:indexPath.row];
         
         if (on) {
             //turn the reminder on by adding to NSUserDefaults
@@ -315,14 +316,14 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
             
             //if all reminders are turned off, switch Enable Reminders switch to off
             BOOL remindersOn = NO;
-            for (APCTaskReminder *reminder in appDelegate.tasksReminder.reminders) {
-                if ([[NSUserDefaults standardUserDefaults]objectForKey:reminder.reminderIdentifier]){
-                    remindersOn = YES;
-                }
-            }
-            
+//            for (APCTaskReminder *reminder in appDelegate.tasksReminder.reminders) {
+//                if ([[NSUserDefaults standardUserDefaults]objectForKey:reminder.reminderIdentifier]){
+//                    remindersOn = YES;
+//                }
+//            }
+			
             if (!remindersOn) {
-                appDelegate.tasksReminder.reminderOn = NO;
+//                appDelegate.tasksReminder.reminderOn = NO;
                 [self prepareContent];
                 [self.tableView reloadData];
             }
@@ -342,8 +343,8 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
 
 - (APCParameters *)parameters
 {
-    _parameters = ((APCAppDelegate *)[UIApplication sharedApplication].delegate).dataSubstrate.parameters;
-    
+    _parameters = ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).dataSubstrate.parameters;
+	
     return _parameters;
    
 }

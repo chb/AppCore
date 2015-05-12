@@ -33,7 +33,7 @@
  
 #import "APCUser.h"
 #import "APCStoredUserData.h"
-#import "APCAppDelegate.h"
+#import "APCAppDelegateTasks.h"
 #import "APCDataSubstrate.h"
 #import "APCKeychainStore.h"
 #import "APCLog.h"
@@ -186,7 +186,7 @@ static NSString *const kSignedInKey = @"SignedIn";
 
 - (void)updateStoredProperty:(NSString *)propertyName withValue:(id)value
 {
-    NSManagedObjectContext * context = [(APCAppDelegate*) [UIApplication sharedApplication].delegate dataSubstrate].persistentContext;
+    NSManagedObjectContext * context = [(id<APCAppDelegateTasks>) [UIApplication sharedApplication].delegate dataSubstrate].persistentContext;
     [context performBlockAndWait:^{
         APCStoredUserData *storedUserData = [self loadStoredUserDataInContext:context];
         [storedUserData setValue:value forKey:propertyName];
@@ -198,7 +198,7 @@ static NSString *const kSignedInKey = @"SignedIn";
 
 - (HKHealthStore *)healthStore
 {
-    return [[(APCAppDelegate*) ([UIApplication sharedApplication].delegate) dataSubstrate] healthStore];
+    return [[(id<APCAppDelegateTasks>)([UIApplication sharedApplication].delegate) dataSubstrate] healthStore];
 }
 
 /*********************************************************************************/
@@ -334,7 +334,7 @@ static NSString *const kSignedInKey = @"SignedIn";
     _consented = consented;
     [self updateStoredProperty:kConsentedPropertyName withValue:@(consented)];
     if (consented) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:APCUserDidConsentNotification object:nil];
+//        [[NSNotificationCenter defaultCenter] postNotificationName:APCUserDidConsentNotification object:nil];
     }
 }
 

@@ -32,7 +32,7 @@
 // 
  
 #import "APCDataSubstrate+CoreData.h"
-#import "APCAppDelegate.h"
+//#import "APCAppDelegate.h"
 #import "APCLog.h"
 
 #import "APCTask+AddOn.h"
@@ -152,8 +152,8 @@ static NSString * const kErrorCantOpenDatabase_Suggestion      = (@"Unable to op
          milliseconds from now (like, thousands of actual
          instructions from now), asynchronously.
          */
-        APCAppDelegate *appDelegate = (APCAppDelegate *) [[UIApplication sharedApplication] delegate];
-        [appDelegate registerCatastrophicStartupError: catastrophe];
+//        APCAppDelegate *appDelegate = (APCAppDelegate *) [[UIApplication sharedApplication] delegate];
+//        [appDelegate registerCatastrophicStartupError: catastrophe];
     }
 }
 
@@ -202,8 +202,8 @@ static NSString * const kErrorCantOpenDatabase_Suggestion      = (@"Unable to op
     APCLogError2 (error);
     [self removeSqliteStore];
     [self setUpPersistentStore];
-    APCAppDelegate * appDelegate = (APCAppDelegate*)[UIApplication sharedApplication].delegate;
-    [appDelegate loadStaticTasksAndSchedulesIfNecessary];
+//    APCAppDelegate * appDelegate = (APCAppDelegate*)[UIApplication sharedApplication].delegate;
+//    [appDelegate loadStaticTasksAndSchedulesIfNecessary];
 }
 
 
