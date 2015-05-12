@@ -32,7 +32,7 @@
 // 
  
 #import "APCInclusionCriteriaViewController.h"
-#import "APCAppDelegateTasks.h"
+#import "APCOnboardingManager.h"
 #import "APCLog.h"
 #import "APCOnboarding.h"
 #import "APCCustomBackButton.h"
@@ -52,8 +52,7 @@
 {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
-  APCLogViewControllerAppeared();
-
+    APCLogViewControllerAppeared();
 }
 
 - (void)setupNavAppearance
@@ -68,9 +67,8 @@
     [self.navigationItem setLeftBarButtonItem:backster];
 }
 
-- (APCOnboarding *)onboarding
-{
-    return ((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate).onboarding;
+- (APCOnboarding *)onboarding {
+    return [(id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate onboardingManager].onboarding;
 }
 
 /*********************************************************************************/

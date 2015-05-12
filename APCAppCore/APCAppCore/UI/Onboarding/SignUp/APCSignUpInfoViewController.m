@@ -32,16 +32,17 @@
 // 
  
 #import "APCSignUpInfoViewController.h"
-#import "APCAppDelegateTasks.h"
+#import "APCOnboardingManager.h"
 #import "APCUserInfoConstants.h"
 #import "APCDataSubstrate.h"
+#import "APCUser.h"
 #import "APCLog.h"
-
 #import "APCStepProgressBar.h"
 
 #import "NSString+Helper.h"
 #import "UIColor+APCAppearance.h"
 #import "UIFont+APCAppearance.h"
+
 
 static CGFloat const kHeaderHeight = 127.0f;
 
@@ -55,17 +56,16 @@ static CGFloat const kHeaderHeight = 127.0f;
 @implementation APCSignUpInfoViewController
 
 @synthesize stepProgressBar;
-@synthesize user = _user;
 
-- (void)dealloc
-{
+- (void)dealloc {
     _nameTextField.delegate = nil;
     _emailTextField.delegate = nil;
 }
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
+    // Do any additional setup after loading the view.
+    
     [self setupAppearance];
     
     self.nameTextField.delegate = self;
@@ -109,17 +109,12 @@ static CGFloat const kHeaderHeight = 127.0f;
     self.stepProgressBar.leftLabel.attributedText = attributedString;
 }
 
-- (APCUser *)user
-{
-    if (!_user) {
-        self.user = ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
-    }
-    return _user;
+- (APCOnboarding *)onboarding {
+    return [(id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate onboardingManager].onboarding;
 }
 
-- (APCOnboarding *)onboarding
-{
-    return ((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate).onboarding;
+- (APCUser *)user {
+    return [(id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate onboardingManager].user;
 }
 
 #pragma mark - Appearance
@@ -177,8 +172,7 @@ static CGFloat const kHeaderHeight = 127.0f;
     
     if (textField == self.nameTextField) {
         self.name = text;
-    }
-    else if (textField == self.emailTextField){
+    } else if (textField == self.emailTextField){
         self.email = text;
     }
     
@@ -189,18 +183,16 @@ static CGFloat const kHeaderHeight = 127.0f;
 {
     if (textField == self.nameTextField) {
         self.name = textField.text;
-    }
-    else if (textField == self.emailTextField){
+    } else if (textField == self.emailTextField){
         self.email = textField.text;
     }
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
+- (BOOL) textFieldShouldReturn:(UITextField *)textField {
+    
     if ((textField == self.nameTextField) && self.emailTextField) {
         [self.emailTextField becomeFirstResponder];
-    }
-	else {
+    } else {
         [self nextResponderForIndexPath:nil];
     }
     
@@ -210,8 +202,8 @@ static CGFloat const kHeaderHeight = 127.0f;
 
 #pragma mark - Private Methods
 
-- (BOOL)isContentValid:(NSString **)errorMessage
-{
+- (BOOL) isContentValid:(NSString **)errorMessage {
+    
     BOOL isContentValid = YES;
     
     if (self.tableView.tableHeaderView) {
@@ -227,9 +219,9 @@ static CGFloat const kHeaderHeight = 127.0f;
     return isContentValid;
 }
 
-- (IBAction)next:(id) __unused sender
-{
+- (void)next{
     
 }
+
 
 @end

@@ -32,68 +32,60 @@
 // 
  
 #import "APCThankYouViewController.h"
-#import "APCAppDelegateTasks.h"
+#import "APCOnboardingManager.h"
 #import "APCDataSubstrate.h"
 #import "APCButton.h"
 #import "APCConstants.h"
 #import "APCUser.h"
+
+#import "APCAppDelegateTasks.h"
 
 
 @implementation APCThankYouViewController
 
 @synthesize stepProgressBar;
 
-@synthesize user = _user;
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
+    
     self.navigationItem.hidesBackButton = YES;
 }
 
-- (APCUser *)user
-{
-    if (!_user) {
-        self.user = ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
-    }
-    return _user;
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
 }
 
-
-- (APCOnboarding *)onboarding
-{
-    return ((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate).onboarding;
+- (APCOnboarding *)onboarding {
+    return [(id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate onboardingManager].onboarding;
 }
 
-- (IBAction)next:(id) __unused sender
-{
+- (APCUser *)user {
+    return [(id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate onboardingManager].user;
+}
+
+- (IBAction)next:(APCButton *)__unused sender {
     if (self.emailVerified) {
         [self performSelector:@selector(setUserSignedIn) withObject:nil afterDelay:0.4];
-    }
-	else {
+    } else {
         [self finishOnboarding];
     }
 }
 
-- (void)finishOnboarding
-{
+- (void)finishOnboarding {
     if ([self onboarding].taskType == kAPCOnboardingTaskTypeSignIn) {
         // We are posting this notification after .4 seconds delay, because we need to display the progress bar completion animation
         [self performSelector:@selector(setUserSignedIn) withObject:nil afterDelay:0.4];
-    }
-	else {
+    } else{
         [self performSelector:@selector(setUserSignedUp) withObject:nil afterDelay:0.4];
     }
 }
 
-- (void)setUserSignedUp
-{
+- (void)setUserSignedUp {
     self.user.signedUp = YES;
-    [[NSNotificationCenter defaultCenter] postNotificationName:(NSString *)APCUserSignedUpNotification object:nil];
 }
 
-- (void)setUserSignedIn
-{
+- (void)setUserSignedIn {
     self.user.signedIn = YES;
     [[NSNotificationCenter defaultCenter] postNotificationName:(NSString *)APCUserSignedInNotification object:nil];
 	

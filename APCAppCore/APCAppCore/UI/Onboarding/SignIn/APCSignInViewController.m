@@ -31,16 +31,15 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 // 
  
+#import "APCAppCore.h"
 #import "APCSignInViewController.h"
 #import "APCEmailVerifyViewController.h"
-#import "APCAppDelegateTasks.h"
+#import "APCOnboardingManager.h"
 #import "APCLog.h"
 
 #import "UIColor+APCAppearance.h"
 #import "UIFont+APCAppearance.h"
 #import "UIAlertController+Helper.h"
-
-#import <ResearchKit/ResearchKit.h>
 
 static NSString * const kServerInvalidEmailErrorString = @"Invalid username or password.";
 
@@ -75,7 +74,7 @@ static NSString * const kServerInvalidEmailErrorString = @"Invalid username or p
     [super viewDidAppear:animated];
     
     [self.userHandleTextField becomeFirstResponder];
-  APCLogViewControllerAppeared();
+    APCLogViewControllerAppeared();
 }
 
 #pragma mark - Appearance
@@ -139,16 +138,12 @@ static NSString * const kServerInvalidEmailErrorString = @"Invalid username or p
 
 #pragma mark - Private methods
 
-- (APCUser *)user
-{
-    APCAppDelegate * appDelegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
-    APCUser * user = appDelegate.dataSubstrate.currentUser;
-    return user;
+- (APCUser *)user {
+    return [(id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate onboardingManager].user;
 }
 
-- (APCOnboarding *)onboarding
-{
-    return ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).onboarding;
+- (APCOnboarding *)onboarding {
+    return [(id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate onboardingManager].onboarding;
 }
 
 - (void)back

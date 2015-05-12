@@ -40,8 +40,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSString * const kOnboardingStoryboardName;
-
 typedef NS_ENUM(NSUInteger, APCOnboardingTaskType) {
     kAPCOnboardingTaskTypeSignUp,
     kAPCOnboardingTaskTypeSignIn,
@@ -49,6 +47,7 @@ typedef NS_ENUM(NSUInteger, APCOnboardingTaskType) {
 
 @protocol APCOnboardingDelegate;
 @class APCScene;
+
 
 @interface APCOnboarding : NSObject
 
@@ -62,7 +61,7 @@ typedef NS_ENUM(NSUInteger, APCOnboardingTaskType) {
 
 @property (nonatomic, readonly) APCOnboardingTaskType taskType;
 
-- (instancetype)initWithDelegate:(id)object taskType:(APCOnboardingTaskType)taskType;
+- (instancetype)initWithDelegate:(id<APCOnboardingDelegate>)object taskType:(APCOnboardingTaskType)taskType;
 
 - (nullable UIViewController *)viewControllerForSceneIdentifier:(NSString *)identifier;
 
@@ -76,7 +75,8 @@ typedef NS_ENUM(NSUInteger, APCOnboardingTaskType) {
 
 @end
 
-@protocol APCOnboardingDelegate <NSObject>
+
+@protocol APCOnboardingDelegate <APCOnboardingTaskDelegate>
 
 @required
 

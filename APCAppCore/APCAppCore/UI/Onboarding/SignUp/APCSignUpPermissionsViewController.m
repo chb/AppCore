@@ -32,12 +32,11 @@
 // 
  
 #import "APCSignUpPermissionsViewController.h"
+#import "APCOnboardingManager.h"
 #import "APCPermissionsManager.h"
-#import "APCAppDelegateTasks.h"
 #import "APCDataSubstrate.h"
 #import "APCUser.h"
 #import "APCLog.h"
-
 #import "APCTableViewItem.h"
 #import "APCPermissionsCell.h"
 #import "APCStepProgressBar.h"
@@ -47,6 +46,8 @@
 #import "NSBundle+Helper.h"
 #import "UIView+Helper.h"
 #import "UIAlertController+Helper.h"
+
+#import "APCAppDelegateTasks.h"
 
 #import <CoreMotion/CoreMotion.h>
 
@@ -64,7 +65,6 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
 
 @synthesize stepProgressBar;
 
-@synthesize user = _user;
 
 - (instancetype)init
 {
@@ -99,8 +99,7 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
     
 }
 
-- (void)viewDidAppear:(BOOL)animated
-{
+- (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [self.stepProgressBar setCompletedSteps:([self onboarding].onboardingTask.currentStepNumber - 1) animation:YES];
     
@@ -116,8 +115,7 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidBecomeActive:) name:UIApplicationWillEnterForegroundNotification object:nil];
 }
 
--(void)dealloc
-{
+- (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -205,22 +203,18 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
     [self.navigationItem setLeftBarButtonItem:backster];
 }
 
-- (APCUser *)user
-{
-    if (!_user) {
-        self.user = ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
-    }
-    return _user;
+- (APCOnboarding *)onboarding {
+    return [(id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate onboardingManager].onboarding;
 }
 
-- (APCOnboarding *)onboarding
-{
-    return ((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate).onboarding;
+- (APCUser *)user {
+    return [(id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate onboardingManager].user;
 }
 
 #pragma mark - UITableViewDataSource methods
 
-- (NSInteger)tableView:(UITableView *) __unused tableView numberOfRowsInSection: (NSInteger) __unused section
+- (NSInteger) tableView: (UITableView *) __unused tableView
+  numberOfRowsInSection: (NSInteger) __unused section
 {
     return self.permissions.count;
 }
@@ -245,7 +239,8 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
 
 #pragma mark - UITableViewDelegate methods
 
-- (CGFloat)tableView:(UITableView *) __unused tableView heightForRowAtIndexPath:(NSIndexPath *) __unused indexPath
+- (CGFloat)       tableView: (UITableView *) __unused tableView
+    heightForRowAtIndexPath: (NSIndexPath *) __unused indexPath
 {
     return kTableViewRowHeight;
 }
@@ -306,7 +301,7 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
     }
 }
 
-- (void)setUserSignedUp
+- (void) setUserSignedUp
 {
     self.user.signedUp = YES;
 	[[NSNotificationCenter defaultCenter] postNotificationName:(NSString *)APCUserSignedUpNotification object:nil];
@@ -331,7 +326,7 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
 
 #pragma mark - UIApplication notification methods
 
-- (void)appDidBecomeActive:(NSNotification *) __unused notification
+- (void) appDidBecomeActive: (NSNotification *) __unused notification
 {
     self.permissions = [self prepareData].mutableCopy;
     [self.tableView reloadData];
@@ -339,15 +334,14 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
 
 #pragma mark - Permissions
 
-- (IBAction)next:(id) __unused sender
+- (IBAction) next: (id) __unused sender
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
-	UIViewController *viewController = [[self onboarding] nextScene];
-    if (viewController) {
+    if (self.onboarding.taskType == kAPCOnboardingTaskTypeSignIn) {
+        UIViewController *viewController = [[self onboarding] nextScene];
         [self.navigationController pushViewController:viewController animated:YES];
-    }
-	else {
+    } else {
         [self finishOnboarding];
     }
 }

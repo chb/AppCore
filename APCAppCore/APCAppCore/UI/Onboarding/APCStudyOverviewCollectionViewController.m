@@ -33,15 +33,18 @@
  
 #import "APCStudyOverviewCollectionViewController.h"
 #import "APCWebViewController.h"
-#import "APCAppDelegateTasks.h"
-#import "APCLog.h"
-#import "APCDataSubstrate.h"
 #import "APCIntroVideoViewController.h"
+#import "APCOnboardingManager.h"
+//#import "APCUser.h"
+#import "APCLog.h"
 
-#import "UIFont+APCAppearance.h"
 #import "UIColor+APCAppearance.h"
+#import "UIFont+APCAppearance.h"
 
 #import <ResearchKit/ResearchKit.h>
+
+#import "APCAppDelegateTasks.h"
+#import "APCDataSubstrate.h"
 
 static NSString *kConsentEmailSubject = @"Consent Document";
 
@@ -59,6 +62,11 @@ static NSString *kConsentEmailSubject = @"Consent Document";
 
 #pragma mark - Lifecycle
 
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:APCConsentCompletedWithDisagreeNotification object:nil];
+    _collectionView.delegate = nil;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
@@ -71,15 +79,15 @@ static NSString *kConsentEmailSubject = @"Consent Document";
     [self setupCollectionView];
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES animated:YES];
-	
-	if (![((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate).onboarding isSignInSupported]) {
-		_loginButton.hidden = YES;
-		_loginButton.enabled = NO;
-	}
+    
+    if (![((id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate).onboardingManager isSignInSupported]) {
+        _loginButton.hidden = YES;
+        _loginButton.enabled = NO;
+    }
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(goBackToSignUpJoin:)
                                                  name:APCConsentCompletedWithDisagreeNotification
@@ -89,18 +97,9 @@ static NSString *kConsentEmailSubject = @"Consent Document";
 
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
 }
 
-
-- (void)dealloc
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:APCConsentCompletedWithDisagreeNotification object:nil];
-    _collectionView.delegate = nil;
-}
-
-- (void) goBackToSignUpJoin: (NSNotification *) __unused notification
-{
+- (void)goBackToSignUpJoin:(NSNotification *)__unused notification {
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
@@ -181,12 +180,6 @@ static NSString *kConsentEmailSubject = @"Consent Document";
     self.dateRangeLabel.textColor = [UIColor appSecondaryColor3];
     
     self.btnAlreadyParticipated.tintColor = [UIColor appPrimaryColor];
-    
-}
-
-- (APCOnboarding *)onboarding
-{
-    return ((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate).onboarding;
 }
 
 - (BOOL)isUserConsented
@@ -208,8 +201,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
     return sectionItem.rows.count;
 }
 
-- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     UICollectionViewCell *cell;
     APCTableViewStudyDetailsItem *studyDetails = [self itemForIndexPath:indexPath];
 
@@ -223,8 +215,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
         if ([MFMailComposeViewController canSendMail]) {
             [landingCell.emailConsentButton setTitleColor:[UIColor appPrimaryColor] forState:UIControlStateNormal];
             [landingCell.emailConsentButton setUserInteractionEnabled:YES];
-        }
-		else {
+        } else {
             [landingCell.emailConsentButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
             [landingCell.emailConsentButton setUserInteractionEnabled:NO];
         }
@@ -232,24 +223,21 @@ static NSString *kConsentEmailSubject = @"Consent Document";
         if (studyDetails.showsConsent) {
             landingCell.readConsentButton.hidden = NO;
         }
-        
         cell = landingCell;
         
-    }
-	else if (studyDetails.videoName.length > 0) {
+    } else if (studyDetails.videoName.length > 0) {
+        
         APCStudyVideoCollectionViewCell *videoCell = (APCStudyVideoCollectionViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:kAPCStudyVideoCollectionViewCellIdentifier forIndexPath:indexPath];
         videoCell.delegate = self;
         videoCell.titleLabel.text = studyDetails.caption;
         videoCell.videoMessageLabel.text = studyDetails.detailText;
         cell = videoCell;
         
-    }
-	else {
+    } else {
         APCStudyOverviewCollectionViewCell *webViewCell = (APCStudyOverviewCollectionViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:kAPCStudyOverviewCollectionViewCellIdentifier forIndexPath:indexPath];
-        webViewCell.webView.scrollView.decelerationRate = UIScrollViewDecelerationRateNormal;
-		
+        
         NSString *filePath = [[NSBundle mainBundle] pathForResource: studyDetails.detailText ofType:@"html" inDirectory:@"HTMLContent"];
-		NSAssert(filePath, @"Expecting file \"%@.html\" to be present in the \"HTMLContent\" directory, but didn't find it", studyDetails.detailText);
+        NSAssert(filePath, @"Expecting file \"%@.html\" to be present in the \"HTMLContent\" directory, but didn't find it", studyDetails.detailText);
         NSURL *targetURL = [NSURL URLWithString:filePath];
         NSURLRequest *request = [NSURLRequest requestWithURL:targetURL];
         [webViewCell.webView loadRequest:request];
@@ -293,9 +281,9 @@ static NSString *kConsentEmailSubject = @"Consent Document";
 
 - (NSArray *)studyDetailsFromJSONFile:(NSString *)jsonFileName
 {
-	NSParameterAssert(jsonFileName);
+    NSParameterAssert(jsonFileName);
     NSString *filePath = [[NSBundle mainBundle] pathForResource:jsonFileName ofType:@"json"];
-	NSAssert(filePath, @"Must include file \"%@.json\" in bundle", jsonFileName);
+    NSAssert(filePath, @"Must include file \"%@.json\" in bundle", jsonFileName);
     NSString *JSONString = [[NSString alloc] initWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:NULL];
     
     NSError *parseError;
@@ -364,23 +352,21 @@ static NSString *kConsentEmailSubject = @"Consent Document";
     return studyItemType;
 }
 
-- (void)signInTapped:(id) __unused sender
-{
-    [((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate) instantiateOnboardingForType:kAPCOnboardingTaskTypeSignIn];
+- (void)signInTapped:(id)__unused sender {
+    APCOnboardingManager *manager = [(id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate onboardingManager];
+    [manager instantiateOnboardingForType:kAPCOnboardingTaskTypeSignIn];
     
-    UIViewController *viewController = [[self onboarding] nextScene];
-	NSAssert(viewController, @"Need the sign in view controller in the SignIn onboarding scene");
-	NSAssert(self.navigationController, @"Need a navigation controller to show the sign in screen, but I'm not embedded in one: %@", self);
+    UIViewController *viewController = [manager.onboarding nextScene];
+    NSAssert(viewController, @"Expecting the first scene's view controller for sign-in onboarding but got nothing");
     [self.navigationController pushViewController:viewController animated:YES];
 }
 
-- (void)signUpTapped:(id) __unused sender
-{
-    [((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate) instantiateOnboardingForType:kAPCOnboardingTaskTypeSignUp];
+- (void)signUpTapped:(id)__unused sender {
+    APCOnboardingManager *manager = [(id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate onboardingManager];
+    [manager instantiateOnboardingForType:kAPCOnboardingTaskTypeSignUp];
     
-    UIViewController *viewController = [[self onboarding] nextScene];
-	NSAssert(viewController, @"Need the inclusion criteria view controller in the SignUp onboarding scene");
-	NSAssert(self.navigationController, @"Need a navigation controller to show the first step for sign up, but I'm not embedded in one: %@", self);
+    UIViewController *viewController = [manager.onboarding nextScene];
+    NSAssert(viewController, @"Expecting the first scene's view controller for sign-up onboarding but got nothing");
     [self.navigationController pushViewController:viewController animated:YES];
 }
 
@@ -398,6 +384,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
     APCTableViewStudyDetailsItem *studyDetails = (APCTableViewStudyDetailsItem *)[self itemForIndexPath:[self.collectionView indexPathForCell:cell]];
     
     NSURL *fileURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:studyDetails.videoName ofType:@"mp4"]];
+    NSAssert(fileURL, @"Must include the consent video with filename \"%@.mp4\" in the app bundle", studyDetails.videoName);
     APCIntroVideoViewController *introVideoViewController = [[APCIntroVideoViewController alloc] initWithContentURL:fileURL];
     
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:introVideoViewController];
@@ -409,28 +396,22 @@ static NSString *kConsentEmailSubject = @"Consent Document";
 - (void)studyVideoCollectionViewCellReadConsent:(APCStudyVideoCollectionViewCell *) __unused cell
 {
     APCWebViewController *webViewController = [[UIStoryboard storyboardWithName:@"APCOnboarding" bundle:[NSBundle bundleForClass:[self class]]] instantiateViewControllerWithIdentifier:@"APCWebViewController"];
-    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"consent" ofType:@"pdf"];
-    NSData *data = [NSData dataWithContentsOfFile:filePath];
     [webViewController.webview setDataDetectorTypes:UIDataDetectorTypeAll];
     webViewController.title = NSLocalizedString(@"Consent", @"Consent");
     
     UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:webViewController];
     [self.navigationController presentViewController:navController animated:YES completion:^{
-        [webViewController.webview loadData:data MIMEType:@"application/pdf" textEncodingName:@"utf-8" baseURL:nil];
+        [webViewController.webview loadData:[self PDFDataOfConsent] MIMEType:@"application/pdf" textEncodingName:@"utf-8" baseURL:nil];
     }];
 
 }
 
 - (void)studyVideoCollectionViewCellEmailConsent:(APCStudyVideoCollectionViewCell *) __unused cell
 {
-    if ([MFMailComposeViewController canSendMail])
-    {
+    if ([MFMailComposeViewController canSendMail]) {
         MFMailComposeViewController *mailComposeVC = [[MFMailComposeViewController alloc] init];
         mailComposeVC.mailComposeDelegate = self;
-        
-        NSString *filePath = [[NSBundle mainBundle] pathForResource:@"consent" ofType:@"pdf"];
-        NSData *fileData = [NSData dataWithContentsOfFile:filePath];
-        [mailComposeVC addAttachmentData:fileData mimeType:@"application/pdf" fileName:@"Consent"];
+        [mailComposeVC addAttachmentData:[self PDFDataOfConsent] mimeType:@"application/pdf" fileName:@"Consent"];
         
         [self presentViewController:mailComposeVC animated:YES completion:NULL];
     }
@@ -440,8 +421,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
 
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
 {
-    switch (result)
-    {
+    switch (result) {
         case MFMailComposeResultCancelled:
             break;
         case MFMailComposeResultSaved:
@@ -460,36 +440,37 @@ static NSString *kConsentEmailSubject = @"Consent Document";
 
 - (void)studyLandingCollectionViewCellEmailConsent:(APCStudyLandingCollectionViewCell *) __unused cell
 {
-    if ([MFMailComposeViewController canSendMail])
-    {
+    if ([MFMailComposeViewController canSendMail]) {
         MFMailComposeViewController *mailComposeVC = [[MFMailComposeViewController alloc] init];
         mailComposeVC.mailComposeDelegate = self;
         
-        NSString *filePath = [[NSBundle mainBundle] pathForResource:@"consent" ofType:@"pdf"];
-		NSAssert(filePath, @"Must include the consent PDF with filename \"consent.pdf\" in the app bundle");
-        NSData *fileData = [NSData dataWithContentsOfFile:filePath];
-        [mailComposeVC addAttachmentData:fileData mimeType:@"application/pdf" fileName:@"Consent"];
+        [mailComposeVC addAttachmentData:[self PDFDataOfConsent] mimeType:@"application/pdf" fileName:@"Consent"];
         [mailComposeVC setSubject:kConsentEmailSubject];
         [self presentViewController:mailComposeVC animated:YES completion:NULL];
     }
-    
-
-    
 }
 
 - (void)studyLandingCollectionViewCellReadConsent:(APCStudyLandingCollectionViewCell *) __unused cell
 {
     APCWebViewController *webViewController = [[UIStoryboard storyboardWithName:@"APCOnboarding" bundle:[NSBundle bundleForClass:[self class]]] instantiateViewControllerWithIdentifier:@"APCWebViewController"];
-    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"consent" ofType:@"pdf"];
-	NSAssert(filePath, @"Must include the consent PDF with filename \"consent.pdf\" in the app bundle");
-    NSData *data = [NSData dataWithContentsOfFile:filePath];
     [webViewController.webview setDataDetectorTypes:UIDataDetectorTypeAll];
     webViewController.title = NSLocalizedString(@"Consent", @"Consent");
     
     UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:webViewController];
     [self.navigationController presentViewController:navController animated:YES completion:^{
-        [webViewController.webview loadData:data MIMEType:@"application/pdf" textEncodingName:@"utf-8" baseURL:nil];
+        [webViewController.webview loadData:[self PDFDataOfConsent] MIMEType:@"application/pdf" textEncodingName:@"utf-8" baseURL:nil];
     }];
+}
+
+#pragma mark - Utilities
+
+- (NSData *)PDFDataOfConsent
+{
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"consent" ofType:@"pdf"];
+    NSAssert(filePath, @"Must include the consent PDF with filename \"consent.pdf\" in the app bundle");
+    NSData *fileData = [NSData dataWithContentsOfFile:filePath];
+    NSAssert(fileData, @"Failed to create an NSData representation of \"consent.pdf\"");
+    return fileData;
 }
 
 @end

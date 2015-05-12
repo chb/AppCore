@@ -32,22 +32,19 @@
 // 
  
 #import "APCPermissionPrimingViewController.h"
-#import "APCAppDelegateTasks.h"
+#import "APCOnboardingManager.h"
 #import "APCCustomBackButton.h"
 #import "APCConstants.h"
 
 #import "UIFont+APCAppearance.h"
 #import "UIColor+APCAppearance.h"
 
+#import "APCAppDelegateTasks.h"
 
-@interface APCPermissionPrimingViewController ()
-
-@end
 
 @implementation APCPermissionPrimingViewController
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
 
     [self setupAppearance];
@@ -80,15 +77,14 @@
                                                                                        target:self
                                                                                        action:@selector(back)];
         [self.navigationItem setLeftBarButtonItem:backBarButton];
-    }
-    else {
+    } else {
         [self.navigationItem setHidesBackButton:YES];
     }
 }
 
 - (APCOnboarding *)onboarding
 {
-    return ((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate).onboarding;
+    return [(id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate onboardingManager].onboarding;
 }
 
 - (IBAction)next:(id) __unused sender
@@ -100,6 +96,7 @@
 - (void)back
 {
     [[self onboarding] popScene];
+    
     [self.navigationController popViewControllerAnimated:YES];
 }
 

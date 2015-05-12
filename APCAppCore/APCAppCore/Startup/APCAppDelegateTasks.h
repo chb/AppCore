@@ -32,7 +32,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "APCOnboarding.h"
 
 @class APCDataSubstrate;
 @class ORKTaskViewController;
@@ -59,9 +58,6 @@
 @protocol APCOnboardingTasks <NSObject>
 
 @required
-@property (strong, nonatomic, readonly, nullable) APCOnboarding *onboarding;
-
-- (void)instantiateOnboardingForType:(APCOnboardingTaskType)type;
 
 /**
  *  Use this to provide custom text on the All Set screen.

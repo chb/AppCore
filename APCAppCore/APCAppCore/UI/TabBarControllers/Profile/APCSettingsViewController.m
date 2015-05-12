@@ -36,12 +36,13 @@
 #import "APCTasksReminderManager.h"
 #import "APCCustomBackButton.h"
 #import "APCTaskReminder.h"
-#import "APCAppDelegate.h"
 #import "APCLog.h"
 
 #import "UIColor+APCAppearance.h"
 #import "UIFont+APCAppearance.h"
 #import "NSBundle+Helper.h"
+
+#import "APCAppDelegateTasks.h"
 
 
 static NSString * const kAPCBasicTableViewCellIdentifier = @"APCBasicTableViewCell";
@@ -72,8 +73,8 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
 - (void)prepareContent
 {
     NSMutableArray *items = [NSMutableArray new];
-    APCAppDelegate * appDelegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
-    BOOL reminderOnState = appDelegate.tasksReminder.reminderOn;
+//    APCAppDelegate * appDelegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
+    BOOL reminderOnState = NO;//appDelegate.tasksReminder.reminderOn;
     
     {
         
@@ -99,7 +100,7 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
             field.pickerData = @[[APCTasksReminderManager reminderTimesArray]];
             field.textAlignnment = NSTextAlignmentRight;
             field.identifier = kAPCDefaultTableViewCellIdentifier;
-            field.selectedRowIndices = @[@([[APCTasksReminderManager reminderTimesArray] indexOfObject:appDelegate.tasksReminder.reminderTime])];
+            //field.selectedRowIndices = @[@([[APCTasksReminderManager reminderTimesArray] indexOfObject:appDelegate.tasksReminder.reminderTime])];
 
             APCTableViewRow *row = [APCTableViewRow new];
             row.item = field;
@@ -115,29 +116,29 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
 
 //The code below enables per task notifications section and rows.
     if (reminderOnState) {
-        NSMutableArray *rowItems = [NSMutableArray new];
-        APCAppDelegate * appDelegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
-        
-        for (APCTaskReminder *reminder in appDelegate.tasksReminder.reminders) {
-            
-            APCTableViewSwitchItem *field = [APCTableViewSwitchItem new];
-            field.caption = NSLocalizedString(reminder.reminderBody, nil);
-            field.identifier = kAPCSwitchCellIdentifier;
-            field.editable = NO;
-            
-            field.on = [[NSUserDefaults standardUserDefaults]objectForKey:reminder.reminderIdentifier] ? YES : NO;
-            
-            APCTableViewRow *row = [APCTableViewRow new];
-            row.item = field;
-            row.itemType = kAPCSettingsItemTypeReminderOnOff;
-            [rowItems addObject:row];            
-        }
-        
-        APCTableViewSection *section = [APCTableViewSection new];
-        
-        section.rows = [NSArray arrayWithArray:rowItems];
-        [items addObject:section];
-        
+//        NSMutableArray *rowItems = [NSMutableArray new];
+//        APCAppDelegate * appDelegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
+//        
+//        for (APCTaskReminder *reminder in appDelegate.tasksReminder.reminders) {
+//            
+//            APCTableViewSwitchItem *field = [APCTableViewSwitchItem new];
+//            field.caption = NSLocalizedString(reminder.reminderBody, nil);
+//            field.identifier = kAPCSwitchCellIdentifier;
+//            field.editable = NO;
+//            
+//            field.on = [[NSUserDefaults standardUserDefaults]objectForKey:reminder.reminderIdentifier] ? YES : NO;
+//            
+//            APCTableViewRow *row = [APCTableViewRow new];
+//            row.item = field;
+//            row.itemType = kAPCSettingsItemTypeReminderOnOff;
+//            [rowItems addObject:row];            
+//        }
+//        
+//        APCTableViewSection *section = [APCTableViewSection new];
+//        
+//        section.rows = [NSArray arrayWithArray:rowItems];
+//        [items addObject:section];
+		
 
     }
     
@@ -166,17 +167,17 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
     
     UITableViewHeaderFooterView *footerView;
     
-    APCAppDelegate * appDelegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
+//    APCAppDelegate * appDelegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
     BOOL hasresultsSummaryKey = NO;
-    NSString *subtaskTitle;
-    for (APCTaskReminder *reminder in appDelegate.tasksReminder.reminders) {
-        BOOL on = [[NSUserDefaults standardUserDefaults]objectForKey:reminder.reminderIdentifier] ? YES : NO;
-        if (on && reminder.resultsSummaryKey) {
-            hasresultsSummaryKey = YES;
-            subtaskTitle = reminder.reminderBody;
-        }
-    }
-    
+    NSString *subtaskTitle = nil;
+//    for (APCTaskReminder *reminder in appDelegate.tasksReminder.reminders) {
+//        BOOL on = [[NSUserDefaults standardUserDefaults]objectForKey:reminder.reminderIdentifier] ? YES : NO;
+//        if (on && reminder.resultsSummaryKey) {
+//            hasresultsSummaryKey = YES;
+//            subtaskTitle = reminder.reminderBody;
+//        }
+//    }
+	
     if (section == 1 && hasresultsSummaryKey) {
         footerView = [[UITableViewHeaderFooterView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(tableView.frame), tableView.sectionHeaderHeight)];
         NSString *footerText = [NSString stringWithFormat:@"%@ reminder will be sent 2 hours later.", subtaskTitle];

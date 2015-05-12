@@ -33,7 +33,7 @@
  
 #import "APCSignupPasscodeViewController.h"
 #import "APCSignUpPermissionsViewController.h"
-#import "APCAppDelegateTasks.h"
+#import "APCOnboardingManager.h"
 #import "APCDataSubstrate.h"
 #import "APCConstants.h"
 #import "APCUser.h"
@@ -66,7 +66,6 @@
 
 @synthesize stepProgressBar;
 
-@synthesize user = _user;
 
 #pragma mark - Life Cycle
 
@@ -115,17 +114,12 @@
 
 }
 
-- (APCUser *)user
-{
-    if (!_user) {
-        self.user = ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
-    }
-    return _user;
+- (APCOnboarding *)onboarding {
+    return [(id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate onboardingManager].onboarding;
 }
 
-- (APCOnboarding *)onboarding
-{
-    return ((id<APCOnboardingTasks>)[UIApplication sharedApplication].delegate).onboarding;
+- (APCUser *)user {
+    return [(id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate onboardingManager].user;
 }
 
 #pragma mark - APCPasscodeViewDelegate
@@ -150,14 +144,12 @@
 
 #pragma mark - Private Methods
 
-- (void)next:(id) __unused sender
-{
-	UIViewController *viewController = [[self onboarding] nextScene];
-    if (viewController) {
-		[self.navigationController pushViewController:viewController animated:YES];
-    }
-    else {
+- (void)next:(id)__unused sender {
+    if ([self onboarding].onboardingTask.permissionScreenSkipped) {
         [self finishOnboarding];
+    } else {
+        UIViewController *viewController = [[self onboarding] nextScene];
+        [self.navigationController pushViewController:viewController animated:YES];
     }
 }
 
@@ -199,7 +191,7 @@
     if (self.retryPasscodeView.code) {
         [APCKeychainStore setPasscode:self.retryPasscodeView.code];
     }
-	[self next:nil];
+    [self next:nil];
 }
 
 #pragma mark - Selectors

@@ -34,6 +34,8 @@
 #import "APCAppDelegate.h"
 #import "APCAppCore.h"
 #import "APCDebugWindow.h"
+#import "APCPasscodeViewController.h"
+#import "APCOnboardingManager.h"
 #import "APCTasksReminderManager.h"
 #import "APCTabBarViewController.h"
 #import "APCHealthKitDataCollector.h"
@@ -44,7 +46,6 @@
 
 #import <AVFoundation/AVFoundation.h>
 #import <AudioToolbox/AudioToolbox.h>
-
 
 /*
  Be sure to set the CORRECT current version before releasing to production
@@ -69,8 +70,14 @@ static NSString *const kLearnStoryBoardKey         = @"APCLearn";
 static NSString *const kActivitiesStoryBoardKey    = @"APCActivities";
 static NSString *const kHealthProfileStoryBoardKey = @"APCProfile";
 
-static NSString *const kLastUsedTimeKey = @"APHLastUsedTime";
-static NSUInteger const kIndexOfProfileTab = 3;
+/*********************************************************************************/
+#pragma mark - User Defaults Keys
+/*********************************************************************************/
+
+static NSString*    const kDemographicDataWasUploadedKey    = @"kDemographicDataWasUploadedKey";
+static NSString*    const kLastUsedTimeKey                  = @"APHLastUsedTime";
+static NSString*    const kAppWillEnterForegroundTimeKey    = @"APCWillEnterForegroundTime";
+static NSUInteger   const kIndexOfProfileTab                = 3;
 
 
 @interface APCAppDelegate  ( )  <UITabBarControllerDelegate>
@@ -81,6 +88,9 @@ static NSUInteger const kIndexOfProfileTab = 3;
 
 @property (nonatomic, strong) NSOperationQueue *healthKitCollectorQueue;
 @property (nonatomic, strong) APCHealthKitDataCollector *healthKitCollector;
+@property (nonatomic, strong) APCDemographicUploader  *demographicUploader;
+
+@property (nonatomic, strong, readwrite) APCOnboardingManager *onboardingManager;
 
 @end
 
@@ -146,6 +156,8 @@ static NSUInteger const kIndexOfProfileTab = 3;
 
 - (void)applicationDidBecomeActive:(UIApplication *) __unused application
 {
+    [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:kAppWillEnterForegroundTimeKey];
+    
 #ifndef DEVELOPMENT
     if (self.dataSubstrate.currentUser.signedIn) {
         [SBBComponent(SBBAuthManager) ensureSignedInWithCompletion: ^(NSURLSessionDataTask * __unused task,
@@ -174,6 +186,11 @@ static NSUInteger const kIndexOfProfileTab = 3;
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
     
+}
+
+- (NSDate*)applicationBecameActiveDate
+{
+    return [[NSUserDefaults standardUserDefaults] objectForKey:kAppWillEnterForegroundTimeKey];
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *) __unused application
@@ -380,6 +397,7 @@ static NSUInteger const kIndexOfProfileTab = 3;
     [APCDBStatus updateSeedLoaded:self.initializationOptions[kDBStatusVersionKey] WithContext:self.dataSubstrate.persistentContext];
 }
 
+
 - (void) setUpHKPermissions
 {
     [APCPermissionsManager setHealthKitTypesToRead:self.initializationOptions[kHKReadPermissionsKey]];
@@ -452,6 +470,12 @@ static NSUInteger const kIndexOfProfileTab = 3;
 
 - (void)afterOnBoardProcessIsFinished
 {
+    /* Abstract implementation. Subclass to override 
+     *
+     * Use this as a hook to post-process anything that is needed
+     * to be processed right after the 'finishOnboarding' method
+     * is invoked.
+     */
 }
 
 
@@ -460,9 +484,24 @@ static NSUInteger const kIndexOfProfileTab = 3;
     return [APCConsentManager new];
 }
 
+// Review Consent Actions
+- (NSArray *)reviewConsentActions
+{
+    return nil;
+}
+
 // The block of text for the All Set
 - (NSArray *)allSetTextBlocks
 {
+    /* Abstract implementaion. Subclass to override.
+     *
+     * Use this to provide custom text on the All Set
+     * screen.
+     *
+     * Please don't be glutenous, don't use four words
+     * when one would suffice.
+     */
+    
     return nil;
 }
 
@@ -608,8 +647,7 @@ static NSUInteger const kIndexOfProfileTab = 3;
 /*********************************************************************************/
 #pragma mark - Respond to Notifications
 /*********************************************************************************/
-- (void)registerNotifications
-{
+- (void) registerNotifications {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(signedUpNotification:) name:(NSString *)APCUserSignedUpNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(signedInNotification:) name:(NSString *)APCUserSignedInNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logOutNotification:) name:(NSString *)APCUserLogOutNotification object:nil];
@@ -622,19 +660,19 @@ static NSUInteger const kIndexOfProfileTab = 3;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void)signedUpNotification:(NSNotification*) __unused notification
+- (void) signedUpNotification: (NSNotification*) __unused notification
 {
     [self showNeedsEmailVerification];
 }
 
-- (void)signedInNotification:(NSNotification*) __unused notification
+- (void) signedInNotification: (NSNotification*) __unused notification
 {
     [self.dataMonitor userConsented];
     [self.tasksReminder updateTasksReminder];
     [self showTabBar];
 }
 
-- (void)userConsented:(NSNotification*) __unused notification
+- (void) userConsented: (NSNotification*) __unused notification
 {
 
 }
@@ -950,9 +988,35 @@ static NSUInteger const kIndexOfProfileTab = 3;
 }
 
 
-/*********************************************************************************/
+#pragma mark - Onboarding Manager
+
+- (APCOnboardingManager *)onboardingManager {
+    if (!_onboardingManager) {
+        self.onboardingManager = [APCOnboardingManager managerWithProvider:self user:self.dataSubstrate.currentUser];
+    }
+    return _onboardingManager;
+}
+
+- (APCScene *)inclusionCriteriaSceneForOnboarding:(APCOnboarding *)__unused onboarding {
+    NSAssert(NO, @"Cannot retun nil. Override this delegate method to return a valid APCScene.");
+    return nil;
+}
+
+- (NSInteger)numberOfServicesInPermissionsList {
+    NSArray *servicesArray = self.initializationOptions[kAppServicesListRequiredKey];
+    return [servicesArray count];
+}
+
+
+- (ORKTaskViewController *)consentViewController
+{
+    NSAssert(NO, @"Override this method to return a valid Consent Task View Controller.");
+    return nil;
+}
+
+
 #pragma mark - Private Helper Methods
-/*********************************************************************************/
+
 - (NSString *) applicationDocumentsDirectory
 {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -970,6 +1034,7 @@ static NSUInteger const kIndexOfProfileTab = 3;
     self.isPasscodeShowing = NO;
 }
 
+
 #pragma mark - Secure View
 
 - (void)showSecureView
@@ -981,7 +1046,7 @@ static NSUInteger const kIndexOfProfileTab = 3;
         UIImage *blurredImage = [viewForSnapshot blurredSnapshot];
         UIImage *appIcon = [UIImage imageNamed:@"logo_disease_large" inBundle:[NSBundle mainBundle] compatibleWithTraitCollection:nil];
         UIImageView *blurredImageView = [[UIImageView alloc] initWithImage:blurredImage];
-        UIImageView *appIconImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 180, 180)];
+        UIImageView *appIconImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0,0, 180, 180)];
 
         appIconImageView.image = appIcon;
         appIconImageView.center = blurredImageView.center;
