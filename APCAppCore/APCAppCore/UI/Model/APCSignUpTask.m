@@ -86,7 +86,7 @@ static NSInteger const kMinimumNumberOfSteps = 3; //Gen Info + MedicalInfo + Pas
         self.currentStepNumber += 1;
     }
     if (!nextStep || [step.identifier isEqualToString:kAPCSignUpPasscodeStepIdentifier]) {
-        if (!self.skipPermissionsStep) {
+        if (!self.permissionScreenSkipped) {
             nextStep = self.permissionsStep;
             self.currentStepNumber += 1;
         }
@@ -107,7 +107,7 @@ static NSInteger const kMinimumNumberOfSteps = 3; //Gen Info + MedicalInfo + Pas
     ORKStep *prevStep = nil;
 
 	if (!prevStep || [step.identifier isEqualToString:kAPCSignUpThankYouStepIdentifier]) {
-		if (!self.skipPermissionsStep) {
+		if (!self.permissionScreenSkipped) {
 			prevStep = self.permissionsStep;
 			self.currentStepNumber -= 1;
 		}
@@ -166,7 +166,7 @@ static NSInteger const kMinimumNumberOfSteps = 3; //Gen Info + MedicalInfo + Pas
     if (self.customStepIncluded) {
         count += 1;
     }
-    if (!self.skipPermissionsStep) {
+    if (!self.permissionScreenSkipped) {
         count += 1;
     }
     

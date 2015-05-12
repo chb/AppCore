@@ -34,6 +34,7 @@
 #import "APCSignupPasscodeViewController.h"
 #import "APCSignUpPermissionsViewController.h"
 #import "APCOnboardingManager.h"
+#import "APCOnboardingTask.h"
 #import "APCDataSubstrate.h"
 #import "APCConstants.h"
 #import "APCUser.h"

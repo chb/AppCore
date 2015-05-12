@@ -36,6 +36,11 @@
 
 @class APCUser;
 
+typedef NS_ENUM(NSUInteger, APCOnboardingTaskType) {
+	kAPCOnboardingTaskTypeSignUp,
+	kAPCOnboardingTaskTypeSignIn,
+};
+
 FOUNDATION_EXPORT NSString *const kAPCSignUpInclusionCriteriaStepIdentifier;
 FOUNDATION_EXPORT NSString *const kAPCSignUpEligibleStepIdentifier;
 FOUNDATION_EXPORT NSString *const kAPCSignUpIneligibleStepIdentifier;
@@ -63,7 +68,7 @@ FOUNDATION_EXPORT NSString *const kAPCSignUpPermissionsPrimingStepIdentifier;
 /**
  *  When the list of Services required is zero, we can skip
  */
-@property (nonatomic,readonly) BOOL skipPermissionsStep;
+@property (nonatomic,readonly) BOOL permissionScreenSkipped;
 
 @property (nonatomic) NSInteger currentStepNumber;
 

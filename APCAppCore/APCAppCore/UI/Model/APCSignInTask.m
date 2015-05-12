@@ -80,7 +80,7 @@ static NSInteger const kMinimumNumberOfSteps = 2; //MedicalInfo + Passcode
         self.currentStepNumber += 1;
     }
     else if ([step.identifier isEqualToString:kAPCSignUpPasscodeStepIdentifier]) {
-        if (self.skipPermissionsStep) {
+        if (self.permissionScreenSkipped) {
             nextStep = nil;
         }
         else {
@@ -141,7 +141,7 @@ static NSInteger const kMinimumNumberOfSteps = 2; //MedicalInfo + Passcode
     if (self.customStepIncluded) {
         count += 1;
     }
-    if (!self.skipPermissionsStep) {
+    if (!self.permissionScreenSkipped) {
         count += 1;
     }
     
