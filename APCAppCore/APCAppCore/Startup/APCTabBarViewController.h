@@ -40,4 +40,6 @@
 @property (nonatomic) BOOL showPasscodeScreen;
 @property (nonatomic, weak) id<APCPasscodeViewControllerDelegate> passcodeDelegate;
 
+- (void)showPasscode;
+
 @end
