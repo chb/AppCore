@@ -44,8 +44,6 @@
 #import <AVFoundation/AVFoundation.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 
-static NSArray *healthKitTypesToRead;
-static NSArray *healthKitTypesToWrite;
 
 static NSString * const APCPermissionsManagerErrorDomain = @"APCPermissionsManagerErrorDomain";
 
@@ -64,17 +62,9 @@ typedef NS_ENUM(NSUInteger, APCPermissionsErrorCode) {
 
 @end
 
+
 @implementation APCPermissionsManager
 
-+ (void)setHealthKitTypesToRead:(NSArray *)types
-{
-    healthKitTypesToRead = types;
-}
-
-+ (void)setHealthKitTypesToWrite:(NSArray *)types
-{
-    healthKitTypesToWrite = types;
-}
 
 - (instancetype)init
 {
@@ -212,7 +202,7 @@ typedef NS_ENUM(NSUInteger, APCPermissionsErrorCode) {
             
             //Add other quantity types
             
-            for (id typeIdentifier in healthKitTypesToRead) {
+            for (id typeIdentifier in _healthKitTypesToRead) {
                 if ([typeIdentifier isKindOfClass:[NSString class]]) {
                     [dataTypesToRead addObject:[HKQuantityType quantityTypeForIdentifier:typeIdentifier]];
                 }
@@ -226,7 +216,7 @@ typedef NS_ENUM(NSUInteger, APCPermissionsErrorCode) {
             //-------WRITE TYPES--------
             NSMutableArray *dataTypesToWrite = [NSMutableArray new];
             
-            for (id typeIdentifier in healthKitTypesToWrite) {
+            for (id typeIdentifier in _healthKitTypesToWrite) {
                 if ([typeIdentifier isKindOfClass:[NSString class]]) {
                     [dataTypesToWrite addObject:[HKQuantityType quantityTypeForIdentifier:typeIdentifier]];
                 }

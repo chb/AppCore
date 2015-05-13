@@ -37,11 +37,11 @@
 #import <ResearchKit/ResearchKit.h>
 
 
-NS_ASSUME_NONNULL_BEGIN
-
 @protocol APCOnboardingDelegate;
 @class APCScene;
 
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface APCOnboarding : NSObject
 

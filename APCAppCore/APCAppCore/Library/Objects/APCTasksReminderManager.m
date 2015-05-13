@@ -42,6 +42,8 @@
 #import "NSDictionary+APCAdditions.h"
 #import "NSManagedObject+APCHelper.h"
 
+#import "APCDataSubstrate.h"
+
 #import <UIKit/UIKit.h>
 
 NSString * const kTaskReminderUserInfo = @"CurrentTaskReminder";
