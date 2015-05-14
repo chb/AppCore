@@ -32,6 +32,7 @@
 // 
  
 #import "APCUser.h"
+#import "APCCoreDataSubstrate.h"
 #import "APCStoredUserData.h"
 #import "APCAppDelegate.h"
 #import "APCDataSubstrate.h"
@@ -186,7 +187,8 @@ static NSString *const kSignedInKey = @"SignedIn";
 
 - (void)updateStoredProperty:(NSString *)propertyName withValue:(id)value
 {
-    NSManagedObjectContext * context = [(APCAppDelegate*) [UIApplication sharedApplication].delegate dataSubstrate].persistentContext;
+    id<APCCoreDataSubstrate> dataSubstrate = ((APCAppDelegate*)[UIApplication sharedApplication].delegate).dataSubstrate;
+    NSManagedObjectContext *context = dataSubstrate.persistentContext;
     [context performBlockAndWait:^{
         APCStoredUserData *storedUserData = [self loadStoredUserDataInContext:context];
         [storedUserData setValue:value forKey:propertyName];

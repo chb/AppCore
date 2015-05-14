@@ -41,7 +41,7 @@
 
 @implementation APCDataMonitor
 
-- (instancetype)initWithDataSubstrate:(APCDataSubstrate *)dataSubstrate  scheduler:(APCScheduler *)scheduler
+- (instancetype)initWithDataSubstrate:(id<APCCoreDataSubstrate>)dataSubstrate scheduler:(APCScheduler *)scheduler
 {
     self = [super init];
     if (self) {

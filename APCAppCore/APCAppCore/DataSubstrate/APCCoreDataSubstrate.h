@@ -1,5 +1,5 @@
 //
-//  APCDataSubstrate.h
+//  APCCoreDataSubstrate.h
 //  APCAppCore
 //
 // Copyright (c) 2015, Apple Inc. All rights reserved.
@@ -31,25 +31,31 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import "APCParameters.h"
-#import <HealthKit/HealthKit.h>
-
-@class APCUser;
-
-NS_ASSUME_NONNULL_BEGIN
+#import "APCDataSubstrate.h"
+#import <CoreData/CoreData.h>
 
 
 /**
- *  Base data substrate protocol.
+ *  Extended APCDataSubstrate for data substrates that use CoreData.
  */
-@protocol APCDataSubstrate <APCParametersDelegate>
+@protocol APCCoreDataSubstrate <APCDataSubstrate>
 
-@property (strong, nonatomic, readonly, nullable) APCUser *currentUser;
+@property (nonatomic, strong) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
-@property (strong, nonatomic, readonly, nullable) APCParameters *parameters;
+/** Main context for use in View Controllers, Fetch Results Controllers etc. */
+@property (nonatomic, strong) NSManagedObjectContext *mainContext;
 
-@property (strong, nonatomic, readonly, nullable) HKHealthStore *healthStore;
+/** Persistent context: Parent of main context.
+ *  Please create a child context of persistentContext for any background processing tasks.
+ */
+@property (nonatomic, strong) NSManagedObjectContext *persistentContext;
+
+- (void)loadStaticTasksAndSchedules:(NSDictionary *)jsonDictionary;
+
+- (NSUInteger)countOfAllScheduledTasksForToday;
+
+- (NSUInteger)countOfCompletedScheduledTasksForToday;
+
+- (void)resetCoreData;
 
 @end
-
-NS_ASSUME_NONNULL_END

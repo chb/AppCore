@@ -31,15 +31,15 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 // 
  
-#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "APCCoreDataSubstrate.h"
 
-@class APCDataSubstrate, APCScheduler;
+@class APCScheduler;
 
 @interface APCDataMonitor : NSObject
 
 
-- (instancetype)initWithDataSubstrate: (APCDataSubstrate*) dataSubstrate scheduler: (APCScheduler*) scheduler;
+- (instancetype)initWithDataSubstrate:(id<APCCoreDataSubstrate>)dataSubstrate scheduler:(APCScheduler *)scheduler;
 
 - (void) appFinishedLaunching;
 - (void) appBecameActive;
@@ -53,8 +53,8 @@
 /*********************************************************************************/
 
 //Declaring as weak so as not to hold on to below objects
-@property (weak, nonatomic) APCDataSubstrate * dataSubstrate;
-@property (weak, nonatomic) APCScheduler * scheduler;
+@property (weak, nonatomic) id<APCCoreDataSubstrate> dataSubstrate;
+@property (weak, nonatomic) APCScheduler *scheduler;
 @property (nonatomic) BOOL batchUploadingInProgress;
 
 @end

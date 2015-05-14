@@ -39,16 +39,16 @@
 static NSString * const kOneTimeSchedule = @"once";
 
 @interface APCScheduler()
-@property  (weak, nonatomic)     APCDataSubstrate        *dataSubstrate;
-@property  (strong, nonatomic)   NSManagedObjectContext  *scheduleMOC;
-@property  (nonatomic) BOOL isUpdating;
+@property (weak, nonatomic) id<APCCoreDataSubstrate> dataSubstrate;
+@property (strong, nonatomic) NSManagedObjectContext *scheduleMOC;
+@property (nonatomic) BOOL isUpdating;
 
 
 @property (nonatomic, strong) NSDateFormatter * dateFormatter;
 
 //Properties that need to be cleaned after every upate
-@property (nonatomic, strong) NSMutableArray * allScheduledTasksForReferenceDate;
-@property (nonatomic, strong) NSMutableArray * validatedScheduledTasksForReferenceDate;
+@property (nonatomic, strong) NSMutableArray *allScheduledTasksForReferenceDate;
+@property (nonatomic, strong) NSMutableArray *validatedScheduledTasksForReferenceDate;
 
 @end
 
@@ -63,7 +63,7 @@ static NSString * const kOneTimeSchedule = @"once";
     return _dateFormatter;
 }
 
-- (instancetype)initWithDataSubstrate: (APCDataSubstrate*) dataSubstrate
+- (instancetype)initWithDataSubstrate:(id<APCCoreDataSubstrate>)dataSubstrate
 {
     self = [super init];
     if (self) {

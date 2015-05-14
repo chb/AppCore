@@ -33,15 +33,16 @@
  
 
 #import <Foundation/Foundation.h>
+#import "APCCoreDataSubstrate.h"
 #import "APCAppCore.h"
 
 @interface APCTasksAndSchedulesMigrationUtility : NSObject
 
 
-@property (nonatomic, strong)   NSDictionary        *tasksAndSchedules;
-@property (nonatomic, strong)   NSString            *tasksAndSchedulesFileName;
-@property (strong, nonatomic)   APCDataSubstrate    *dataSubstrate;
-@property (nonatomic)           BOOL                needsMigration;
+@property (nonatomic, strong) NSDictionary *tasksAndSchedules;
+@property (nonatomic, strong) NSString *tasksAndSchedulesFileName;
+@property (strong, nonatomic) id<APCCoreDataSubstrate> dataSubstrate;
+@property (nonatomic) BOOL needsMigration;
 
 - (instancetype)initWithFileName:(NSDictionary *)newTasksAndSchedules;
 

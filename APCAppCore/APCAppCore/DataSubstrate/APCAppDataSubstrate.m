@@ -1,5 +1,5 @@
 // 
-//  APCDataSubstrate.m 
+//  APCAppDataSubstrate.m
 //  APCAppCore 
 // 
 // Copyright (c) 2015, Apple Inc. All rights reserved. 
@@ -31,7 +31,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 // 
  
-#import "APCDataSubstrate.h"
+#import "APCAppDataSubstrate.h"
 #import "APCConstants.h"
 #import "APCUser.h"
 #import "APCAppDelegate.h"		// should be replaced
@@ -63,14 +63,14 @@ static NSString * const kErrorCantOpenDatabase_Suggestion      = (@"Unable to op
 
 
 
-@interface APCDataSubstrate ()
+@interface APCAppDataSubstrate ()
 
 @property (strong, nonatomic) NSTimer *dateChangeTestTimer;//refreshes Activities if the date crosses midnight.
 @property (strong, nonatomic) NSDate *tomorrowAtMidnight;
 
 @end
 
-@implementation APCDataSubstrate
+@implementation APCAppDataSubstrate
 
 - (void)dealloc
 {

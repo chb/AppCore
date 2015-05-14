@@ -224,7 +224,8 @@
 
 - (void) storeInCoreDataWithFileName: (NSString *) fileName resultSummary: (NSString *) resultSummary
 {
-    NSManagedObjectContext * context = ((APCAppDelegate *)[UIApplication sharedApplication].delegate).dataSubstrate.mainContext;
+    id<APCCoreDataSubstrate> dataSubstrate = ((APCAppDelegate*)[UIApplication sharedApplication].delegate).dataSubstrate;
+    NSManagedObjectContext *context = dataSubstrate.mainContext;
     
     [self storeInCoreDataWithFileName: fileName resultSummary: resultSummary usingContext: context];
 }
