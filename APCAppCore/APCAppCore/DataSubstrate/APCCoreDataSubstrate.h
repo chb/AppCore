@@ -1,8 +1,8 @@
 //
-//  APCAppDelegateTasks.h
+//  APCCoreDataSubstrate.h
 //  APCAppCore
 //
-// Copyright (c) 2015 Boston Children's Hospital. All rights reserved.
+// Copyright (c) 2015, Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
 // are permitted provided that the following conditions are met:
@@ -31,66 +31,31 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <Foundation/Foundation.h>
 #import "APCDataSubstrate.h"
-
-@class ORKTaskViewController;
+#import <CoreData/CoreData.h>
 
 
 /**
- *  Protocol, typically implemented by the AppDelegate, to handle init and data management tasks.
+ *  Extended APCDataSubstrate for data substrates that use CoreData.
  */
-@protocol APCAppDelegateTasks <NSObject>
+@protocol APCCoreDataSubstrate <APCDataSubstrate>
 
-@required
-@property (copy, nonatomic, readonly, nullable) NSDictionary *initializationOptions;
+@property (nonatomic, strong) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
-@property (strong, nonatomic, readonly, nullable) id<APCDataSubstrate> dataSubstrate;
+/** Main context for use in View Controllers, Fetch Results Controllers etc. */
+@property (nonatomic, strong) NSManagedObjectContext *mainContext;
 
-@end
-
-
-#pragma mark -
-
-/**
- *  Protocol, typically implemented by the AppDelegate, to handle onboarding.
+/** Persistent context: Parent of main context.
+ *  Please create a child context of persistentContext for any background processing tasks.
  */
-@protocol APCOnboardingTasks <NSObject>
+@property (nonatomic, strong) NSManagedObjectContext *persistentContext;
 
-@required
+- (void)loadStaticTasksAndSchedules:(NSDictionary *)jsonDictionary;
 
-/**
- *  Use this to provide custom text on the All Set screen.
- *
- *  You must return an array full of dictionaries, each with the main text keyed with `kAllSetActivitiesTextOriginal`
- *  and supplementary text keyed with `kAllSetActivitiesTextAdditional` or `kAllSetDashboardTextOriginal` and
- *  `kAllSetDashboardTextAdditional`.
- *
- *  Please don't be glutenous, don't use four words when one would suffice.
- */
-- (nonnull NSArray *)allSetTextBlocks;
+- (NSUInteger)countOfAllScheduledTasksForToday;
 
-@optional
+- (NSUInteger)countOfCompletedScheduledTasksForToday;
 
-/**
- *  Use this as a hook to post-process anything that is needed to be processed right after the 'finishOnboarding' method
- *  is invoked.
- */
-- (void)afterOnBoardProcessIsFinished;
-
-@end
-
-
-#pragma mark -
-
-/**
- *  Protocol, typically implemented by the AppDelegate, to handle consenting.
- */
-@protocol APCConsentingTasks <NSObject>
-
-@required
-@property (nonatomic, readonly) BOOL disableSignatureInConsent;
-
-- (nonnull ORKTaskViewController *)consentViewController;
+- (void)resetCoreData;
 
 @end

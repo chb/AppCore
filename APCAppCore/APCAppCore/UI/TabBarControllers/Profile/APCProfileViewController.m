@@ -46,6 +46,7 @@
 #import "APCConsentManager.h"
 #import "APCTasksReminderManager.h"
 #import "APCUserInfoConstants.h"
+#import "APCTasksReminderManager.h"
 #import "APCDataSubstrate.h"
 #import "APCConstants.h"
 #import "APCUtilities.h"
@@ -59,7 +60,7 @@
 #import "NSDate+Helper.h"
 #import "NSBundle+Helper.h"
 #import "NSError+APCAdditions.h"
-#import "APCUser+UserData.h"
+#import "APCUserData.h"
 #import "UIAlertController+Helper.h"
 
 #import <ResearchKit/ResearchKit.h>
@@ -404,7 +405,7 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
                     field.identifier = kAPCDefaultTableViewCellIdentifier;
                     field.editable = NO;
                     field.textAlignnment = NSTextAlignmentRight;
-                    field.detailText = [APCUser stringValueFromSexType:self.user.biologicalSex];
+                    field.detailText = [APCUserData stringValueFromSexType:self.user.biologicalSex];
                     field.selectionStyle = self.isEditing ? UITableViewCellSelectionStyleGray : UITableViewCellSelectionStyleNone;
                     
                     APCTableViewRow *row = [APCTableViewRow new];
@@ -457,7 +458,7 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
                 {
                     APCTableViewCustomPickerItem *field = [APCTableViewCustomPickerItem new];
                     field.caption = NSLocalizedString(@"Medical Conditions", @"");
-                    field.pickerData = @[[APCUser medicalConditions]];
+                    field.pickerData = @[[APCUserData medicalConditions]];
                     field.textAlignnment = NSTextAlignmentRight;
                     field.identifier = kAPCDefaultTableViewCellIdentifier;
                     field.selectionStyle = self.isEditing ? UITableViewCellSelectionStyleGray : UITableViewCellSelectionStyleNone;
@@ -481,7 +482,7 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
                 {
                     APCTableViewCustomPickerItem *field = [APCTableViewCustomPickerItem new];
                     field.caption = NSLocalizedString(@"Medications", @"");
-                    field.pickerData = @[[APCUser medications]];
+                    field.pickerData = @[[APCUserData medications]];
                     field.textAlignnment = NSTextAlignmentRight;
                     field.identifier = kAPCDefaultTableViewCellIdentifier;
                     field.selectionStyle = self.isEditing ? UITableViewCellSelectionStyleGray : UITableViewCellSelectionStyleNone;
@@ -509,14 +510,14 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
                     field.identifier = kAPCDefaultTableViewCellIdentifier;
                     field.detailDiscloserStyle = YES;
                     field.textAlignnment = NSTextAlignmentRight;
-                    field.pickerData = [APCUser heights];
+                    field.pickerData = [APCUserData heights];
                     field.selectionStyle = self.isEditing ? UITableViewCellSelectionStyleGray : UITableViewCellSelectionStyleNone;
                     field.editable = NO;
                     
                     NSInteger defaultIndexOfMyHeightInFeet = 5;
                     NSInteger defaultIndexOfMyHeightInInches = 0;
                     
-                    double usersHeight = [APCUser heightInInches:self.user.height];
+                    double usersHeight = [APCUserData heightInInches:self.user.height];
                     
                     if (usersHeight) {
                         double heightInInches = round(usersHeight);
@@ -555,7 +556,7 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
                     field.placeholder = NSLocalizedString(@"add weight (lb)", @"");
                     field.regularExpression = kAPCMedicalInfoItemWeightRegEx;
                     
-                    double userWeight = [APCUser weightInPounds:self.user.weight];
+                    double userWeight = [APCUserData weightInPounds:self.user.weight];
                     
                     if (userWeight) {
                         field.value = [NSString stringWithFormat:@"%.0f", userWeight];
@@ -847,7 +848,7 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
 
 #pragma mark - Getter Methods
 
-- (APCUser *)user
+- (APCAppUser *)user
 {
     if (!_user) {
 //        _user = ((APCAppDelegate *)[UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
@@ -1221,7 +1222,7 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
                 case kAPCUserInfoItemTypeHeight:
                 {
                     APCTableViewCustomPickerItem *heightPicker = (APCTableViewCustomPickerItem *)item;
-                    double height = [APCUser heightInInchesForSelectedIndices:heightPicker.selectedRowIndices];
+                    double height = [APCUserData heightInInchesForSelectedIndices:heightPicker.selectedRowIndices];
                     
                     HKUnit *inchUnit = [HKUnit inchUnit];
                     HKQuantity *heightQuantity = [HKQuantity quantityWithUnit:inchUnit doubleValue:height];

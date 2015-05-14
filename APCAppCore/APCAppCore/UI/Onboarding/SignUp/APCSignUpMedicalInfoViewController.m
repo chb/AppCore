@@ -118,7 +118,7 @@
                     }
                     
                     field.textAlignnment = NSTextAlignmentRight;
-                    field.pickerData = @[ [APCUser bloodTypeInStringValues] ];
+                    field.pickerData = @[ [APCUserData bloodTypeInStringValues] ];
                     
                     APCTableViewRow *row = [APCTableViewRow new];
                     row.item = field;
@@ -135,7 +135,7 @@
                     field.identifier = kAPCDefaultTableViewCellIdentifier;
                     field.selectionStyle = UITableViewCellSelectionStyleGray;
                     field.detailDiscloserStyle = YES;
-                    field.pickerData = @[ [APCUser medicalConditions] ];
+                    field.pickerData = @[ [APCUserData medicalConditions] ];
                     field.textAlignnment = NSTextAlignmentRight;
                     if (self.user.medicalConditions) {
                         field.selectedRowIndices = @[ @([field.pickerData[0] indexOfObject:self.user.medicalConditions]) ];
@@ -159,7 +159,7 @@
                     field.selectionStyle = UITableViewCellSelectionStyleGray;
                     field.detailDiscloserStyle = YES;
                     field.textAlignnment = NSTextAlignmentRight;
-                    field.pickerData = @[ [APCUser medications] ];
+                    field.pickerData = @[ [APCUserData medications] ];
                     
                     if (self.user.medications) {
                         field.selectedRowIndices = @[ @([field.pickerData[0] indexOfObject:self.user.medications]) ];
@@ -183,13 +183,13 @@
                     field.selectionStyle = UITableViewCellSelectionStyleGray;
                     field.detailDiscloserStyle = YES;
                     field.textAlignnment = NSTextAlignmentRight;
-                    field.pickerData = [APCUser heights];
+                    field.pickerData = [APCUserData heights];
 
                     NSInteger indexOfMyHeightInFeet = 0;
                     NSInteger indexOfMyHeightInInches = 0;
 
                     if (self.user.height) {
-                        double heightInInches = round([APCUser heightInInches:self.user.height]);
+                        double heightInInches = round([APCUserData heightInInches:self.user.height]);
                         
                         NSString *feet = [NSString stringWithFormat:@"%d'", (int)heightInInches/12];
                         NSString *inches = [NSString stringWithFormat:@"%d''", (int)heightInInches%12];
@@ -231,7 +231,7 @@
                     field.textAlignnment = NSTextAlignmentRight;
                     
                     if (self.user.weight) {
-                        field.value = [NSString stringWithFormat:@"%.0f", [APCUser weightInPounds:self.user.weight]];
+                        field.value = [NSString stringWithFormat:@"%.0f", [APCUserData weightInPounds:self.user.weight]];
                     }
                     
                     APCTableViewRow *row = [APCTableViewRow new];
@@ -352,7 +352,7 @@
                     
                 case kAPCUserInfoItemTypeHeight:
                 {
-                    double height = [APCUser heightInInchesForSelectedIndices:[(APCTableViewCustomPickerItem *)item selectedRowIndices]];
+                    double height = [APCUserData heightInInchesForSelectedIndices:[(APCTableViewCustomPickerItem *)item selectedRowIndices]];
                     
                     if (height > 0) {
                         HKUnit *inchUnit = [HKUnit inchUnit];

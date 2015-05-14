@@ -93,7 +93,7 @@ NSString *const kAPCSignUpPermissionsPrimingStepIdentifier  = @"PermissionsPrimi
     return NO;
 }
 
-- (APCUser *)user {
+- (id<APCUser>)user {
     if ([self.delegate respondsToSelector:@selector(userForOnboardingTask:)]) {
         _user = [self.delegate userForOnboardingTask:self];
     }

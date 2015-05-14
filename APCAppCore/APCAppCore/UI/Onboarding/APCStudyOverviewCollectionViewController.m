@@ -148,7 +148,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
 {
     [super viewDidLayoutSubviews];
     
-    if ([self isUserConsented]) {
+    if ([self user].serverConsented) {
         self.joinButtonLeadingConstraint.constant = CGRectGetWidth(self.view.frame)/2;
         [self.view layoutIfNeeded];
     }
@@ -182,9 +182,9 @@ static NSString *kConsentEmailSubject = @"Consent Document";
     self.btnAlreadyParticipated.tintColor = [UIColor appPrimaryColor];
 }
 
-- (BOOL)isUserConsented
+- (id<APCUser>)user
 {
-    return ((id<APCAppDelegateTasks>) [UIApplication sharedApplication].delegate).dataSubstrate.isUserConsented;
+    return ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
 }
 
 #pragma mark - UICollectionViewDataSource methods

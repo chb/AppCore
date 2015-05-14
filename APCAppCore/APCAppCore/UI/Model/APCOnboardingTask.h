@@ -33,8 +33,8 @@
  
 #import <Foundation/Foundation.h>
 #import <ResearchKit/ResearchKit.h>
+#import "APCUser.h"
 
-@class APCUser;
 
 typedef NS_ENUM(NSUInteger, APCOnboardingTaskType) {
     kAPCOnboardingTaskTypeSignUp,
@@ -63,7 +63,7 @@ FOUNDATION_EXPORT NSString *const kAPCSignUpPermissionsPrimingStepIdentifier;
 
 @property (nonatomic, readonly) BOOL customStepIncluded;
 
-@property (nonatomic) APCUser *user;
+@property (nonatomic) id<APCUser> user;
 
 /** When the list of Services required is zero, we can skip. */
 @property (nonatomic, readonly) BOOL permissionScreenSkipped;
@@ -98,7 +98,7 @@ FOUNDATION_EXPORT NSString *const kAPCSignUpPermissionsPrimingStepIdentifier;
 
 @protocol APCOnboardingTaskDelegate <NSObject>
 
-- (APCUser *)userForOnboardingTask:(APCOnboardingTask *)task;
+- (id<APCUser>)userForOnboardingTask:(APCOnboardingTask *)task;
 
 - (NSInteger)numberOfServicesInPermissionsListForOnboardingTask:(APCOnboardingTask *)task;
 

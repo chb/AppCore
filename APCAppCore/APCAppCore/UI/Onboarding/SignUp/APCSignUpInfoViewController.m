@@ -113,7 +113,7 @@ static CGFloat const kHeaderHeight = 127.0f;
     return [(id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate onboardingManager].onboarding;
 }
 
-- (APCUser *)user {
+- (id<APCUser>)user {
     return [(id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate onboardingManager].user;
 }
 

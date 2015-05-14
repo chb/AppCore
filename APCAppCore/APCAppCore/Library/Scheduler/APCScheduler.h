@@ -31,8 +31,8 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 // 
  
-#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "APCCoreDataSubstrate.h"
 
 @class APCDataSubstrate;
 @class APCSchedule;
@@ -47,15 +47,15 @@ typedef NS_ENUM(NSUInteger, APCSchedulerDateRange) {
 
 @interface APCScheduler : NSObject
 
-- (instancetype) initWithDataSubstrate: (APCDataSubstrate*) dataSubstrate;
+- (instancetype)initWithDataSubstrate:(id<APCCoreDataSubstrate>)dataSubstrate;
 
-- (void)updateScheduledTasksIfNotUpdating: (BOOL) today;
-- (void)updateScheduledTasksIfNotUpdatingWithRange: (APCSchedulerDateRange) range;
-- (void) updateScheduledTasksForSchedule: (APCSchedule*) schedule;
+- (void)updateScheduledTasksIfNotUpdating:(BOOL)today;
+- (void)updateScheduledTasksIfNotUpdatingWithRange:(APCSchedulerDateRange)range;
+- (void) updateScheduledTasksForSchedule:(APCSchedule *)schedule;
 
-@property (nonatomic, strong) APCDateRange * referenceRange;
+@property (nonatomic, strong) APCDateRange *referenceRange;
 
-- (void) findOrCreateOneTimeScheduledTask:(APCSchedule *) schedule task: (APCTask*) task andStartDateReference: (NSDate *)startOn;
+- (void) findOrCreateOneTimeScheduledTask:(APCSchedule *)schedule task:(APCTask *)task andStartDateReference:(NSDate *)startOn;
 
 
 @end

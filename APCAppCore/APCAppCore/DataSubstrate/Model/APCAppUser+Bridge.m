@@ -1,5 +1,5 @@
 // 
-//  APCUser+Bridge.m 
+//  APCAppUser+Bridge.m 
 //  APCAppCore 
 // 
 // Copyright (c) 2015, Apple Inc. All rights reserved. 
@@ -31,11 +31,11 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 // 
  
-#import "APCUser+Bridge.h"
+#import "APCAppUser+Bridge.h"
 #import "APCAppCore.h"
 
 
-@implementation APCUser (Bridge)
+@implementation APCAppUser (Bridge)
 
 - (BOOL) serverDisabled
 {
@@ -175,7 +175,7 @@
             [self signOutOnCompletion:^(NSError *error) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if(!error) {
-                        self.consented = NO;
+                        self.serverConsented = NO;
                         APCLogEventWithData(kNetworkEvent, (@{@"event_detail":@"User Suspended Consent"}));
                     }
                     if (completionBlock) {

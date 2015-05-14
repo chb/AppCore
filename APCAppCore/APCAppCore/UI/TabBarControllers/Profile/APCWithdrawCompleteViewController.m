@@ -37,7 +37,7 @@
 #import "UIFont+APCAppearance.h"
 #import "UIImage+APCHelper.h"
 #import "APCWithdrawSurveyViewController.h"
-#import "APCUser+Bridge.h"
+#import "APCUser.h"
 
 @interface APCWithdrawCompleteViewController ()
 
@@ -70,7 +70,7 @@
     [self.logoImageVIew setImage:[UIImage imageNamed:@"logo_disease"]];
 }
 
-- (APCUser *) user {
+- (id<APCUser>)user {
     return ((APCAppDelegate *)[UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
 }
 

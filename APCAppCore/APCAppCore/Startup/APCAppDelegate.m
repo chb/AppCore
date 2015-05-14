@@ -329,7 +329,7 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
     //Check if persistent store (db.sqlite file) exists
     self.persistentStoreExistence = [self determineIfPeresistentStoreExists];
     
-    self.dataSubstrate = [[APCDataSubstrate alloc] initWithPersistentStorePath:[[self applicationDocumentsDirectory] stringByAppendingPathComponent:self.initializationOptions[kDatabaseNameKey]] additionalModels: nil studyIdentifier:self.initializationOptions[kStudyIdentifierKey]];
+    self.dataSubstrate = [[APCAppDataSubstrate alloc] initWithPersistentStorePath:[[self applicationDocumentsDirectory] stringByAppendingPathComponent:self.initializationOptions[kDatabaseNameKey]] additionalModels: nil studyIdentifier:self.initializationOptions[kStudyIdentifierKey]];
     
     [self performMigrationAfterDataSubstrateFrom:[self obtainPreviousVersion] currentVersion:kTheEntireDataModelOfTheApp];
     
@@ -342,7 +342,7 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
     
     //Setup AuthDelegate for SageSDK
     SBBAuthManager * manager = (SBBAuthManager*) SBBComponent(SBBAuthManager);
-    manager.authDelegate = self.dataSubstrate.currentUser;
+    manager.authDelegate = (APCAppUser *)self.dataSubstrate.currentUser;
 }
 
 - (void)loadStaticTasksAndSchedulesIfNecessary
@@ -548,7 +548,7 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
   */
 - (void)configureObserverQueries
 {
-    if (!self.dataSubstrate.currentUser.consented) {
+    if (!self.dataSubstrate.currentUser.serverConsented) {
         return;
     }
     
@@ -1146,7 +1146,10 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
 }
 
 
-#pragma mark - Private Helper Methods
+- (id<APCUser>)userForOnboardingTask:(APCOnboardingTask *)__unused task
+{
+    return self.dataSubstrate.currentUser;
+}
 
 - (NSString *) applicationDocumentsDirectory
 {

@@ -106,7 +106,7 @@ static NSString *kInternetNotAvailableErrorMessage2 = @"BackendServer Not Reacha
     return isContentValid;
 }
 
-- (APCUser *) user {
+- (id<APCUser>)user {
     return ((APCAppDelegate*) [UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
 }
 
@@ -122,7 +122,7 @@ static NSString *kInternetNotAvailableErrorMessage2 = @"BackendServer Not Reacha
             APCSpinnerViewController *spinnerController = [[APCSpinnerViewController alloc] init];
             [self presentViewController:spinnerController animated:YES completion:nil];
             
-            APCUser *user = [self user];
+            id<APCUser> user = [self user];
             user.email = self.emailTextField.text;
             
             typeof(self) __weak weakSelf = self;

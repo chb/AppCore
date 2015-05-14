@@ -34,6 +34,7 @@
 
 #import <Foundation/Foundation.h>
 #import "APCOnboarding.h"
+#import "APCUser.h"
 
 @class APCOnboardingManager;
 @class APCPermissionsManager;
@@ -79,7 +80,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic, nullable) APCOnboarding *onboarding;
 
 /// The user/subject that is onboarding.
-@property (strong, nonatomic, readonly) APCUser *user;
+@property (strong, nonatomic, readonly) id<APCUser> user;
 
 /// The permissions manager defining and requesting needed permissions.
 @property (strong, nonatomic, readonly) APCPermissionsManager *permissionsManager;
@@ -87,10 +88,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// Whether a sign-in action, to resume a study previously enrolled in, is supported. Defaults to YES.
 @property (nonatomic, getter=isSignInSupported) BOOL signInSupported;
 
-+ (instancetype)managerWithProvider:(id<APCOnboardingManagerProvider>)provider user:(APCUser *)user;
++ (instancetype)managerWithProvider:(id<APCOnboardingManagerProvider>)provider user:(id<APCUser>)user;
 
 /** Designated initializer. */
-- (instancetype)initWithProvider:(id<APCOnboardingManagerProvider>)provider user:(APCUser *)user;
+- (instancetype)initWithProvider:(id<APCOnboardingManagerProvider>)provider user:(id<APCUser>)user;
 
 - (void)instantiateOnboardingForType:(APCOnboardingTaskType)type;
 

@@ -32,7 +32,7 @@
 // 
  
 #import <UIKit/UIKit.h>
-#import "APCDataSubstrate.h"
+#import "APCAppDataSubstrate.h"
 #import "APCPasscodeViewController.h"
 #import "APCProfileViewController.h"
 #import "APCConsentManager.h"
@@ -41,7 +41,7 @@
 
 extern NSUInteger   const kTheEntireDataModelOfTheApp;
 
-@class APCDataSubstrate, APCDataMonitor, APCScheduler, APCPasscodeViewController, APCTasksReminderManager, APCPassiveDataCollector, APCFitnessAllocation;
+@class APCDataMonitor, APCScheduler, APCPasscodeViewController, APCTasksReminderManager, APCPassiveDataCollector, APCFitnessAllocation;
 
 @interface APCAppDelegate : UIResponder <UIApplicationDelegate, APCOnboardingManagerProvider, APCConsentManagerProvider, APCPasscodeViewControllerDelegate>
 
@@ -49,7 +49,7 @@ extern NSUInteger   const kTheEntireDataModelOfTheApp;
 @property (strong, nonatomic) UITabBarController *tabster;
 
 //APC Related Properties & Methods
-@property (strong, nonatomic) APCDataSubstrate * dataSubstrate;
+@property (strong, nonatomic) APCAppDataSubstrate *dataSubstrate;
 @property (strong, nonatomic) APCDataMonitor * dataMonitor;
 @property (strong, nonatomic) APCScheduler * scheduler;
 @property (strong, nonatomic) APCTasksReminderManager * tasksReminder;

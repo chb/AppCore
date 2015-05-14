@@ -1,5 +1,5 @@
 // 
-//  APCDataSubstrate+ResearchKit.m 
+//  APCAppDataSubstrate+ResearchKit.m
 //  APCAppCore 
 // 
 // Copyright (c) 2015, Apple Inc. All rights reserved. 
@@ -31,7 +31,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 // 
  
-#import "APCDataSubstrate+ResearchKit.h"
+#import "APCAppDataSubstrate+ResearchKit.h"
 #import "APCAppCore.h"
 
 #import <ResearchKit/ResearchKit.h>
@@ -48,7 +48,7 @@
 //static NSInteger const APCDataLoggerManagerMaximumInputBytes = 10;
 //static NSInteger const APCDataLoggerManagerMaximumFiles = 0;
 
-@implementation APCDataSubstrate (ResearchKit)
+@implementation APCAppDataSubstrate (ResearchKit)
 
 /*********************************************************************************/
 #pragma mark - ResearchKit Subsystem

@@ -41,7 +41,7 @@
 
 @implementation APCDataMonitor
 
-- (instancetype)initWithDataSubstrate:(APCDataSubstrate *)dataSubstrate  scheduler:(APCScheduler *)scheduler
+- (instancetype)initWithDataSubstrate:(id<APCCoreDataSubstrate>)dataSubstrate scheduler:(APCScheduler *)scheduler
 {
     self = [super init];
     if (self) {
@@ -54,7 +54,7 @@
 
 - (void) appFinishedLaunching
 {
-    if (self.dataSubstrate.currentUser.isConsented) {
+    if (self.dataSubstrate.currentUser.isServerConsented) {
         [(APCAppDelegate*)[UIApplication sharedApplication].delegate setUpCollectors];
     }
     APCLogEventWithData(kAppStateChangedEvent, @{@"state":@"App Launched"});

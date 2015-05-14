@@ -1,5 +1,5 @@
 // 
-//  APCUser+UserData.h 
+//  APCAppDataSubstrate+ResearchKit.h 
 //  APCAppCore 
 // 
 // Copyright (c) 2015, Apple Inc. All rights reserved. 
@@ -31,44 +31,12 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 // 
  
-#import "APCUser.h"
+#import "APCAppDataSubstrate.h"
 
-@interface APCUser (UserData)
+@interface APCAppDataSubstrate (ResearchKit)
 
-/* Biologcal Sex */
-+ (NSArray *) sexTypesInStringValue;
-
-+ (HKBiologicalSex)sexTypeForIndex:(NSInteger)index;
-
-+ (HKBiologicalSex) sexTypeFromStringValue:(NSString *)stringValue;
-
-+ (NSString *) stringValueFromSexType:(HKBiologicalSex)sexType;
-
-+ (NSUInteger) stringIndexFromSexType:(HKBiologicalSex)sexType;
-
-
-/*Blood Type */
-+ (NSArray *) bloodTypeInStringValues;
-
-+ (HKBloodType) bloodTypeFromStringValue:(NSString *)stringValue;
-
-
-+ (NSArray *) medicalConditions;
-
-+ (NSArray *) medications;
-
-/* Height */
-+ (NSArray *) heights;
-
-+ (double)heightInInchesForSelectedIndices:(NSArray *)selectedIndices;
-
-+ (double)heightInInches:(HKQuantity *)height;
-
-+ (double)heightInMeters:(HKQuantity *)height;
-
-
-+ (double)weightInPounds:(HKQuantity *)weight;
-
-+ (double)weightInKilograms:(HKQuantity *)weight;
+/*********************************************************************************/
+#pragma mark - Methods meant only for Categories
+/*********************************************************************************/
 
 @end

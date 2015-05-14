@@ -44,7 +44,7 @@ NSString * const kAPCOnboardingStoryboardName = @"APCOnboarding";
 
 @property (weak, nonatomic) id<APCOnboardingManagerProvider> provider;
 
-@property (strong, nonatomic, readwrite) APCUser *user;
+@property (strong, nonatomic, readwrite) id<APCUser> user;
 
 @property (strong, nonatomic, readwrite) APCPermissionsManager *permissionsManager;
 
@@ -54,7 +54,7 @@ NSString * const kAPCOnboardingStoryboardName = @"APCOnboarding";
 @implementation APCOnboardingManager
 
 
-- (instancetype)initWithProvider:(id<APCOnboardingManagerProvider>)provider user:(APCUser * __nonnull)user {
+- (instancetype)initWithProvider:(id<APCOnboardingManagerProvider>)provider user:(id<APCUser> __nonnull)user {
     if ((self = [super init])) {
         self.provider = provider;
         self.user = user;
@@ -63,7 +63,7 @@ NSString * const kAPCOnboardingStoryboardName = @"APCOnboarding";
     return self;
 }
 
-+ (instancetype)managerWithProvider:(id<APCOnboardingManagerProvider>)provider user:(APCUser * __nonnull)user {
++ (instancetype)managerWithProvider:(id<APCOnboardingManagerProvider>)provider user:(id<APCUser> __nonnull)user {
     return [[self alloc] initWithProvider:provider user:user];
 }
 

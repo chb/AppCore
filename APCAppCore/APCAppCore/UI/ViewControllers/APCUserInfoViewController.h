@@ -37,7 +37,6 @@
 #import "APCSegmentedTableViewCell.h"
 #import "APCDefaultTableViewCell.h"
 #import "APCSwitchTableViewCell.h"
-#import "APCUser+UserData.h"
 #import "APCTableViewItem.h"
 
 @interface APCUserInfoViewController : UITableViewController <APCTextFieldTableViewCellDelegate, APCSegmentedTableViewCellDelegate, APCPickerTableViewCellDelegate, APCSwitchTableViewCellDelegate, UITextFieldDelegate>

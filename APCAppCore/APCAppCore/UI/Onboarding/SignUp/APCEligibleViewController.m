@@ -37,6 +37,7 @@
 #import "APCConstants.h"
 #import "APCLog.h"
 #import "APCDataSubstrate.h"
+#import "APCParameters.h"
 #import "APCUser.h"
 
 #ifndef APC_HAVE_CONSENT
@@ -102,7 +103,7 @@ static NSString *kreturnControlOfTaskDelegate = @"returnControlOfTaskDelegate";
     return [(id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate onboardingManager].onboarding;
 }
 
-- (APCUser *)user {
+- (id<APCUser>)user {
     return [(id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate onboardingManager].user;
 }
 
@@ -164,8 +165,9 @@ static NSString *kreturnControlOfTaskDelegate = @"returnControlOfTaskDelegate";
         }
         
         //  if no signature (no consent result) then assume the user failed the quiz
-        if (consentResult != nil && consentResult.signature.requiresName && (consentResult.signature.givenName && consentResult.signature.familyName)) {
-            APCUser *user = [self user];
+        if (consentResult != nil && consentResult.signature.requiresName && (consentResult.signature.givenName && consentResult.signature.familyName))
+        {
+            id<APCUser> user = [self user];
             user.consentSignatureName = [consentResult.signature.givenName stringByAppendingFormat:@" %@",consentResult.signature.familyName];
             user.consentSignatureImage = UIImagePNGRepresentation(consentResult.signature.signatureImage);
             

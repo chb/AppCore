@@ -47,7 +47,9 @@
 #import "UIAlertController+Helper.h"
 #import "NSBundle+Helper.h"
 #import "APCSpinnerViewController.h"
-#import "APCUser+Bridge.h"
+#import "APCAppUser+Bridge.h"
+#import "APCUserData.h"
+#import "APCLog.h"
 #import "NSError+APCAdditions.h"
 
 static NSString *kInternetNotAvailableErrorMessage1 = @"Internet Not Connected";
@@ -249,11 +251,11 @@ static CGFloat kHeaderHeight = 157.0f;
             {
                 APCTableViewSegmentItem *field = [APCTableViewSegmentItem new];
                 field.style = UITableViewCellStyleValue1;
-                field.segments = [APCUser sexTypesInStringValue];
+                field.segments = [APCUserData sexTypesInStringValue];
                 field.identifier = kAPCSegmentedTableViewCellIdentifier;
                 
                 if (self.permissionGranted && self.user.biologicalSex) {
-                    field.selectedIndex = [APCUser stringIndexFromSexType:self.user.biologicalSex];
+                    field.selectedIndex = [APCUserData stringIndexFromSexType:self.user.biologicalSex];
                     field.editable = NO;
                 }
                 
@@ -587,7 +589,7 @@ static CGFloat kHeaderHeight = 157.0f;
                     break;
                     
                 case kAPCUserInfoItemTypeBiologicalSex:{
-                    self.user.biologicalSex = [APCUser sexTypeForIndex:((APCTableViewSegmentItem *)item).selectedIndex];
+                    self.user.biologicalSex = [APCUserData sexTypeForIndex:((APCTableViewSegmentItem *)item).selectedIndex];
                 }
                     break;
                 case kAPCUserInfoItemTypeDateOfBirth:

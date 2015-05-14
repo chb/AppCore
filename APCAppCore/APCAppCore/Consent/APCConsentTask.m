@@ -372,7 +372,7 @@ static NSString*    kStepIdentifierSuffixStart          = @"+X";
                         selected = 2;		// TODO: this represents `SBBConsentShareScopeAll`, as defined in SBBConsentManager.h. Find a better way to define these
                     }
                     
-                    delegate.dataSubstrate.currentUser.sharedOptionSelection = @(selected);
+                    //delegate.dataSubstrate.currentUser.sharedOptionSelection = @(selected);
                 }
             }
         }

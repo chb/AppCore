@@ -206,7 +206,7 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
     return [(id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate onboardingManager].onboarding;
 }
 
-- (APCUser *)user {
+- (id<APCUser>)user {
     return [(id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate onboardingManager].user;
 }
 

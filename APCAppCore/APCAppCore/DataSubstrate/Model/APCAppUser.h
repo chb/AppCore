@@ -1,5 +1,5 @@
 // 
-//  APCUser.h 
+//  APCAppUser.h 
 //  APCAppCore 
 // 
 // Copyright (c) 2015, Apple Inc. All rights reserved. 
@@ -34,9 +34,9 @@
 #import <Foundation/Foundation.h>
 #import <HealthKit/HealthKit.h>
 #import <CoreData/CoreData.h>
-#import <UIKit/UIKit.h>
+#import "APCUser.h"
 
-@interface APCUser : NSObject
+@interface APCAppUser : NSObject <APCUser>
 
 /*********************************************************************************/
 #pragma mark - Designated Intializer
@@ -47,14 +47,14 @@
 #pragma mark - Stored Properties in Keychain
 /*********************************************************************************/
 
-@property (nonatomic, strong) NSString * name;
+@property (nonatomic, copy) NSString * name;
 
 @property (nonatomic, strong) NSString * firstName DEPRECATED_ATTRIBUTE;
 @property (nonatomic, strong) NSString * lastName DEPRECATED_ATTRIBUTE;
 
-@property (nonatomic, strong) NSString * email;
-@property (nonatomic, strong) NSString * password;
-@property (nonatomic, strong) NSString * sessionToken;
+@property (nonatomic, copy) NSString * email;
+@property (nonatomic, copy) NSString * password;
+@property (nonatomic, copy) NSString * sessionToken;
 
 /*********************************************************************************/
 #pragma mark - Stored Properties in Core Data
@@ -62,7 +62,7 @@
 @property (nonatomic) NSNumber *sharedOptionSelection;
 @property (nonatomic, strong) NSData *profileImage;
 
-@property (nonatomic, getter=isConsented) BOOL consented; //Confirmation that server is consented. Should be used in the app to test for user consent.
+@property (nonatomic, getter=isServerConsented) BOOL serverConsented; //Confirmation that server is consented. Should be used in the app to test for user consent.
 @property (nonatomic, getter=isUserConsented) BOOL userConsented; //User has consented though not communicated to the server.
 
 @property (nonatomic, strong) NSDate * taskCompletion;
@@ -71,20 +71,20 @@
 @property (nonatomic, strong) NSString *customSurveyQuestion;
 @property (nonatomic, strong) NSString *phoneNumber;
 @property (nonatomic) BOOL allowContact;
-@property (nonatomic, strong) NSString * medicalConditions;
-@property (nonatomic, strong) NSString * medications;
-@property (nonatomic, strong) NSString *ethnicity;
+@property (nonatomic, copy) NSString *medicalConditions;
+@property (nonatomic, copy) NSString *medications;
+@property (nonatomic, copy) NSString *ethnicity;
 
 @property (nonatomic, strong) NSDate *sleepTime;
 @property (nonatomic, strong) NSDate *wakeUpTime;
 
 @property (nonatomic, strong) NSString *glucoseLevels;
 
-@property (nonatomic, strong) NSString *homeLocationAddress;
-@property (nonatomic, strong) NSNumber *homeLocationLat;
-@property (nonatomic, strong) NSNumber *homeLocationLong;
+@property (nonatomic, copy) NSString *homeLocationAddress;
+@property (nonatomic, copy) NSNumber *homeLocationLat;
+@property (nonatomic, copy) NSNumber *homeLocationLong;
 
-@property (nonatomic, strong) NSString *consentSignatureName;
+@property (nonatomic, copy) NSString *consentSignatureName;
 @property (nonatomic, strong) NSDate *consentSignatureDate;
 @property (nonatomic, strong) NSData *consentSignatureImage;
 

@@ -1,5 +1,5 @@
 // 
-//  APCDataSubstrate+CoreData.m 
+//  APCAppDataSubstrate.m
 //  APCAppCore 
 // 
 // Copyright (c) 2015, Apple Inc. All rights reserved. 
@@ -31,18 +31,19 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 // 
  
-#import "APCDataSubstrate+CoreData.h"
-//#import "APCAppDelegate.h"
+#import "APCAppDataSubstrate.h"
+#import "APCConstants.h"
+#import "APCAppUser.h"
+#import "APCAppDelegate.h"		// should be replaced
 #import "APCLog.h"
 
+#import "NSDate+Helper.h"
 #import "APCTask+AddOn.h"
 #import "APCSchedule+AddOn.h"
 #import "APCScheduledTask+AddOn.h"
 #import "NSError+APCAdditions.h"
 
-#import <CoreData/CoreData.h>
-
-
+static int dateCheckTimeInterval = 60;
 
 static NSString * const kCoreDataErrorDomain                   = @"kAPCError_CoreData_Domain";
 
@@ -50,19 +51,76 @@ static NSInteger  const kErrorCantCreateDatabase_Code          = 1;
 static NSString * const kErrorCantCreateDatabase_Reason        = @"Unable to Create Database";
 static NSString * const kErrorCantCreateDatabase_Suggestion    = (@"We were unable to create a place to "
                                                                   "save your data. Please exit the app and "
-                                                                  "try again. If the problem recurs, please "
+                                                                  "try again. If the problem reoccurs, please "
                                                                   "uninstall the app and try once more.");
 
 static NSInteger  const kErrorCantOpenDatabase_Code            = 2;
 static NSString * const kErrorCantOpenDatabase_Reason          = @"Unable to Open Database";
 static NSString * const kErrorCantOpenDatabase_Suggestion      = (@"Unable to open your existing data file. "
                                                                   "Please exit the app and try again. If the "
-                                                                  "problem recurs, please uninstall and "
+                                                                  "problem reoccurs, please uninstall and "
                                                                   "reinstall the app.");
 
 
 
-@implementation APCDataSubstrate (CoreData)
+@interface APCAppDataSubstrate ()
+
+@property (strong, nonatomic) NSTimer *dateChangeTestTimer;//refreshes Activities if the date crosses midnight.
+@property (strong, nonatomic) NSDate *tomorrowAtMidnight;
+
+@end
+
+@implementation APCAppDataSubstrate
+
+- (void)dealloc
+{
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (instancetype)initWithPersistentStorePath:(NSString *)storePath
+						   additionalModels:(NSManagedObjectModel *)mergedModels
+                            studyIdentifier:(NSString *)__unused studyIdentifier
+{
+    self = [super init];
+    if (self) {
+        [self setUpCoreDataStackWithPersistentStorePath:storePath additionalModels:mergedModels];
+        [self setUpCurrentUser:self.persistentContext];
+        [self setUpHealthKit];
+        [self setupParameters];
+        [self setupNotifications];
+    }
+    return self;
+}
+
+- (void)setUpCurrentUser:(NSManagedObjectContext *)context
+{
+    if (!_currentUser) {
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            _currentUser = [[APCAppUser alloc] initWithContext:context];
+        });
+    }
+}
+
+- (void)setupParameters
+{
+    self.parameters = [[APCParameters alloc] initWithFileName:@"APCParameters.json"];
+    [self.parameters setDelegate:self];
+}
+
+- (void)setupNotifications
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(instantiateTimer:) name:UIApplicationWillEnterForegroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(instantiateTimer:) name:UIApplicationDidFinishLaunchingNotification object:nil];
+}
+
+
+#pragma mark - HealthKit
+
+- (void)setUpHealthKit
+{
+    self.healthStore = [HKHealthStore isHealthDataAvailable] ? [[HKHealthStore alloc] init] : nil;
+}
 
 
 
@@ -152,8 +210,8 @@ static NSString * const kErrorCantOpenDatabase_Suggestion      = (@"Unable to op
          milliseconds from now (like, thousands of actual
          instructions from now), asynchronously.
          */
-//        APCAppDelegate *appDelegate = (APCAppDelegate *) [[UIApplication sharedApplication] delegate];
-//        [appDelegate registerCatastrophicStartupError: catastrophe];
+        APCAppDelegate *appDelegate = (APCAppDelegate *) [[UIApplication sharedApplication] delegate];
+        [appDelegate registerCatastrophicStartupError: catastrophe];
     }
 }
 
@@ -202,12 +260,12 @@ static NSString * const kErrorCantOpenDatabase_Suggestion      = (@"Unable to op
     APCLogError2 (error);
     [self removeSqliteStore];
     [self setUpPersistentStore];
-//    APCAppDelegate * appDelegate = (APCAppDelegate*)[UIApplication sharedApplication].delegate;
-//    [appDelegate loadStaticTasksAndSchedulesIfNecessary];
+    APCAppDelegate * appDelegate = (APCAppDelegate*)[UIApplication sharedApplication].delegate;
+    [appDelegate loadStaticTasksAndSchedulesIfNecessary];
 }
 
 
-#pragma mark - Helpers - ONLY RETURNS IN NSManagedObjects in mainContext
+#pragma mark - Core Data Helpers - ONLY RETURNS in NSManagedObjects in mainContext
 
 - (NSFetchRequest*)requestForScheduledTasksDueFrom:(NSDate *)fromDate toDate:(NSDate *)toDate sortDescriptors:(NSArray *)sortDescriptors
 {
@@ -259,6 +317,31 @@ static NSString * const kErrorCantOpenDatabase_Suggestion      = (@"Unable to op
 - (NSUInteger)countOfCompletedScheduledTasksForToday
 {
     return [APCScheduledTask countOfAllCompletedTasksTodayInContext:self.mainContext];
+}
+
+
+#pragma mark - Properties & Methods meant only for Categories
+
+- (void)parameters:(APCParameters *)__unused parameters didFailWithError:(NSError *)error
+{
+    NSAssert(error, @"parameters are not loaded");
+}
+
+
+#pragma mark - Date Change Test Timer
+
+- (void)instantiateTimer:(NSNotification *)__unused notification
+{
+    self.tomorrowAtMidnight = [NSDate tomorrowAtMidnight];
+    self.dateChangeTestTimer = [NSTimer scheduledTimerWithTimeInterval:dateCheckTimeInterval target:self selector:@selector(didDateCrossMidnight:) userInfo:nil repeats:YES];
+}
+
+- (void)didDateCrossMidnight:(NSNotification *)__unused notification
+{
+    if ([[NSDate new] compare:self.tomorrowAtMidnight] == NSOrderedDescending || [[NSDate new] compare:self.tomorrowAtMidnight] == NSOrderedSame) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:APCDayChangedNotification object:nil];
+        self.tomorrowAtMidnight = [NSDate tomorrowAtMidnight];
+    }
 }
 
 @end

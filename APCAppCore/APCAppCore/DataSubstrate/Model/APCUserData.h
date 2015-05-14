@@ -1,5 +1,5 @@
 // 
-//  APCDataSubstrate+HealthKit.h 
+//  APCUserData.h
 //  APCAppCore 
 // 
 // Copyright (c) 2015, Apple Inc. All rights reserved. 
@@ -31,10 +31,45 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 // 
  
-#import "APCDataSubstrate.h"
+#import <Foundation/Foundation.h>
+#import <HealthKit/HealthKit.h>
 
-@interface APCDataSubstrate (HealthKit)
+@interface APCUserData : NSObject 
 
-- (void)setUpHealthKit;
+/* Biologcal Sex */
++ (NSArray *) sexTypesInStringValue;
+
++ (HKBiologicalSex)sexTypeForIndex:(NSInteger)index;
+
++ (HKBiologicalSex) sexTypeFromStringValue:(NSString *)stringValue;
+
++ (NSString *) stringValueFromSexType:(HKBiologicalSex)sexType;
+
++ (NSUInteger) stringIndexFromSexType:(HKBiologicalSex)sexType;
+
+
+/*Blood Type */
++ (NSArray *) bloodTypeInStringValues;
+
++ (HKBloodType) bloodTypeFromStringValue:(NSString *)stringValue;
+
+
++ (NSArray *) medicalConditions;
+
++ (NSArray *) medications;
+
+/* Height */
++ (NSArray *) heights;
+
++ (double)heightInInchesForSelectedIndices:(NSArray *)selectedIndices;
+
++ (double)heightInInches:(HKQuantity *)height;
+
++ (double)heightInMeters:(HKQuantity *)height;
+
+
++ (double)weightInPounds:(HKQuantity *)weight;
+
++ (double)weightInKilograms:(HKQuantity *)weight;
 
 @end

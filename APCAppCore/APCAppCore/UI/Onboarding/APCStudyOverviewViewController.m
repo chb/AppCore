@@ -142,7 +142,7 @@ static NSString * const kStudyOverviewCellIdentifier = @"kStudyOverviewCellIdent
 {
     [super viewDidLayoutSubviews];
     
-    if ([self user].consented) {
+    if ([self user].serverConsented) {
         self.joinButtonLeadingConstraint.constant = CGRectGetWidth(self.view.frame)/2;
         [self.view layoutIfNeeded];
     }
@@ -163,7 +163,7 @@ static NSString * const kStudyOverviewCellIdentifier = @"kStudyOverviewCellIdent
     self.diseaseNameLabel.minimumScaleFactor = 0.5;
 }
 
-- (APCUser *)user
+- (id<APCUser>)user
 {
     return ((id<APCAppDelegateTasks>) [UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
 }

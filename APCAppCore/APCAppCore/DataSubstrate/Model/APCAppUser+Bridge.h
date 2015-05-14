@@ -1,5 +1,5 @@
 // 
-//  APCDataSubstrate+ResearchKit.h 
+//  APCAppUser+Bridge.h
 //  APCAppCore 
 // 
 // Copyright (c) 2015, Apple Inc. All rights reserved. 
@@ -31,12 +31,22 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 // 
  
-#import "APCDataSubstrate.h"
+#import "APCAppUser.h"
+#import <BridgeSDK/BridgeSDK.h>
 
-@interface APCDataSubstrate (ResearchKit)
+@interface APCAppUser (Bridge) <SBBAuthManagerDelegateProtocol>
 
-/*********************************************************************************/
-#pragma mark - Methods meant only for Categories
-/*********************************************************************************/
+- (void) signUpOnCompletion:(void (^)(NSError * error))completionBlock;
+- (void) signInOnCompletion:(void (^)(NSError * error))completionBlock;
+- (void) signOutOnCompletion:(void (^)(NSError * error))completionBlock;
+- (void) updateProfileOnCompletion:(void (^)(NSError * error))completionBlock;
+- (void) updateCustomProfile:(SBBUserProfile*)profile onCompletion:(void (^)(NSError * error))completionBlock;
+- (void) getProfileOnCompletion:(void (^)(NSError *error))completionBlock;
+- (void) sendUserConsentedToBridgeOnCompletion: (void (^)(NSError * error))completionBlock;
+- (void) retrieveConsentOnCompletion:(void (^)(NSError *error))completionBlock;
+- (void) withdrawStudyOnCompletion:(void (^)(NSError *error))completionBlock;
+- (void) resumeStudyOnCompletion:(void (^)(NSError *error))completionBlock;
+- (void) resendEmailVerificationOnCompletion:(void (^)(NSError *))completionBlock;
+- (void) changeDataSharingTypeOnCompletion:(void (^)(NSError *))completionBlock;
 
 @end

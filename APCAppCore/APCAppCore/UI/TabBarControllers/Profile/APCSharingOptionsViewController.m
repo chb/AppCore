@@ -36,7 +36,7 @@
 #import "UIColor+APCAppearance.h"
 #import "UIFont+APCAppearance.h"
 #import "APCAppDelegate.h"
-#import "APCUser+Bridge.h"
+#import "APCAppUser+Bridge.h"
 #import "APCSpinnerViewController.h"
 #import "UIAlertController+Helper.h"
 
@@ -49,7 +49,7 @@ static NSInteger kNumberOfRows = 2;
 
 @property (nonatomic, strong) NSString *instituteLongName;
 
-@property (nonatomic, strong) APCUser *user;
+@property (nonatomic, strong) APCAppUser *user;
 
 @end
 
@@ -122,7 +122,7 @@ static NSInteger kNumberOfRows = 2;
     self.messageLabel.textColor = [UIColor appSecondaryColor1];
 }
 
-- (APCUser *) user {
+- (APCAppUser *)user {
     if (!_user) {
         _user = ((APCAppDelegate *)[UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
     }

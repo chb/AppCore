@@ -32,6 +32,7 @@
 // 
  
 #import "APCTask+Bridge.h"
+#import "APCCoreDataSubstrate.h"
 #import "APCSmartSurveyTask.h"
 #import "APCAppDelegate.h"
 #import "APCLog.h"
@@ -59,7 +60,8 @@
 
 + (void)refreshSurveysOnCompletion: (void (^)(NSError * error)) completionBlock
 {
-    NSManagedObjectContext * context = ((APCAppDelegate*)[UIApplication sharedApplication].delegate).dataSubstrate.persistentContext;
+    id<APCCoreDataSubstrate> dataSubstrate = ((APCAppDelegate*)[UIApplication sharedApplication].delegate).dataSubstrate;
+    NSManagedObjectContext *context = dataSubstrate.persistentContext;
     NSFetchRequest * request = [APCTask request];
     request.predicate = [NSPredicate predicateWithFormat:@"taskDescription == nil && taskHRef != nil"];
     [context performBlockAndWait:^{

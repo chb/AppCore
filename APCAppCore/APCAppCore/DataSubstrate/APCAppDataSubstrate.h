@@ -1,5 +1,5 @@
 // 
-//  APCDataSubstrate+CoreData.h 
+//  APCAppDataSubstrate.h
 //  APCAppCore 
 // 
 // Copyright (c) 2015, Apple Inc. All rights reserved. 
@@ -31,26 +31,64 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 // 
  
-#import "APCDataSubstrate.h"
+#import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
+#import <HealthKit/HealthKit.h>
+#import "APCCoreDataSubstrate.h"
+#import "APCAppUser.h"
 
-@interface APCDataSubstrate (CoreData)
 
-/*********************************************************************************/
+@interface APCAppDataSubstrate : NSObject <APCCoreDataSubstrate>
+
+
+#pragma mark - Initializer
+
+- (instancetype)initWithPersistentStorePath:(NSString *)storePath additionalModels:(NSManagedObjectModel *)mergedModels studyIdentifier:(NSString *)studyIdentifier;
+
+
+#pragma mark - ResearchKit Subsystem Public Properties & Passive Location Tracking
+
+@property (assign) BOOL justJoined;
+@property (strong, nonatomic) NSString *logDirectory;
+@property (nonatomic, strong) APCAppUser *currentUser;
+
+
+#pragma mark - CoreData
+
+@property (nonatomic, strong) NSString *storePath;
+@property (nonatomic, strong) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+@property (nonatomic, strong) NSManagedObjectModel *managedObjectModel;
+
+/** Main context for use in View Controllers, Fetch Results Controllers etc. */
+@property (nonatomic, strong) NSManagedObjectContext * mainContext;
+
+/** Persistent context: Parent of main context.
+ *  Please create a child context of persistentContext for any background processing tasks.
+ */
+@property (nonatomic, strong) NSManagedObjectContext * persistentContext;
+
+
 #pragma mark - Core Data Public Methods
-/*********************************************************************************/
-- (void) loadStaticTasksAndSchedules: (NSDictionary*) jsonDictionary;
-- (void) resetCoreData; //EXERCISE CAUTION IN CALLING THIS METHOD
 
-/*********************************************************************************/
-#pragma mark - Helpers - ONLY RETURNS IN NSManagedObjects in mainContext
-/*********************************************************************************/
-- (NSUInteger) countOfAllScheduledTasksForToday;
-- (NSUInteger) countOfCompletedScheduledTasksForToday;
+- (void)loadStaticTasksAndSchedules:(NSDictionary *)jsonDictionary;
+
+/** EXERCISE CAUTION IN CALLING THIS METHOD. */
+- (void)resetCoreData;
 
 
-/*********************************************************************************/
-#pragma mark - Methods meant only for Categories
-/*********************************************************************************/
-- (void) setUpCoreDataStackWithPersistentStorePath:(NSString*) storePath additionalModels: (NSManagedObjectModel*) mergedModels;
+#pragma mark - Core Data Helpers - ONLY RETURNS in NSManagedObjects in mainContext
+
+- (NSUInteger)countOfAllScheduledTasksForToday;
+- (NSUInteger)countOfCompletedScheduledTasksForToday;
+
+
+#pragma mark - HealthKit
+
+@property (nonatomic, strong) HKHealthStore *healthStore;
+
+
+#pragma mark - Parameters
+
+@property (strong, nonatomic) APCParameters *parameters;
 
 @end

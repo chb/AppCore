@@ -41,7 +41,7 @@ NSString *const kFirstTimeRefreshToday = @"FirstTimeRefreshToday";
 
 - (void) refreshFromBridgeOnCompletion: (void (^)(NSError * error)) completionBlock
 {
-    if (self.dataSubstrate.currentUser.isConsented) {
+    if (self.dataSubstrate.currentUser.isServerConsented) {
         [APCSchedule updateSchedulesOnCompletion:^(NSError *error) {
             if (!error) {
                 [self.scheduler updateScheduledTasksIfNotUpdatingWithRange:kAPCSchedulerDateRangeToday];
@@ -67,7 +67,7 @@ NSString *const kFirstTimeRefreshToday = @"FirstTimeRefreshToday";
 
 - (void) batchUploadDataToBridgeOnCompletion: (void (^)(NSError * error)) completionBlock
 {
-    if (self.dataSubstrate.currentUser.isConsented && !self.batchUploadingInProgress) {
+    if (self.dataSubstrate.currentUser.isServerConsented && !self.batchUploadingInProgress) {
         self.batchUploadingInProgress = YES;
         NSManagedObjectContext * context = self.dataSubstrate.persistentContext;
         [context performBlock:^{

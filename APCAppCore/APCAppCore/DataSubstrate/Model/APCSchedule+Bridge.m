@@ -32,6 +32,7 @@
 // 
  
 #import "APCSchedule+Bridge.h"
+#import "APCCoreDataSubstrate.h"
 #import "APCAppDelegate.h"
 #import "APCTask.h"
 #import "APCLog.h"
@@ -62,7 +63,8 @@ NSString *const kSurveyTaskViewController = @"APCGenericSurveyTaskViewController
                 SBBResourceList *list = (SBBResourceList *)schedulesList;
                 NSArray * schedules = list.items;
                 NSManagedObjectContext * context = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-                context.parentContext = ((APCAppDelegate*)[UIApplication sharedApplication].delegate).dataSubstrate.persistentContext;
+                id<APCCoreDataSubstrate> dataSubstrate = ((APCAppDelegate*)[UIApplication sharedApplication].delegate).dataSubstrate;
+                context.parentContext = dataSubstrate.persistentContext;
                 [self clearAllRemoteUpdatableSchedules:context];
                 [context performBlockAndWait:^{
                     [schedules enumerateObjectsUsingBlock:^(SBBSchedule* schedule, NSUInteger  __unused idx, BOOL * __unused stop) {

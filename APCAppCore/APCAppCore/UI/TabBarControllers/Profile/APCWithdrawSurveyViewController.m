@@ -38,7 +38,7 @@
 #import "NSBundle+Helper.h"
 #import "UIImage+APCHelper.h"
 #import "APCAppCore.h"
-#import "APCUser+Bridge.h"
+#import "APCUser.h"
 
 @interface APCWithdrawSurveyViewController ()<APCWithdrawDescriptionViewControllerDelegate>
 
@@ -92,7 +92,7 @@
     [self.selectAllLabel setFont:[UIFont appLightFontWithSize:14.0f]];
 }
 
-- (APCUser *) user {
+- (id<APCUser>)user {
     return ((APCAppDelegate *)[UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
 }
 
