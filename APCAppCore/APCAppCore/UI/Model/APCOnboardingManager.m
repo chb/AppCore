@@ -146,7 +146,7 @@ NSString * const kAPCOnboardingStoryboardName = @"APCOnboarding";
     return nil;
 }
 
-- (APCUser *)userForOnboardingTask:(APCOnboardingTask *)__unused task {
+- (id<APCUser>)userForOnboardingTask:(APCOnboardingTask *)__unused task {
     return self.user;
 }
 

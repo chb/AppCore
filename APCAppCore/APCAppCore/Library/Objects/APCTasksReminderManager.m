@@ -42,7 +42,7 @@
 #import "NSDictionary+APCAdditions.h"
 #import "NSManagedObject+APCHelper.h"
 
-#import "APCDataSubstrate.h"
+#import "APCCoreDataSubstrate.h"
 
 #import <UIKit/UIKit.h>
 
@@ -472,7 +472,8 @@ NSString * const kTaskReminderDelayMessage = @"Remind me in 1 hour";
 {
    
     APCDateRange *dateRange = [[APCDateRange alloc]initWithStartDate:[NSDate todayAtMidnight] endDate:[NSDate tomorrowAtMidnight]];
-    NSManagedObjectContext *context = ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).dataSubstrate.mainContext;
+	id<APCAppDelegateTasks> delegate = (id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate;
+    NSManagedObjectContext *context = ((id<APCCoreDataSubstrate>)delegate.dataSubstrate).mainContext;
     
     NSFetchRequest * request = [APCScheduledTask request];
     request.shouldRefreshRefetchedObjects = YES;

@@ -360,7 +360,7 @@ static NSString*    kStepIdentifierSuffixStart          = @"+X";
                 
                 if (sharingAnswer != nil)
                 {
-                    id<APCAppDelegateTasks> delegate = (id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate;
+                    //id<APCAppDelegateTasks> delegate = (id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate;
                     NSInteger selected = -1;
                     
                     if ([sharingAnswer integerValue] == 0)
