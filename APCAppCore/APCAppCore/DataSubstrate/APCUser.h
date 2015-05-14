@@ -49,36 +49,36 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (copy, nonatomic, nullable) NSString *sessionToken;
 
-@property (strong, nonatomic) NSDate *birthDate;
+@property (strong, nonatomic, nullable) NSDate *birthDate;
 
 @property (nonatomic) HKBiologicalSex biologicalSex;
 
 @property (nonatomic) HKBloodType bloodType;
 
-@property (copy, nonatomic) NSString *ethnicity;
+@property (copy, nonatomic, nullable) NSString *ethnicity;
 
 @property (strong, nonatomic, nullable) NSData *profileImage;
 
-@property (copy, nonatomic) NSNumber *homeLocationLong;
+@property (copy, nonatomic, nullable) NSNumber *homeLocationLong;
 
-@property (copy, nonatomic) NSNumber *homeLocationLat;
+@property (copy, nonatomic, nullable) NSNumber *homeLocationLat;
 
-@property (copy, nonatomic) NSString *homeLocationAddress;
+@property (copy, nonatomic, nullable) NSString *homeLocationAddress;
 
 
 #pragma mark Vitals, Conditions & Meds
 
-@property (strong, nonatomic) HKQuantity *height;
+@property (strong, nonatomic, nullable) HKQuantity *height;
 
-@property (strong, nonatomic) HKQuantity *weight;
+@property (strong, nonatomic, nullable) HKQuantity *weight;
 
-@property (strong, nonatomic) NSDate *sleepTime;
+@property (strong, nonatomic, nullable) NSDate *sleepTime;
 
-@property (strong, nonatomic) NSDate *wakeUpTime;
+@property (strong, nonatomic, nullable) NSDate *wakeUpTime;
 
-@property (copy, nonatomic) NSString *medicalConditions;
+@property (copy, nonatomic, nullable) NSString *medicalConditions;
 
-@property (copy, nonatomic) NSString *medications;
+@property (copy, nonatomic, nullable) NSString *medications;
 
 
 #pragma mark Consenting
@@ -103,9 +103,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, getter=isSecondaryInfoSaved) BOOL secondaryInfoSaved;
 
 
-- (void)signUpOnCompletion:(void(^)(NSError *error))callback;
+- (void)signUpOnCompletion:(void(^)(NSError *__nullable error))callback;
 
-- (void)withdrawStudyOnCompletion:(void (^)(NSError *error))callback;
+- (void)withdrawStudyOnCompletion:(void (^)(NSError *__nullable error))callback;
 
 @end
 
