@@ -339,7 +339,7 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
     
     //Setup AuthDelegate for SageSDK
     SBBAuthManager * manager = (SBBAuthManager*) SBBComponent(SBBAuthManager);
-    manager.authDelegate = self.dataSubstrate.currentUser;
+    manager.authDelegate = (APCAppUser *)self.dataSubstrate.currentUser;
 }
 
 - (void)loadStaticTasksAndSchedulesIfNecessary
@@ -596,7 +596,7 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
   */
 - (void)configureObserverQueries
 {
-    if (!self.dataSubstrate.currentUser.consented) {
+    if (!self.dataSubstrate.currentUser.serverConsented) {
         return;
     }
     
@@ -1193,7 +1193,7 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
 
 #pragma mark - APCOnboardingTaskDelegate methods
 
-- (APCUser *) userForOnboardingTask: (APCOnboardingTask *) __unused task
+- (id<APCUser>)userForOnboardingTask:(APCOnboardingTask *)__unused task
 {
     return self.dataSubstrate.currentUser;
 }

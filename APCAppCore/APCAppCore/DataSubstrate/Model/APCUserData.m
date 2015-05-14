@@ -1,5 +1,5 @@
 // 
-//  APCUser+UserData.m 
+//  APCUserData.m 
 //  APCAppCore 
 // 
 // Copyright (c) 2015, Apple Inc. All rights reserved. 
@@ -31,9 +31,9 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 // 
  
-#import "APCUser+UserData.h"
+#import "APCUserData.h"
 
-@implementation APCUser (UserData)
+@implementation APCUserData
 
 /***************
  Biologial Sex 
@@ -74,9 +74,9 @@
 }
 
 + (NSString *) stringValueFromSexType:(HKBiologicalSex)sexType {
-    NSArray *values = [APCUser sexTypesInStringValue];
+    NSArray *values = [APCUserData sexTypesInStringValue];
     
-    NSUInteger index = [APCUser stringIndexFromSexType:sexType];
+    NSUInteger index = [APCUserData stringIndexFromSexType:sexType];
 
     return (index == NSNotFound)? nil : values[index];
 }
@@ -105,7 +105,7 @@
     HKBloodType type = HKBloodTypeNotSet;
     
     if (stringValue.length > 0) {
-        type = [[APCUser bloodTypeInStringValues] indexOfObject:stringValue];
+        type = [[APCUserData bloodTypeInStringValues] indexOfObject:stringValue];
     }
     
     return type;

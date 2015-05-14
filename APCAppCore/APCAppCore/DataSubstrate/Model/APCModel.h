@@ -39,8 +39,8 @@
 /*********************************************************************************/
 #pragma mark - Memory Only Objects
 /*********************************************************************************/
-#import "APCUser+UserData.h"
-#import "APCUser+Bridge.h"
+#import "APCUserData.h"
+#import "APCAppUser+Bridge.h"
 
 /*********************************************************************************/
 #pragma mark - Core Data Model Objects

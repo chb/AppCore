@@ -34,7 +34,7 @@
 #import "APCEmailVerifyViewController.h"
 #import "APCAppDelegate.h"
 #import "UIAlertController+Helper.h"
-#import "APCUser+Bridge.h"
+#import "APCAppUser+Bridge.h"
 #import "UIFont+APCAppearance.h"
 #import "UIColor+APCAppearance.h"
 #import "NSError+APCAdditions.h"
@@ -66,7 +66,7 @@ static NSString * const kAPCPleaseCheckEmailAlertOkButton = @"OK";
 
 
 @interface APCEmailVerifyViewController ()
-@property (nonatomic, readonly) APCUser * user;
+@property (nonatomic, readonly) APCAppUser *user;
 @property (nonatomic, strong) UIAlertController *pleaseCheckEmailAlert;
 @property (nonatomic, weak) IBOutlet UIView *spinnerView;
 @end
@@ -80,9 +80,8 @@ static NSString * const kAPCPleaseCheckEmailAlertOkButton = @"OK";
 #pragma mark - Who are we talkin' about?
 // ---------------------------------------------------------
 
-- (APCUser *)user
-{
-    return ((APCAppDelegate*) [UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
+- (APCAppUser *)user {
+    return (APCAppUser *)((APCAppDelegate*) [UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
 }
 
 
@@ -406,7 +405,7 @@ static NSString * const kAPCPleaseCheckEmailAlertOkButton = @"OK";
     }
     else
     {
-        self.user.consented = YES;
+        self.user.serverConsented = YES;
 
         [self checkSignInOnce];
     }

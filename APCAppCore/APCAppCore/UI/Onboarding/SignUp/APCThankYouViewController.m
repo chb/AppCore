@@ -54,7 +54,7 @@
     [super didReceiveMemoryWarning];
 }
 
-- (APCUser *) user {
+- (id<APCUser>)user {
     if (!_user) {
         _user = ((APCAppDelegate*) [UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
     }

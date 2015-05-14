@@ -35,8 +35,8 @@
 #import <CoreData/CoreData.h>
 #import <HealthKit/HealthKit.h>
 #import "APCCoreDataSubstrate.h"
+#import "APCAppUser.h"
 
-@class APCUser;
 
 @interface APCAppDataSubstrate : NSObject <APCCoreDataSubstrate>
 
@@ -50,7 +50,7 @@
 
 @property (assign) BOOL justJoined;
 @property (strong, nonatomic) NSString *logDirectory;
-@property (nonatomic, strong) APCUser *currentUser;
+@property (nonatomic, strong) APCAppUser *currentUser;
 
 
 #pragma mark - CoreData

@@ -32,6 +32,7 @@
 // 
  
 #import "APCStudyOverviewCollectionViewController.h"
+#import "APCUser.h"
 #import "APCAppCore.h"
 #import "APCWebViewController.h"
 
@@ -137,7 +138,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
 {
     [super viewDidLayoutSubviews];
     
-    if ([self user].consented) {
+    if ([self user].serverConsented) {
         self.joinButtonLeadingConstraint.constant = CGRectGetWidth(self.view.frame)/2;
         [self.view layoutIfNeeded];
     }
@@ -177,7 +178,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
     return ((APCAppDelegate *)[UIApplication sharedApplication].delegate).onboarding;
 }
 
-- (APCUser *)user
+- (id<APCUser>)user
 {
     return ((APCAppDelegate*) [UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
 }

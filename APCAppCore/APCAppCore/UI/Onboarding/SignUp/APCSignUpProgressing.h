@@ -32,12 +32,13 @@
 // 
  
 @import Foundation;
+#import "APCUser.h"
 
-@class APCUser, APCStepProgressBar;
+@class APCStepProgressBar;
 
 @protocol APCSignUpProgressing <NSObject>
 
-@property (nonatomic, strong) APCUser *user;
+@property (nonatomic, strong) id<APCUser> user;
 
 @property (nonatomic, strong) APCStepProgressBar *stepProgressBar;
 

@@ -37,6 +37,7 @@
 #import "UIFont+APCAppearance.h"
 #import "APCEmailVerifyViewController.h"
 #import "UIAlertController+Helper.h"
+#import "APCAppUser+Bridge.h"
 
 static NSString * const kServerInvalidEmailErrorString = @"Invalid username or password.";
 
@@ -82,7 +83,7 @@ static NSString * const kServerInvalidEmailErrorString = @"Invalid username or p
     [self.userHandleTextField setFont:[UIFont appRegularFontWithSize:17.0f]];
     [self.userHandleTextField setTintColor:[UIColor appPrimaryColor]];
     
-    APCUser * user = [self user];
+    APCAppUser *user = [self user];
     
     self.userHandleTextField.text = user.email;
     
@@ -135,11 +136,9 @@ static NSString * const kServerInvalidEmailErrorString = @"Invalid username or p
 
 #pragma mark - Private methods
 
-- (APCUser *)user
-{
-    APCAppDelegate * appDelegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
-    APCUser * user = appDelegate.dataSubstrate.currentUser;
-    return user;
+- (APCAppUser *)user {
+    APCAppDelegate *appDelegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
+    return appDelegate.dataSubstrate.currentUser;
 }
 
 - (APCOnboarding *)onboarding
@@ -162,7 +161,7 @@ static NSString * const kServerInvalidEmailErrorString = @"Invalid username or p
         APCSpinnerViewController *spinnerController = [[APCSpinnerViewController alloc] init];
         [self presentViewController:spinnerController animated:YES completion:nil];
     
-        APCUser * user = [self user];
+        APCAppUser *user = [self user];
         
         user.email = self.userHandleTextField.text;
         
@@ -202,8 +201,7 @@ static NSString * const kServerInvalidEmailErrorString = @"Invalid username or p
                             }
                             
                         } else {
-                            user.consented = YES;
-                            user.userConsented = YES;
+                            user.serverConsented = YES;
                             [self signInSuccess];
                         }
                     }];
@@ -220,7 +218,7 @@ static NSString * const kServerInvalidEmailErrorString = @"Invalid username or p
 
 - (void)signInSuccess
 {
-    APCUser *user = [self user];
+    APCAppUser *user = [self user];
     
     [user getProfileOnCompletion:^(NSError *error) {
         APCLogError2 (error);
@@ -250,7 +248,7 @@ static NSString * const kServerInvalidEmailErrorString = @"Invalid username or p
 
 - (void)sendConsent
 {
-    APCUser *user = [self user];
+    APCAppUser *user = [self user];
     
     APCSpinnerViewController *spinnerController = [[APCSpinnerViewController alloc] init];
     [self presentViewController:spinnerController animated:YES completion:nil];
@@ -263,7 +261,7 @@ static NSString * const kServerInvalidEmailErrorString = @"Invalid username or p
                     [self handleConsentConflict];
                 }
             } else {
-                user.consented = YES;
+                user.serverConsented = YES;
                 [self signInSuccess];
             }
         }];
@@ -289,7 +287,7 @@ static NSString * const kServerInvalidEmailErrorString = @"Invalid username or p
 
 - (void)rejoinStudy
 {
-    APCUser *user = [self user];
+    APCAppUser *user = [self user];
     
     [user resumeStudyOnCompletion:^(NSError *error) {
         if (error) {
@@ -298,7 +296,7 @@ static NSString * const kServerInvalidEmailErrorString = @"Invalid username or p
             UIAlertController *alert = [UIAlertController simpleAlertWithTitle:NSLocalizedString(@"Sign In", @"") message:error.message];
             [self presentViewController:alert animated:YES completion:nil];
         } else {
-            user.consented = YES;
+            user.serverConsented = YES;
             [self signInSuccess];
         }
     }];
@@ -356,7 +354,7 @@ static NSString * const kServerInvalidEmailErrorString = @"Invalid username or p
     
     if (consentResult.signature.requiresName && (consentResult.signature.givenName && consentResult.signature.familyName))
     {
-        APCUser *user = [self user];
+        APCAppUser *user = [self user];
         user.consentSignatureName = [consentResult.signature.givenName stringByAppendingFormat:@" %@",consentResult.signature.familyName];
         user.consentSignatureImage = UIImagePNGRepresentation(consentResult.signature.signatureImage);
         

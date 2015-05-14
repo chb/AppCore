@@ -54,7 +54,7 @@
 
 - (void) appFinishedLaunching
 {
-    if (self.dataSubstrate.currentUser.isConsented) {
+    if (self.dataSubstrate.currentUser.isServerConsented) {
         [(APCAppDelegate*)[UIApplication sharedApplication].delegate setUpCollectors];
     }
     APCLogEventWithData(kAppStateChangedEvent, @{@"state":@"App Launched"});

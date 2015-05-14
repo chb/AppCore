@@ -36,6 +36,7 @@
 #import "APCOnboarding.h"
 #import "APCPasscodeViewController.h"
 #import "APCProfileViewController.h"
+#import "APCAppDataSubstrate.h"
 #import "APCConsentTask.h"
 
 extern NSUInteger   const kTheEntireDataModelOfTheApp;
@@ -48,7 +49,7 @@ extern NSUInteger   const kTheEntireDataModelOfTheApp;
 @property (strong, nonatomic) UITabBarController *tabster;
 
 //APC Related Properties & Methods
-@property (strong, nonatomic) id<APCCoreDataSubstrate> dataSubstrate;
+@property (strong, nonatomic) APCAppDataSubstrate *dataSubstrate;
 @property (strong, nonatomic) APCDataMonitor * dataMonitor;
 @property (strong, nonatomic) APCScheduler * scheduler;
 @property (strong, nonatomic) APCTasksReminderManager * tasksReminder;

@@ -32,9 +32,8 @@
 //
 
 #import "APCParameters.h"
+#import "APCUser.h"
 #import <HealthKit/HealthKit.h>
-
-@class APCUser;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -44,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @protocol APCDataSubstrate <APCParametersDelegate>
 
-@property (strong, nonatomic, readonly, nullable) APCUser *currentUser;
+@property (strong, nonatomic, readonly, nullable) id<APCUser> currentUser;
 
 @property (strong, nonatomic, readonly, nullable) APCParameters *parameters;
 

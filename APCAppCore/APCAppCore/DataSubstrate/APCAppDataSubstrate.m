@@ -33,7 +33,7 @@
  
 #import "APCAppDataSubstrate.h"
 #import "APCConstants.h"
-#import "APCUser.h"
+#import "APCAppUser.h"
 #import "APCAppDelegate.h"		// should be replaced
 #import "APCLog.h"
 
@@ -97,7 +97,7 @@ static NSString * const kErrorCantOpenDatabase_Suggestion      = (@"Unable to op
     if (!_currentUser) {
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
-            _currentUser = [[APCUser alloc] initWithContext:context];
+            _currentUser = [[APCAppUser alloc] initWithContext:context];
         });
     }
 }

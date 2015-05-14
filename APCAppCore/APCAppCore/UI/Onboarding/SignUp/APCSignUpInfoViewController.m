@@ -34,6 +34,7 @@
 #import "APCSignUpInfoViewController.h"
 #import "APCAppDelegate.h"
 #import "APCUserInfoConstants.h"
+#import "APCUser.h"
 #import "NSString+Helper.h"
 #import "UIColor+APCAppearance.h"
 #import "UIFont+APCAppearance.h"
@@ -106,11 +107,10 @@ static CGFloat const kHeaderHeight = 127.0f;
     self.stepProgressBar.leftLabel.attributedText = attributedString;
 }
 
-- (APCUser *) user {
+- (id<APCUser>)user {
     if (!_user) {
         _user = ((APCAppDelegate*) [UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
     }
-    
     return _user;
 }
 

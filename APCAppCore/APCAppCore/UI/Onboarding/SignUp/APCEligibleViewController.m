@@ -88,7 +88,7 @@ static NSString *kreturnControlOfTaskDelegate = @"returnControlOfTaskDelegate";
     return ((APCAppDelegate *)[UIApplication sharedApplication].delegate).onboarding;
 }
 
-- (APCUser *) user {
+- (id<APCUser>)user {
     return ((APCAppDelegate*) [UIApplication sharedApplication].delegate).dataSubstrate.currentUser;;
 }
 
@@ -161,7 +161,7 @@ static NSString *kreturnControlOfTaskDelegate = @"returnControlOfTaskDelegate";
         //  if no signature (no consent result) then assume the user failed the quiz
         if (consentResult != nil && consentResult.signature.requiresName && (consentResult.signature.givenName && consentResult.signature.familyName))
         {
-            APCUser *user = [self user];
+            id<APCUser> user = [self user];
             user.consentSignatureName = [consentResult.signature.givenName stringByAppendingFormat:@" %@",consentResult.signature.familyName];
             user.consentSignatureImage = UIImagePNGRepresentation(consentResult.signature.signatureImage);
             

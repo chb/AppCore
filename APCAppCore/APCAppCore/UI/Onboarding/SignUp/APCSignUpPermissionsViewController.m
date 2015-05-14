@@ -33,6 +33,7 @@
  
 #import "APCAppCore.h"
 #import "APCSignUpPermissionsViewController.h"
+#import "APCUser.h"
 #import "APCTableViewItem.h"
 #import "APCPermissionsCell.h"
 #import "NSBundle+Helper.h"
@@ -197,7 +198,7 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
     [self.navigationItem setLeftBarButtonItem:backster];
 }
 
-- (APCUser *) user {
+- (id<APCUser>)user {
     if (!_user) {
         _user = ((APCAppDelegate*) [UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
     }

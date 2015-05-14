@@ -33,8 +33,8 @@
  
 #import <Foundation/Foundation.h>
 #import <ResearchKit/ResearchKit.h>
+#import "APCUser.h"
 
-@class APCUser;
 
 FOUNDATION_EXPORT NSString *const kAPCSignUpInclusionCriteriaStepIdentifier;
 FOUNDATION_EXPORT NSString *const kAPCSignUpEligibleStepIdentifier;
@@ -58,7 +58,7 @@ FOUNDATION_EXPORT NSString *const kAPCSignUpPermissionsPrimingStepIdentifier;
 
 @property (nonatomic) BOOL customStepIncluded;
 
-@property (nonatomic) APCUser *user;
+@property (nonatomic) id<APCUser> user;
 
 /**
  *  When the list of Services required in zero, we can skip
@@ -95,7 +95,7 @@ FOUNDATION_EXPORT NSString *const kAPCSignUpPermissionsPrimingStepIdentifier;
 
 @protocol APCOnboardingTaskDelegate <NSObject>
 
-- (APCUser *)userForOnboardingTask:(APCOnboardingTask *)task;
+- (id<APCUser>)userForOnboardingTask:(APCOnboardingTask *)task;
 
 - (NSInteger)numberOfServicesInPermissionsListForOnboardingTask:(APCOnboardingTask *)task;
 

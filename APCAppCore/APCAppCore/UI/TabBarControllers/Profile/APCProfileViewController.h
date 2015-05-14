@@ -32,13 +32,14 @@
 // 
  
 #import "APCUserInfoViewController.h"
+#import "APCAppUser.h"
 
 
 @protocol APCProfileViewControllerDelegate;
 
 @interface APCProfileViewController : APCUserInfoViewController <APCPickerTableViewCellDelegate, APCTextFieldTableViewCellDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate,UITextFieldDelegate, APCSwitchTableViewCellDelegate>
 
-@property (nonatomic, strong) APCUser *user;
+@property (nonatomic, strong) APCAppUser *user;
 
 @property (weak, nonatomic) IBOutlet UIView *headerView;
 

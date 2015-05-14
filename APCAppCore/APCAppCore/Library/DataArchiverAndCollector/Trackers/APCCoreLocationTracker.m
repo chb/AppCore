@@ -110,7 +110,7 @@ static NSString *kLon = @"lon";
 {
     if (_homeLocationStatus == APCPassiveLocationTrackingHomeLocationAvailable)
     {
-        APCUser  *user = ((APCAppDelegate *)[UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
+        id<APCUser> user = ((APCAppDelegate *)[UIApplication sharedApplication].delegate).dataSubstrate.currentUser;
         CLLocationDegrees homeLocationLatitude  = [user.homeLocationLat doubleValue];
         CLLocationDegrees homeLocationLongitude = [user.homeLocationLong doubleValue];
         _baseTrackingLocation = [[CLLocation alloc] initWithLatitude:homeLocationLatitude longitude:homeLocationLongitude];

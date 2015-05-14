@@ -1,5 +1,5 @@
 // 
-//  APCUser.m 
+//  APCAppUser.m
 //  APCAppCore 
 // 
 // Copyright (c) 2015, Apple Inc. All rights reserved. 
@@ -31,7 +31,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 // 
  
-#import "APCUser.h"
+#import "APCAppUser.h"
 #import "APCCoreDataSubstrate.h"
 #import "APCStoredUserData.h"
 #import "APCAppDelegate.h"
@@ -83,7 +83,7 @@ static NSString *const kConsentSignatureImagePropertyName = @"consentSignatureIm
 static NSString *const kSignedUpKey = @"SignedUp";
 static NSString *const kSignedInKey = @"SignedIn";
 
-@interface APCUser ()
+@interface APCAppUser ()
 {
     NSDate *_birthDate;
     HKBiologicalSex _biologicalSex;
@@ -93,7 +93,7 @@ static NSString *const kSignedInKey = @"SignedIn";
 @end
 
 
-@implementation APCUser
+@implementation APCAppUser
 
 /*********************************************************************************/
 #pragma mark - Initialization Methods
@@ -117,7 +117,7 @@ static NSString *const kSignedInKey = @"SignedIn";
             SignedUp? :%@\n\
             UserConsented? : %@\n\
             LoggedIn? :%@\n\
-            serverConsented? : %@\n\
+            ServerConsented? : %@\n\
             -----------------------\n\
             Medical Conditions : %@\n\
             Medications : %@\n\
@@ -129,7 +129,7 @@ static NSString *const kSignedInKey = @"SignedIn";
             Home Address : %@ \n\
             Home Location Lat : %@ \n\
             Home Location Long : %@ \n\
-            ", self.name, self.email, self.birthDate, (int) self.biologicalSex, @(self.isSignedUp), @(self.isUserConsented), @(self.isSignedIn), @(self.isConsented), self.medicalConditions, self.medications, (int) self.bloodType, self.height, self.weight, self.wakeUpTime, self.sleepTime, self.homeLocationAddress, self.homeLocationLat, self.homeLocationLong];
+            ", self.name, self.email, self.birthDate, (int) self.biologicalSex, @(self.isSignedUp), @(self.isUserConsented), @(self.isSignedIn), @(self.isServerConsented), self.medicalConditions, self.medications, (int) self.bloodType, self.height, self.weight, self.wakeUpTime, self.sleepTime, self.homeLocationAddress, self.homeLocationLat, self.homeLocationLong];
 }
 
 - (void)loadStoredUserData:(NSManagedObjectContext *)context
@@ -161,7 +161,7 @@ static NSString *const kSignedInKey = @"SignedIn";
     _birthDate = [storedUserData.birthDate copy];
     _biologicalSex = (HKBiologicalSex)[storedUserData.biologicalSex integerValue];
     _bloodType = (HKBloodType) [storedUserData.bloodType integerValue];
-    _consented = [storedUserData.serverConsented boolValue];
+    _serverConsented = [storedUserData.serverConsented boolValue];
     _userConsented = [storedUserData.userConsented boolValue];
     _medicalConditions = [storedUserData.medicalConditions copy];
     _medications = [storedUserData.medications copy];
@@ -331,9 +331,9 @@ static NSString *const kSignedInKey = @"SignedIn";
     [self updateStoredProperty:kProfileImagePropertyName withValue:profileImage];
 }
 
-- (void)setConsented:(BOOL)consented
+- (void)setServerConsented:(BOOL)consented
 {
-    _consented = consented;
+    _serverConsented = consented;
     [self updateStoredProperty:kConsentedPropertyName withValue:@(consented)];
     if (consented) {
         [[NSNotificationCenter defaultCenter] postNotificationName:APCUserDidConsentNotification object:nil];

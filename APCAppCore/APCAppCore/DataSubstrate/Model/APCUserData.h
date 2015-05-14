@@ -1,5 +1,5 @@
 // 
-//  APCUser+Bridge.h 
+//  APCUserData.h
 //  APCAppCore 
 // 
 // Copyright (c) 2015, Apple Inc. All rights reserved. 
@@ -31,22 +31,45 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 // 
  
-#import "APCUser.h"
-#import <BridgeSDK/BridgeSDK.h>
+#import <Foundation/Foundation.h>
+#import <HealthKit/HealthKit.h>
 
-@interface APCUser (Bridge) <SBBAuthManagerDelegateProtocol>
+@interface APCUserData : NSObject 
 
-- (void) signUpOnCompletion:(void (^)(NSError * error))completionBlock;
-- (void) signInOnCompletion:(void (^)(NSError * error))completionBlock;
-- (void) signOutOnCompletion:(void (^)(NSError * error))completionBlock;
-- (void) updateProfileOnCompletion:(void (^)(NSError * error))completionBlock;
-- (void) updateCustomProfile:(SBBUserProfile*)profile onCompletion:(void (^)(NSError * error))completionBlock;
-- (void) getProfileOnCompletion:(void (^)(NSError *error))completionBlock;
-- (void) sendUserConsentedToBridgeOnCompletion: (void (^)(NSError * error))completionBlock;
-- (void) retrieveConsentOnCompletion:(void (^)(NSError *error))completionBlock;
-- (void) withdrawStudyOnCompletion:(void (^)(NSError *error))completionBlock;
-- (void) resumeStudyOnCompletion:(void (^)(NSError *error))completionBlock;
-- (void) resendEmailVerificationOnCompletion:(void (^)(NSError *))completionBlock;
-- (void) changeDataSharingTypeOnCompletion:(void (^)(NSError *))completionBlock;
+/* Biologcal Sex */
++ (NSArray *) sexTypesInStringValue;
+
++ (HKBiologicalSex)sexTypeForIndex:(NSInteger)index;
+
++ (HKBiologicalSex) sexTypeFromStringValue:(NSString *)stringValue;
+
++ (NSString *) stringValueFromSexType:(HKBiologicalSex)sexType;
+
++ (NSUInteger) stringIndexFromSexType:(HKBiologicalSex)sexType;
+
+
+/*Blood Type */
++ (NSArray *) bloodTypeInStringValues;
+
++ (HKBloodType) bloodTypeFromStringValue:(NSString *)stringValue;
+
+
++ (NSArray *) medicalConditions;
+
++ (NSArray *) medications;
+
+/* Height */
++ (NSArray *) heights;
+
++ (double)heightInInchesForSelectedIndices:(NSArray *)selectedIndices;
+
++ (double)heightInInches:(HKQuantity *)height;
+
++ (double)heightInMeters:(HKQuantity *)height;
+
+
++ (double)weightInPounds:(HKQuantity *)weight;
+
++ (double)weightInKilograms:(HKQuantity *)weight;
 
 @end
