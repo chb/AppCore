@@ -36,7 +36,6 @@
 #import "APCUtilities.h"
 #import "APCConstants.h"
 #import "APCAllSetTableViewCell.h"
-//#import "APCDemographicUploader.h"
 
 static NSString *kAllSetCellIdentifier = @"AllSetCell";
 
@@ -67,11 +66,8 @@ typedef NS_ENUM(NSUInteger, APCAllSetRows)
     
     [self configureTextBlocks];
     
-//    self.demographicUploader = [[APCDemographicUploader alloc] init];
-//    [self.demographicUploader uploadNonIdentifiableDemographicData];
-	
 //    [(APCAppDelegate *)[UIApplication sharedApplication].delegate configureObserverQueries];
-	
+    
     [self.tableView reloadData];
 }
 

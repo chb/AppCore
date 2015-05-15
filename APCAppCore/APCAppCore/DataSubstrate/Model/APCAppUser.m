@@ -129,7 +129,7 @@ static NSString *const kSignedInKey = @"SignedIn";
             Home Address : %@ \n\
             Home Location Lat : %@ \n\
             Home Location Long : %@ \n\
-            ", self.name, self.email, self.birthDate, (int) self.biologicalSex, @(self.isSignedUp), @(self.isUserConsented), @(self.isSignedIn), @(self.isServerConsented), self.medicalConditions, self.medications, (int) self.bloodType, self.height, self.weight, self.wakeUpTime, self.sleepTime, self.homeLocationAddress, self.homeLocationLat, self.homeLocationLong];
+            ", self.name, self.email, self.birthDate, (int) self.biologicalSex, @(self.signedUp), @(self.userConsented), @(self.signedIn), @(self.serverConsented), self.medicalConditions, self.medications, (int) self.bloodType, self.height, self.weight, self.wakeUpTime, self.sleepTime, self.homeLocationAddress, self.homeLocationLat, self.homeLocationLong];
 }
 
 - (void)loadStoredUserData:(NSManagedObjectContext *)context
@@ -574,7 +574,7 @@ static NSString *const kSignedInKey = @"SignedIn";
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (BOOL)isSignedUp
+- (BOOL)signedUp
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:kSignedUpKey];
 }
@@ -585,14 +585,14 @@ static NSString *const kSignedInKey = @"SignedIn";
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (BOOL)isSignedIn
+- (BOOL)signedIn
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:kSignedInKey];
 }
 
 - (BOOL)isLoggedOut
 {
-    return self.email.length && !self.isSignedIn && !self.isSignedUp;
+    return self.email.length && !self.signedIn && !self.signedUp;
 }
 
 @end

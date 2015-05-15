@@ -62,8 +62,8 @@
 @property (nonatomic) NSNumber *sharedOptionSelection;
 @property (nonatomic, strong) NSData *profileImage;
 
-@property (nonatomic, getter=isServerConsented) BOOL serverConsented; //Confirmation that server is consented. Should be used in the app to test for user consent.
-@property (nonatomic, getter=isUserConsented) BOOL userConsented; //User has consented though not communicated to the server.
+@property (nonatomic) BOOL serverConsented; //Confirmation that server is consented. Should be used in the app to test for user consent.
+@property (nonatomic) BOOL userConsented; //User has consented though not communicated to the server.
 
 @property (nonatomic, strong) NSDate * taskCompletion;
 @property (nonatomic) NSInteger hasHeartDisease;
@@ -88,7 +88,7 @@
 @property (nonatomic, strong) NSDate *consentSignatureDate;
 @property (nonatomic, strong) NSData *consentSignatureImage;
 
-@property (nonatomic, getter=isSecondaryInfoSaved) BOOL secondaryInfoSaved;
+@property (nonatomic) BOOL secondaryInfoSaved;
 
 /*********************************************************************************/
 #pragma mark - Simulated Properties using HealthKit
@@ -105,8 +105,8 @@
 /*********************************************************************************/
 #pragma mark - NSUserDefaults Simulated Properties
 /*********************************************************************************/
-@property (nonatomic, getter=isSignedUp) BOOL signedUp;
-@property (nonatomic, getter=isSignedIn) BOOL signedIn;
+@property (nonatomic) BOOL signedUp;
+@property (nonatomic) BOOL signedIn;
 
 - (BOOL) isLoggedOut;
 
