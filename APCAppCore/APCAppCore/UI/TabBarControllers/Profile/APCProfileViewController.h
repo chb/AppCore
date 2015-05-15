@@ -34,6 +34,7 @@
 #import "APCUserInfoViewController.h"
 #import "APCAppUser.h"
 
+@class APCUser;
 
 @protocol APCProfileViewControllerDelegate;
 

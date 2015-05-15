@@ -33,6 +33,7 @@
  
 #import "APCEligibleViewController.h"
 #import "APCConsentTaskViewController.h"
+#import "APCConsentTask.h"
 #import "APCOnboardingManager.h"
 #import "APCConstants.h"
 #import "APCLog.h"
@@ -165,16 +166,45 @@ static NSString *kreturnControlOfTaskDelegate = @"returnControlOfTaskDelegate";
         }
         
         //  if no signature (no consent result) then assume the user failed the quiz
-        if (consentResult != nil && consentResult.signature.requiresName && (consentResult.signature.givenName && consentResult.signature.familyName))
-        {
+        if (consentResult != nil && consentResult.signature.requiresName && (consentResult.signature.givenName && consentResult.signature.familyName)) {
             id<APCUser> user = [self user];
-            user.consentSignatureName = [consentResult.signature.givenName stringByAppendingFormat:@" %@",consentResult.signature.familyName];
-            user.consentSignatureImage = UIImagePNGRepresentation(consentResult.signature.signatureImage);
             
+            // extract the user's sharing choice
+            APCConsentTask *task = self.consentVC.task;
+            ORKConsentSharingStep *sharingStep = task.sharingStep;
+            
+            for (ORKStepResult* result in taskViewController.result.results) {
+                if ([result.identifier isEqualToString:sharingStep.identifier]) {
+                    for (ORKChoiceQuestionResult *choice in result.results) {
+                        if ([choice isKindOfClass:[ORKChoiceQuestionResult class]]) {
+                            NSNumber *answer = [choice.choiceAnswers firstObject];
+                            if ([answer isKindOfClass:[NSNumber class]]) {
+                                if (0 == answer.integerValue) {
+                                    user.sharingScope = APCUserConsentSharingScopeStudy;
+                                }
+                                else if (1 == answer.integerValue) {
+                                    user.sharingScope = APCUserConsentSharingScopeAll;
+                                }
+                                else {
+                                    APCLogDebug(@"Unknown sharing choice answer: %@", answer);
+                                }
+                            }
+                            else {
+                                APCLogDebug(@"Unknown sharing choice answer(s): %@", choice.choiceAnswers);
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+            
+            // retrieve consent signature and date
             NSDateFormatter *dateFormatter = [NSDateFormatter new];
             dateFormatter.dateFormat = consentResult.signature.signatureDateFormatString;
             user.consentSignatureDate = [dateFormatter dateFromString:consentResult.signature.signatureDate];
-            [self user].userConsented = YES;
+            user.consentSignatureName = [consentResult.signature.givenName stringByAppendingFormat:@" %@",consentResult.signature.familyName];
+            user.consentSignatureImage = UIImagePNGRepresentation(consentResult.signature.signatureImage);
+            user.userConsented = YES;
             
             [self.consentVC dismissViewControllerAnimated:YES completion:^{
                 [self startSignUp];

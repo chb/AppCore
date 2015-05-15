@@ -105,8 +105,8 @@ static NSString*    kStepIdentifierSuffixStart          = @"+X";
 @property (nonatomic, copy)   NSString*         investigatorLongDescription;
 @property (nonatomic, copy)   NSString*         sharingHtmlLearnMoreContent;
 
-@property (nonatomic, strong) ORKConsentSharingStep*  sharingStep;
-@property (nonatomic, strong) ORKVisualConsentStep*   visualStep;
+@property (nonatomic, strong, readwrite) ORKConsentSharingStep *sharingStep;
+@property (nonatomic, strong) ORKVisualConsentStep *visualStep;
 
 @property (nonatomic, strong) ORKStep*   lastQuestionStep;
 @property (nonatomic, strong) ORKStep*   resultQuestionStep;
@@ -348,34 +348,6 @@ static NSString*    kStepIdentifierSuffixStart          = @"+X";
     }
     else if ([step.identifier isEqualToString:kSharingTag])
     {
-        // Check for the sharing options answer and set the answer in the data model
-        ORKStepResult*  sharingStep = [result stepResultForStepIdentifier:kSharingTag];
-        if (sharingStep != nil)
-        {
-            NSArray *resultsOfSharingStep = [sharingStep results];
-            
-            if ([resultsOfSharingStep firstObject])
-            {
-                NSNumber*   sharingAnswer = [[[resultsOfSharingStep firstObject] choiceAnswers] firstObject];
-                
-                if (sharingAnswer != nil)
-                {
-                    //id<APCAppDelegateTasks> delegate = (id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate;
-                    NSInteger selected = -1;
-                    
-                    if ([sharingAnswer integerValue] == 0)
-                    {
-                        selected = 1;		// TODO: this represents Sage's `SBBConsentShareScopeStudy`, as defined in SBBConsentManager.h
-                    }
-                    else if ([sharingAnswer integerValue] == 1)
-                    {
-                        selected = 2;		// TODO: this represents `SBBConsentShareScopeAll`, as defined in SBBConsentManager.h. Find a better way to define these
-                    }
-                    
-                    //delegate.dataSubstrate.currentUser.sharedOptionSelection = @(selected);
-                }
-            }
-        }
         nextStep = findNextStep();
     }
     else if ([step.identifier isEqualToString:kSuccessMessageTag])

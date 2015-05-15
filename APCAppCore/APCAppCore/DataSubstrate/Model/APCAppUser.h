@@ -59,6 +59,7 @@
 /*********************************************************************************/
 #pragma mark - Stored Properties in Core Data
 /*********************************************************************************/
+@property (nonatomic) APCUserConsentSharingScope sharingScope;      // NOT stored to CoreData, reflected in "sharedOptionSelection"
 @property (nonatomic) NSNumber *sharedOptionSelection;
 @property (nonatomic, strong) NSData *profileImage;
 

@@ -36,6 +36,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSInteger, APCUserConsentSharingScope) {
+	APCUserConsentSharingScopeNone = 0,
+	APCUserConsentSharingScopeStudy,
+	APCUserConsentSharingScopeAll,
+};
+
+
 @protocol APCUser <NSObject>
 
 
@@ -82,6 +89,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 #pragma mark Consenting
+
+@property (nonatomic) APCUserConsentSharingScope sharingScope;      // NOT stored to CoreData, reflected in "sharedOptionSelection"
 
 @property (nonatomic) BOOL userConsented;
 
