@@ -273,12 +273,12 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
 - (BOOL)application:(UIApplication *) __unused application shouldSaveApplicationState:(NSCoder *) __unused coder
 {
     [[UIApplication sharedApplication] ignoreSnapshotOnNextApplicationLaunch];
-    return self.dataSubstrate.currentUser.isSignedIn;
+    return self.dataSubstrate.currentUser.signedIn;
 }
 
 - (BOOL)application:(UIApplication *) __unused application shouldRestoreApplicationState:(NSCoder *) __unused coder
 {
-    return self.dataSubstrate.currentUser.isSignedIn;
+    return self.dataSubstrate.currentUser.signedIn;
 }
 
 - (UIViewController *)application:(UIApplication *) __unused application viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *) __unused coder
@@ -1091,11 +1091,11 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
     {
         [self showCatastrophicStartupError];
     }
-    else if (self.dataSubstrate.currentUser.isSignedIn)
+    else if (self.dataSubstrate.currentUser.signedIn)
     {
         [self showTabBar];
     }
-    else if (self.dataSubstrate.currentUser.isSignedUp)
+    else if (self.dataSubstrate.currentUser.signedUp)
     {
         [self showNeedsEmailVerification];
     }
@@ -1107,7 +1107,7 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
 
 - (void)showPasscodeIfNecessary
 {
-    if (self.dataSubstrate.currentUser.isSignedIn && !self.isPasscodeShowing) {
+    if (self.dataSubstrate.currentUser.signedIn && !self.isPasscodeShowing) {
         NSDate *lastUsedTime = [[NSUserDefaults standardUserDefaults] objectForKey:kLastUsedTimeKey];
         
         if (lastUsedTime) {

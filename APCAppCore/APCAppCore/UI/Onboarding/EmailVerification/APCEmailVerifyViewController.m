@@ -386,7 +386,7 @@ static NSString * const kAPCPleaseCheckEmailAlertOkButton = @"OK";
 {
     __weak APCEmailVerifyViewController * weakSelf = self;
 
-    if (self.user.isUserConsented) {
+    if (self.user.userConsented) {
         [self.user sendUserConsentedToBridgeOnCompletion: ^(NSError *error) {
             [weakSelf handleConsentResponseWithError: error];
         }];

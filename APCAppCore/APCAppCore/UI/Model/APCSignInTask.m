@@ -53,7 +53,7 @@ static NSInteger const kMinimumNumberOfSteps = 2; //MedicalInfo + Passcode
     } else if ([step.identifier isEqualToString:kAPCSignInStepIdentifier]) {
         nextStep = self.permissionsPrimingStep;
     } else if ([step.identifier isEqualToString:kAPCSignUpPermissionsPrimingStepIdentifier]) {
-        if (self.user.isSecondaryInfoSaved) {
+        if (self.user.secondaryInfoSaved) {
             nextStep = nil;
         } else{
             nextStep = self.medicalInfoStep;

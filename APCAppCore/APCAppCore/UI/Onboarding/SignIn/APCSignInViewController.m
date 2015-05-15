@@ -224,7 +224,7 @@ static NSString * const kServerInvalidEmailErrorString = @"Invalid username or p
         APCLogError2 (error);
     }];
     
-    if (user.isSecondaryInfoSaved) {
+    if (user.secondaryInfoSaved) {
         user.signedIn = YES;
     } else{
         UIViewController *viewController = [[self onboarding] nextScene];

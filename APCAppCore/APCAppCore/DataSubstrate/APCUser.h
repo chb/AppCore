@@ -83,9 +83,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Consenting
 
-@property (nonatomic, getter=isUserConsented) BOOL userConsented;
+@property (nonatomic) BOOL userConsented;
 
-@property (nonatomic, getter=isServerConsented) BOOL serverConsented;
+@property (nonatomic) BOOL serverConsented;
 
 @property (strong, nonatomic, nullable) NSDate *consentSignatureDate;
 
@@ -96,11 +96,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Signup/Signin
 
-@property (nonatomic, getter=isSignedUp) BOOL signedUp;
+@property (nonatomic) BOOL signedUp;
 
-@property (nonatomic, getter=isSignedIn) BOOL signedIn;
+@property (nonatomic) BOOL signedIn;
 
-@property (nonatomic, getter=isSecondaryInfoSaved) BOOL secondaryInfoSaved;
+@property (nonatomic) BOOL secondaryInfoSaved;
 
 
 - (void)signUpOnCompletion:(void(^)(NSError *__nullable error))callback;
