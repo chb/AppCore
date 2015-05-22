@@ -406,6 +406,7 @@ static NSString * const kAPCPleaseCheckEmailAlertOkButton = @"OK";
     else
     {
         self.user.serverConsented = YES;
+        [[NSNotificationCenter defaultCenter] postNotificationName:APCUserDidConsentNotification object:nil];
 
         [self checkSignInOnce];
     }
@@ -420,6 +421,7 @@ static NSString * const kAPCPleaseCheckEmailAlertOkButton = @"OK";
 - (IBAction) skip: (id) __unused sender
 {
     self.user.signedIn = YES;
+    [[NSNotificationCenter defaultCenter] postNotificationName:APCUserSignedInNotification object:self];
 }
 
 - (IBAction) changeEmailAddress: (id) __unused sender
@@ -430,6 +432,7 @@ static NSString * const kAPCPleaseCheckEmailAlertOkButton = @"OK";
 - (IBAction) secretButton: (id) __unused sender
 {
     self.user.signedIn = YES;
+    [[NSNotificationCenter defaultCenter] postNotificationName:APCUserSignedInNotification object:self];
 }
 
 - (IBAction) resendEmail: (id) __unused sender

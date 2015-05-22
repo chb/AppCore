@@ -228,10 +228,12 @@ static NSString * const kServerInvalidEmailErrorString = @"Invalid username or p
     
     if (user.secondaryInfoSaved) {
         user.signedIn = YES;
+        [[NSNotificationCenter defaultCenter] postNotificationName:APCUserSignedInNotification object:self];
     } else{
         UIViewController *viewController = [[self onboarding] nextScene];
         [self.navigationController pushViewController:viewController animated:YES];
     }
+    [[NSNotificationCenter defaultCenter] postNotificationName:APCUserDidConsentNotification object:nil];
 }
 
 - (void)showConsent
@@ -375,7 +377,7 @@ static NSString * const kServerInvalidEmailErrorString = @"Invalid username or p
     {
         [taskViewController dismissViewControllerAnimated:YES completion:^
          {
-             [[NSNotificationCenter defaultCenter] postNotificationName:APCConsentCompletedWithDisagreeNotification object:nil];
+             [[NSNotificationCenter defaultCenter] postNotificationName:APCUserDidDeclineConsentNotification object:nil];
          }];
     }
 }
