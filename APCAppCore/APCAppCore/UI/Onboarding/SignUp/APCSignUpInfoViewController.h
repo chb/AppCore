@@ -55,6 +55,6 @@
 
 - (void)setupAppearance;
 
-- (IBAction)next:(id)sender;
+- (id<APCUser>)user;
 
 @end
