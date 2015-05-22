@@ -75,9 +75,9 @@ typedef NS_ENUM(NSInteger, APCUserConsentSharingScope) {
 
 #pragma mark Vitals, Conditions & Meds
 
-@property (strong, nonatomic, nullable) HKQuantity *height;
+@property (strong, nonatomic, nullable) HKQuantity *bodyheight;
 
-@property (strong, nonatomic, nullable) HKQuantity *weight;
+@property (strong, nonatomic, nullable) HKQuantity *bodyweight;
 
 @property (strong, nonatomic, nullable) NSDate *sleepTime;
 
