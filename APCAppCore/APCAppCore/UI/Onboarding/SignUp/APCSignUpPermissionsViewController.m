@@ -46,8 +46,6 @@
 #import "UIView+Helper.h"
 #import "UIAlertController+Helper.h"
 
-#import "APCAppDelegateTasks.h"
-
 #import <CoreMotion/CoreMotion.h>
 
 static CGFloat const kTableViewRowHeight                 = 200.0f;
@@ -84,7 +82,7 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
 - (void)sharedInit
 {
     self.permissions = [NSMutableArray array];
-    self.permissionsManager = [(id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate onboardingManager].permissionsManager;
+    self.permissionsManager = [self onboardingManager].permissionsManager;
 }
 
 #pragma mark - Lifecycle
@@ -122,10 +120,6 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
 - (NSArray *)prepareData
 {
     NSMutableArray *items = [NSMutableArray new];
-    
-    NSDictionary *initialOptions = ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).initializationOptions;
-    NSDictionary *servicesDescrtiptions = initialOptions[kAppServicesDescriptionsKey];
-    
     for (NSNumber *type in _permissionsManager.requiredServiceTypes) {
         
         APCSignUpPermissionsType permissionType = type.integerValue;
@@ -137,7 +131,7 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
                 item.permissionType = kAPCSignUpPermissionsTypeHealthKit;
                 item.permissionGranted = [self.permissionsManager isPermissionsGrantedForType:item.permissionType];
                 item.caption = NSLocalizedString(@"Health Kit", @"");
-                item.detailText = servicesDescrtiptions[@(kAPCSignUpPermissionsTypeHealthKit)];
+                item.detailText = [_permissionsManager permissionDescriptionForType:kAPCSignUpPermissionsTypeHealthKit];
                 [items addObject:item];
             }
                 break;
@@ -147,7 +141,7 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
                 item.permissionType = kAPCSignUpPermissionsTypeLocation;
                 item.permissionGranted = [self.permissionsManager isPermissionsGrantedForType:item.permissionType];
                 item.caption = NSLocalizedString(@"Location Services", @"");
-                item.detailText = servicesDescrtiptions[@(kAPCSignUpPermissionsTypeLocation)];
+                item.detailText = [_permissionsManager permissionDescriptionForType:kAPCSignUpPermissionsTypeLocation];
                 [items addObject:item];
             }
                 break;
@@ -158,7 +152,7 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
                     item.permissionType = kAPCSignUpPermissionsTypeCoremotion;
                     item.permissionGranted = [self.permissionsManager isPermissionsGrantedForType:item.permissionType];
                     item.caption = NSLocalizedString(@"Motion Activity", @"");
-                    item.detailText = servicesDescrtiptions[@(kAPCSignUpPermissionsTypeCoremotion)];
+                    item.detailText = [_permissionsManager permissionDescriptionForType:kAPCSignUpPermissionsTypeCoremotion];
                     [items addObject:item];
                 }
             }
@@ -169,7 +163,7 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
                 item.permissionType = kAPCSignUpPermissionsTypeLocalNotifications;
                 item.permissionGranted = [self.permissionsManager isPermissionsGrantedForType:item.permissionType];
                 item.caption = NSLocalizedString(@"Notifications", @"");
-                item.detailText = servicesDescrtiptions[@(kAPCSignUpPermissionsTypeLocalNotifications)];
+                item.detailText = [_permissionsManager permissionDescriptionForType:kAPCSignUpPermissionsTypeLocalNotifications];
                 [items addObject:item];
             }
                 break;
@@ -179,7 +173,7 @@ static CGFloat const kTableViewRowHeight                 = 200.0f;
                 item.permissionType = kAPCSignUpPermissionsTypeMicrophone;
                 item.permissionGranted = [self.permissionsManager isPermissionsGrantedForType:item.permissionType];
                 item.caption = NSLocalizedString(@"Microphone", @"");
-                item.detailText = servicesDescrtiptions[@(kAPCSignUpPermissionsTypeMicrophone)];
+                item.detailText = [_permissionsManager permissionDescriptionForType:kAPCSignUpPermissionsTypeMicrophone];
                 [items addObject:item];
             }
                 break;
