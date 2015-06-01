@@ -978,11 +978,6 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
     return nil;
 }
 
-- (NSInteger)numberOfServicesInPermissionsList {
-    NSArray *servicesArray = self.initializationOptions[kAppServicesListRequiredKey];
-    return [servicesArray count];
-}
-
 
 - (ORKTaskViewController *)consentViewController
 {
