@@ -45,13 +45,12 @@
 #import "APCTableViewItem.h"
 #import "APCConsentManager.h"
 #import "APCTasksReminderManager.h"
+#import "APCOnboardingManager.h"
 #import "APCUserInfoConstants.h"
-#import "APCTasksReminderManager.h"
 #import "APCDataSubstrate.h"
 #import "APCConstants.h"
 #import "APCUtilities.h"
 #import "APCUser.h"
-#import "APCTasksReminderManager.h"
 #import "APCLog.h"
 
 #ifndef APC_HAVE_CONSENT
@@ -71,12 +70,10 @@
 #import "APCDemographicUploader.h"
 
 #import <ResearchKit/ResearchKit.h>
-#import <BridgeSDK/BridgeSDK.h>
 
 // the following dependencies should be removed when refactoring
-//#import "APCAppDelegate.h"
-//#import "APCUser+Bridge.h"
-//#import <BridgeSDK/BridgeSDK.h>
+#import <BridgeSDK/BridgeSDK.h>
+
 
 static CGFloat const kSectionHeaderHeight = 40.f;
 static CGFloat const kStudyDetailsViewHeightConstant = 48.f;
@@ -409,8 +406,8 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
 
 - (NSArray *)prepareContent
 {
-	NSDictionary *initialOptions = nil;//((APCAppDelegate *)[UIApplication sharedApplication].delegate).initializationOptions;
-    NSArray *profileElementsList = initialOptions[kAppProfileElementsListKey];
+    APCOnboardingManager *manager = [(id<APCOnboardingManagerProvider>)[[UIApplication sharedApplication] delegate] onboardingManager];
+    NSArray *profileElementsList = manager.userProfileElements;
     
     NSMutableArray *items = [NSMutableArray new];
     
@@ -761,8 +758,8 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
             row.item = field;
             row.itemType = kAPCSettingsItemTypeSharingOptions;
             [rowItems addObject:row];
-//        }
-		
+        }
+        
         APCTableViewSection *section = [APCTableViewSection new];
         section.rows = [NSArray arrayWithArray:rowItems];
         [items addObject:section];
