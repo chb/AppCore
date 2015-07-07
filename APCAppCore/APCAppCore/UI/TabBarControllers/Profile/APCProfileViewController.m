@@ -46,6 +46,7 @@
 #import "APCConsentManager.h"
 #import "APCTasksReminderManager.h"
 #import "APCOnboardingManager.h"
+#import "APCAppDelegateTasks.h"
 #import "APCUserInfoConstants.h"
 #import "APCDataSubstrate.h"
 #import "APCConstants.h"
@@ -113,8 +114,8 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
     NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
     self.versionLabel.text = [NSString stringWithFormat:@"Version: %@ (Build %@)", version, build];
     
-    APCAppDelegate *appDelegate = (APCAppDelegate *)[UIApplication sharedApplication].delegate;
-    APCUser  *user = appDelegate.dataSubstrate.currentUser;
+    id<APCAppDelegateTasks> appDelegate = (id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate;
+    id<APCUser> user = appDelegate.dataSubstrate.currentUser;
     self.demographicUploader = [[APCDemographicUploader alloc] initWithUser:user];
 }
 
@@ -1545,7 +1546,7 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
     
     UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:webViewController];
     [self.navigationController presentViewController:navController animated:YES completion:^{
-        [webViewController.webview loadRequest:request];
+        [webViewController.webView loadRequest:request];
     }];
 }
 
@@ -1566,12 +1567,12 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
             APCWebViewController *webViewController = [[UIStoryboard storyboardWithName:@"APCOnboarding" bundle:[NSBundle appleCoreBundle]] instantiateViewControllerWithIdentifier:@"APCWebViewController"];
             NSString *filePath = [[NSBundle mainBundle] pathForResource:@"consent" ofType:@"pdf"];
             NSData *data = [NSData dataWithContentsOfFile:filePath];
-            [webViewController.webview setDataDetectorTypes:UIDataDetectorTypeAll];
+            [webViewController.webView setDataDetectorTypes:UIDataDetectorTypeAll];
             webViewController.title = NSLocalizedString(@"Consent", @"Consent");
             
             UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:webViewController];
             [weakSelf.navigationController presentViewController:navController animated:YES completion:^{
-                [webViewController.webview loadData:data MIMEType:@"application/pdf" textEncodingName:@"utf-8" baseURL:nil];
+                [webViewController.webView loadData:data MIMEType:@"application/pdf" textEncodingName:@"utf-8" baseURL:nil];
             }];
         }];
         [alertController addAction:pdfAction];

@@ -1,8 +1,8 @@
 //
-//  APCAppDelegate+Onboarding.m
+//  APCFeedTableViewCell.h
 //  APCAppCore
 //
-//  Copyright (c) 2015 Boston Children's Hospital, Inc. All rights reserved.
+// Copyright (c) 2015, Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
 // are permitted provided that the following conditions are met:
@@ -31,47 +31,17 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import "APCAppDelegate+Onboarding.h"
-#import "APCOnboarding.h"
-#import "APCLog.h"
+#import <UIKit/UIKit.h>
 
-#import "APCEligibleViewController.h"
-#import "APCInEligibleViewController.h"
-#import "APCPermissionPrimingViewController.h"
-#import "APCSignUpGeneralInfoViewController.h"
-#import "APCSignUpMedicalInfoViewController.h"
-#import "APCSignupPasscodeViewController.h"
-#import "APCSignUpPermissionsViewController.h"
-#import "APCThankYouViewController.h"
-#import "APCSignInViewController.h"
+FOUNDATION_EXPORT NSString *kAPCFeedTableViewCellIdentifier;
 
-#import "NSBundle+Helper.h"
+@interface APCFeedTableViewCell : UITableViewCell
 
+@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+@property (weak, nonatomic) IBOutlet UILabel *descriptionLabel;
+@property (weak, nonatomic) IBOutlet UILabel *dateLabel;
 
-@implementation APCAppDelegate (Onboarding)
-
-- (void)instantiateOnboardingForType:(APCOnboardingTaskType)type
-{
-    if (self.onboarding) {
-        self.onboarding.delegate = nil;
-        self.onboarding = nil;
-    }
-    
-    self.onboarding = [[APCOnboarding alloc] initWithDelegate:self taskType:type];
-}
-
-
-#pragma mark - APCOnboardingTaskDelegate methods
-
-- (APCUser *) userForOnboardingTask: (APCOnboardingTask *) __unused task
-{
-    return self.dataSubstrate.currentUser;
-}
-
-- (NSInteger) numberOfServicesInPermissionsListForOnboardingTask: (APCOnboardingTask *) __unused task
-{
-    NSArray *servicesArray = self.initializationOptions[kAppServicesListRequiredKey];
-    return servicesArray.count;
-}
+- (void)setupAppearanceForRead:(BOOL)read;
 
 @end
+

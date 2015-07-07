@@ -35,6 +35,7 @@
 #import "APCUserInfoViewController.h"
 #import "APCSignUpProgressing.h"
 #import "APCFormTextField.h"
+#import "APCUser.h"
 
 @interface APCSignUpInfoViewController : APCUserInfoViewController <APCSignUpProgressing, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 

@@ -38,9 +38,10 @@
 #import "APCDataSubstrate.h"
 #import "APCKeychainStore.h"
 #import "APCLog.h"
-
+#import "APCUtilities.h"
 #import "NSManagedObject+APCHelper.h"
 #import "HKHealthStore+APCExtensions.h"
+#import <UIKit/UIKit.h>
 
 
 static NSString *const kNamePropertytName = @"name";
@@ -187,7 +188,7 @@ static NSString *const kSignedInKey = @"SignedIn";
 
 - (void)updateStoredProperty:(NSString *)propertyName withValue:(id)value
 {
-    id<APCCoreDataSubstrate> dataSubstrate = ((APCAppDelegate*)[UIApplication sharedApplication].delegate).dataSubstrate;
+    id<APCCoreDataSubstrate> dataSubstrate = ((id<APCAppDelegateTasks>)[UIApplication sharedApplication].delegate).dataSubstrate;
     NSManagedObjectContext *context = dataSubstrate.persistentContext;
     [context performBlockAndWait:^{
         APCStoredUserData *storedUserData = [self loadStoredUserDataInContext:context];
@@ -276,6 +277,30 @@ static NSString *const kSignedInKey = @"SignedIn";
 {
     //TODO: Implement hashing method
     return password;
+}
+
+- (NSDate *) estimatedConsentDate
+{
+    NSDate *consentDate = self.consentSignatureDate;
+
+    if (! consentDate)
+    {
+        consentDate = [[self class] proxyForConsentDate];
+    }
+
+    return consentDate;
+}
+
++ (NSDate *) proxyForConsentDate
+{
+    NSDate *bestGuessConsentDate = [APCUtilities firstKnownFileAccessDate];
+
+    if (! bestGuessConsentDate)
+    {
+        bestGuessConsentDate = [NSDate date];
+    }
+
+    return bestGuessConsentDate;
 }
 
 

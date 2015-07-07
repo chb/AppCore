@@ -40,7 +40,8 @@
 #import "APCLog.h"
 
 #import "UIAlertController+Helper.h"
-#import "APCUser+Bridge.h"
+#import "APCUserData.h"
+#import "APCAppUser+Bridge.h"
 
 
 @interface APCSignUpMedicalInfoViewController ()
@@ -112,7 +113,7 @@
                 }
                 
                 field.textAlignnment = NSTextAlignmentRight;
-                field.pickerData = @[ [APCUser bloodTypeInStringValues] ];
+                field.pickerData = @[ [APCUserData bloodTypeInStringValues] ];
                 
                 APCTableViewRow *row = [APCTableViewRow new];
                 row.item = field;
@@ -182,8 +183,8 @@
                 NSInteger indexOfMyHeightInFeet = 0;
                 NSInteger indexOfMyHeightInInches = 0;
 
-                if (self.user.height) {
-                    double heightInInches = round([APCUserData heightInInches:self.user.height]);
+                if (self.user.bodyheight) {
+                    double heightInInches = round([APCUserData heightInInches:self.user.bodyheight]);
                     
                     NSString *feet = [NSString stringWithFormat:@"%d'", (int)heightInInches/12];
                     NSString *inches = [NSString stringWithFormat:@"%d''", (int)heightInInches%12];
@@ -224,8 +225,8 @@
                 field.keyboardType = UIKeyboardTypeDecimalPad;
                 field.textAlignnment = NSTextAlignmentRight;
                 
-                if (self.user.weight) {
-                    field.value = [NSString stringWithFormat:@"%.0f", [APCUserData weightInPounds:self.user.weight]];
+                if (self.user.bodyweight) {
+                    field.value = [NSString stringWithFormat:@"%.0f", [APCUserData weightInPounds:self.user.bodyweight]];
                 }
                 
                 APCTableViewRow *row = [APCTableViewRow new];
@@ -352,7 +353,7 @@
                         HKUnit *inchUnit = [HKUnit inchUnit];
                         HKQuantity *heightQuantity = [HKQuantity quantityWithUnit:inchUnit doubleValue:height];
                         
-                        self.user.height = heightQuantity;
+                        self.user.bodyheight = heightQuantity;
                     }
                 }
                     
@@ -366,7 +367,7 @@
                         HKUnit *poundUnit = [HKUnit poundUnit];
                         HKQuantity *weightQuantity = [HKQuantity quantityWithUnit:poundUnit doubleValue:weight];
                         
-                        self.user.weight = weightQuantity;
+                        self.user.bodyweight = weightQuantity;
                     }
                 }
                     break;

@@ -277,7 +277,7 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
     BOOL allReminders = indexPath.section == 0 && indexPath.row == 0;
     if (allReminders) {
         
-        __block APCAppDelegate * appDelegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
+        __block id<APCAppDelegateTasks> appDelegate = (id<APCAppDelegateTasks>) [UIApplication sharedApplication].delegate;
         __weak APCSettingsViewController *weakSelf = self;
         //if on == TRUE && notification permission denied, request notification permission
         if (on && [[UIApplication sharedApplication] currentUserNotificationSettings].types == 0) {
@@ -286,14 +286,14 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
                 if (!granted) {
                     [weakSelf presentSettingsAlert:error];
                 }else{
-                    [appDelegate.tasksReminder setReminderOn:NO];
+//                    [appDelegate.tasksReminder setReminderOn:NO];
                     [weakSelf prepareContent];
                     [weakSelf.tableView reloadData];
                 }
             }];
             
         }else{
-            appDelegate.tasksReminder.reminderOn = on;
+//            appDelegate.tasksReminder.reminderOn = on;
         }
         
         //turn off each reminder if all reminders off

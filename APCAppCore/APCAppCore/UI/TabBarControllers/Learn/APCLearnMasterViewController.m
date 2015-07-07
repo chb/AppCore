@@ -39,6 +39,8 @@
 #import "APCLearnStudyDetailsViewController.h"
 #import "APCTintedTableViewCell.h"
 #import "APCShareViewController.h"
+#import "APCUtilities.h"
+#import "APCLog.h"
 
 static CGFloat kSectionHeaderHeight = 40.f;
 static NSString *kreturnControlOfTaskDelegate = @"returnControlOfTaskDelegate";

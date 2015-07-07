@@ -50,8 +50,6 @@
  */
 @property (nonatomic, strong) NSManagedObjectContext *persistentContext;
 
-- (void)loadStaticTasksAndSchedules:(NSDictionary *)jsonDictionary;
-
 - (NSUInteger)countOfAllScheduledTasksForToday;
 
 - (NSUInteger)countOfCompletedScheduledTasksForToday;

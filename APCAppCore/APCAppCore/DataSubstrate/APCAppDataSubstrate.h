@@ -1,5 +1,5 @@
 // 
-//  APCAppDataSubstrate.h
+//  APCDataSubstrate.h 
 //  APCAppCore 
 // 
 // Copyright (c) 2015, Apple Inc. All rights reserved. 
@@ -30,12 +30,13 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 // 
- 
+
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 #import <HealthKit/HealthKit.h>
 #import "APCCoreDataSubstrate.h"
 #import "APCAppUser.h"
+#import "APCNewsFeedManager.h"
 
 
 @interface APCAppDataSubstrate : NSObject <APCCoreDataSubstrate>
@@ -50,7 +51,7 @@
 
 @property (assign) BOOL justJoined;
 @property (strong, nonatomic) NSString *logDirectory;
-@property (nonatomic, strong) APCAppUser *currentUser;
+@property (nonatomic, strong) id<APCUser> currentUser;
 
 
 #pragma mark - CoreData
@@ -70,16 +71,54 @@
 
 #pragma mark - Core Data Public Methods
 
-- (void)loadStaticTasksAndSchedules:(NSDictionary *)jsonDictionary;
-
 /** EXERCISE CAUTION IN CALLING THIS METHOD. */
 - (void)resetCoreData;
 
 
 #pragma mark - Core Data Helpers - ONLY RETURNS in NSManagedObjects in mainContext
 
-- (NSUInteger)countOfAllScheduledTasksForToday;
-- (NSUInteger)countOfCompletedScheduledTasksForToday;
+/**
+ Tracks the total number of required tasks for "today," whenever
+ "today" is.  This is updated by the Activities screen, or the
+ CoreData method called by that screen, whenever appropriate.
+ */
+@property (readonly) NSUInteger countOfTotalRequiredTasksForToday;
+
+/**
+ Tracks the total number of completed tasks for "today," whenever
+ "today" is.  This is updated by the Activities screen, or the
+ CoreData method called by that screen, whenever appropriate.
+ */
+@property (readonly) NSUInteger countOfTotalCompletedTasksForToday;
+
+/**
+ Called by the Activities screen, or the CoreData method
+ called by that screen, whenever appropriate.  Updates the
+ two -count properties on this object.
+ */
+- (void) updateCountOfTotalRequiredTasksForToday: (NSUInteger) countOfRequiredTasks
+                     andTotalCompletedTasksToday: (NSUInteger) countOfCompletedTasks;
+
+/**
+ Former name for -countOfTotalRequiredTasksForToday.
+ Please use that method instead.
+ This method used to run a CoreData query which counted
+ today's total (completed + uncompleted) tasks.  The
+ replacement method, in contrast, simply tracks the most
+ recent stuff appearing on the Activities screen, which
+ was the point.
+ */
+- (NSUInteger)countOfAllScheduledTasksForToday  __attribute__((deprecated("Please use -countOfTotalRequiredTasksForToday instead.")));
+
+/**
+ Former name for -countOfTotalCompletedTasksForToday.
+ Please use that method instead.
+ This method used to run a CoreData query which counted
+ today's completed tasks.  The replacement method, in
+ contrast, simply tracks the most recent stuff appearing
+ on the Activities screen, which was the point.
+ */
+- (NSUInteger) countOfCompletedScheduledTasksForToday  __attribute__((deprecated("Please use -countOfTotalCompletedTasksForToday instead.")));
 
 
 #pragma mark - HealthKit
@@ -90,5 +129,9 @@
 #pragma mark - Parameters
 
 @property (strong, nonatomic) APCParameters *parameters;
+
+#pragma mark - News Feed
+
+@property (strong, nonatomic) APCNewsFeedManager *newsFeedManager;
 
 @end

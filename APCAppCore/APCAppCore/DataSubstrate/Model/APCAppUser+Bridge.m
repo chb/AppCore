@@ -197,7 +197,7 @@
     else
     {
         APCAppDelegate *delegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
-        NSNumber *selected = delegate.dataSubstrate.currentUser.sharedOptionSelection;
+        NSNumber *selected = @1;//delegate.dataSubstrate.currentUser.sharedOptionSelection;
         
         [SBBComponent(SBBConsentManager) dataSharing:[selected integerValue] completion:^(id __unused responseObject, NSError *error) {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -296,7 +296,7 @@
         UIImage *consentImage = [UIImage imageWithData:self.consentSignatureImage];
         
         APCAppDelegate *delegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
-        NSNumber *selected = delegate.dataSubstrate.currentUser.sharedOptionSelection;
+        NSNumber *selected = @1;//delegate.dataSubstrate.currentUser.sharedOptionSelection;
         
         [SBBComponent(SBBConsentManager) consentSignature:name
                                                 birthdate: [birthDate startOfDay]

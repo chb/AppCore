@@ -33,7 +33,7 @@
 
 #import "APCParameters.h"
 #import "APCUser.h"
-#import <HealthKit/HealthKit.h>
+#import "APCNewsFeedManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

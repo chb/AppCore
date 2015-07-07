@@ -1,8 +1,8 @@
 //
-//  APCAppDelegate+Onboarding.h
+//  APCCubicCurveAlgorithm.h
 //  APCAppCore
 //
-//  Copyright (c) 2015 Boston Children's Hospital, Inc. All rights reserved.
+// Copyright (c) 2015, Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
 // are permitted provided that the following conditions are met:
@@ -31,10 +31,26 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import "APCAppDelegate.h"
-#import "APCOnboarding.h"
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
+@interface APCCubicCurveAlgorithm : NSObject
 
-@interface APCAppDelegate (Onboarding) <APCOnboardingTasks, APCOnboardingDelegate, APCOnboardingTaskDelegate>
+/**
+*  Computes Control points for the cubic bezier curve that passes through the given points.
+*
+*  @param dataPoints An array of CGPoints
+*
+*  @return Array of APCCubicCurveSegment
+*/
+
+- (NSArray *)controlPointsFromPoints:(NSArray *)dataPoints;
+
+@end
+
+@interface APCCubicCurveSegment : NSObject
+
+@property (nonatomic) CGPoint controlPoint1;
+@property (nonatomic) CGPoint controlPoint2;
 
 @end
