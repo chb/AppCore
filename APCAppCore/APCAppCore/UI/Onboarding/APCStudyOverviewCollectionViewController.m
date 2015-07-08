@@ -84,8 +84,8 @@ static NSString *kConsentEmailSubject = @"Consent Document";
     [self.navigationController setNavigationBarHidden:YES animated:YES];
     
     if (![((id<APCOnboardingManagerProvider>)[UIApplication sharedApplication].delegate).onboardingManager isSignInSupported]) {
-        _loginButton.hidden = YES;
-        _loginButton.enabled = NO;
+        _btnAlreadyParticipated.hidden = YES;
+        _btnAlreadyParticipated.enabled = NO;
     }
     
     [[NSNotificationCenter defaultCenter] addObserver:self

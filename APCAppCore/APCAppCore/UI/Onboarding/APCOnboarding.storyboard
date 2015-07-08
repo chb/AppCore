@@ -2053,6 +2053,7 @@
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
+                        <outlet property="btnAlreadyParticipated" destination="bc0-QL-BYl" id="cdC-rN-Qu3"/>
                         <outlet property="collectionView" destination="SgZ-KM-25o" id="2wg-2K-k8J"/>
                         <outlet property="diseaseNameLabel" destination="kk3-fj-UpN" id="QMx-dH-a0E"/>
                         <outlet property="gradientCollectionView" destination="QiS-6G-IB1" id="i3a-kD-LB2"/>
