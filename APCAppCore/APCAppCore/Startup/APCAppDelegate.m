@@ -87,7 +87,6 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
 @property (nonatomic, strong) NSOperationQueue *healthKitCollectorQueue;
 @property (nonatomic, strong) APCDemographicUploader  *demographicUploader;
 @property (nonatomic, strong) APCPasscodeViewController *passcodeViewController;
-@end
 
 @property (nonatomic, strong, readwrite) APCOnboardingManager *onboardingManager;
 
@@ -179,6 +178,7 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
 
 - (BOOL)application:(UIApplication *) __unused application didFinishLaunchingWithOptions:(NSDictionary *) __unused launchOptions
 {
+    self.dataUploader = [[APCDataUploader alloc] init];
     [self.dataMonitor appFinishedLaunching];
     return YES;
 }
@@ -688,7 +688,6 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userConsented:) name:APCUserDidConsentNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(withdrawStudy:) name:APCUserDidWithdrawStudyNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newsFeedUpdated:) name:kAPCNewsFeedUpdateNotification object:nil];
-
 }
 
 - (void)dealloc
@@ -808,8 +807,7 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
 - (void)showTabBar
 {
     self.tabBarController = [[UITabBarController alloc] init];
-    
-    NSUInteger     selectedItemIndex = kAPCActivitiesTabIndex;
+    NSUInteger selectedItemIndex = kAPCActivitiesTabIndex;
     
     NSMutableArray *tabBarItems = [NSMutableArray new];
     NSMutableArray *viewControllers = [NSMutableArray new];
@@ -1048,6 +1046,7 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
     return basePath;
 }
 
+
 #pragma mark - Secure View
 
 - (void)showSecureView
@@ -1080,12 +1079,15 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
     }
 }
         
-#pragma mark PasscodeViewController delegate
+
+#pragma mark - PasscodeViewController delegate
+
 - (void)passcodeViewControllerDidSucceed:(APCPasscodeViewController *)__unused viewController
 {
     //set the tabbar controller as the rootViewController
     [self showTabBar];
     self.isPasscodeShowing = NO;
+    self.passcodeViewController = nil;
     [[NSUserDefaults standardUserDefaults] setObject: [NSNumber numberWithLong:uptime()] forKey:kLastUsedTimeKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
