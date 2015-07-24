@@ -79,18 +79,3 @@
 - (void)afterOnBoardProcessIsFinished;
 
 @end
-
-
-#pragma mark -
-
-/**
- *  Protocol, typically implemented by the AppDelegate, to handle consenting.
- */
-@protocol APCConsentingTasks <NSObject>
-
-@required
-@property (nonatomic, readonly) BOOL disableSignatureInConsent;
-
-- (nonnull ORKTaskViewController *)consentViewController;
-
-@end

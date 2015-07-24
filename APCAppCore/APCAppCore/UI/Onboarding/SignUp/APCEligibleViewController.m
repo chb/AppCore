@@ -33,8 +33,9 @@
  
 #import "APCEligibleViewController.h"
 #import "APCConsentTaskViewController.h"
-#import "APCConsentTask.h"
 #import "APCOnboardingManager.h"
+#import "APCConsentManager.h"
+#import "APCConsentTask.h"
 #import "APCLog.h"
 
 #ifndef APC_HAVE_CONSENT
@@ -103,7 +104,7 @@ static NSString *kreturnControlOfTaskDelegate = @"returnControlOfTaskDelegate";
 
 - (void)showConsent
 {
-    self.consentVC = [((id<APCConsentingTasks>)[UIApplication sharedApplication].delegate) consentViewController];
+    self.consentVC = [((id<APCConsentManagerProvider>)[UIApplication sharedApplication].delegate) consentManager].consentViewController;
     
     self.consentVC.delegate = self;
     self.consentVC.navigationBar.topItem.title = NSLocalizedString(@"Consent", nil);

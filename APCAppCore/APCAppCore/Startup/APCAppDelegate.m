@@ -35,14 +35,13 @@
 #import "APCAppCore.h"
 #import "APCDebugWindow.h"
 #import "APCPasscodeViewController.h"
-#import "APCOnboardingManager.h"
 #import "APCTasksReminderManager.h"
+#import "UIView+Helper.h"
+#import "UIAlertController+Helper.h"
+#import "APCAppDataSubstrate.h"
 #import "APCDemographicUploader.h"
 #import "APCConstants.h"
 #import "APCUtilities.h"
-
-#import "UIView+Helper.h"
-#import "UIAlertController+Helper.h"
 
 #import <AVFoundation/AVFoundation.h>
 #import <AudioToolbox/AudioToolbox.h>
@@ -157,7 +156,7 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
         //    indicating that this is an update to a previously installed version of the application
         //
     id<APCUser> user = self.dataSubstrate.currentUser;
-    if (user.serverConsented) {
+    if (user.userConsented) {
         BOOL  demographicDataWasUploaded = [defaults boolForKey:kDemographicDataWasUploadedKey];
         if (demographicDataWasUploaded == NO) {
             self.demographicUploader = [[APCDemographicUploader alloc] initWithUser:user];
@@ -353,193 +352,13 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
     
     //Setup AuthDelegate for SageSDK
     SBBAuthManager * manager = (SBBAuthManager*) SBBComponent(SBBAuthManager);
-    manager.authDelegate = (APCAppUser *)self.dataSubstrate.currentUser;
+    manager.authDelegate = self.dataSubstrate.currentUser;
 }
 
 //This method is overridable from each app
 - (void) updateDBVersionStatus
 {
     [APCDBStatus updateSeedLoaded:self.initializationOptions[kDBStatusVersionKey] WithContext:self.dataSubstrate.persistentContext];
-}
-
-- (NSMutableArray*)consentSectionsAndHtmlContent:(NSString**)htmlContent
-{
-    ORKConsentSectionType(^toSectionType)(NSString*) = ^(NSString* sectionTypeName)
-    {
-        ORKConsentSectionType   sectionType = ORKConsentSectionTypeCustom;
-        
-        if ([sectionTypeName isEqualToString:@"overview"])
-        {
-            sectionType = ORKConsentSectionTypeOverview;
-        }
-        else if ([sectionTypeName isEqualToString:@"privacy"])
-        {
-            sectionType = ORKConsentSectionTypePrivacy;
-        }
-        else if ([sectionTypeName isEqualToString:@"dataGathering"])
-        {
-            sectionType = ORKConsentSectionTypeDataGathering;
-        }
-        else if ([sectionTypeName isEqualToString:@"dataUse"])
-        {
-            sectionType = ORKConsentSectionTypeDataUse;
-        }
-        else if ([sectionTypeName isEqualToString:@"timeCommitment"])
-        {
-            sectionType = ORKConsentSectionTypeTimeCommitment;
-        }
-        else if ([sectionTypeName isEqualToString:@"studySurvey"])
-        {
-            sectionType = ORKConsentSectionTypeStudySurvey;
-        }
-        else if ([sectionTypeName isEqualToString:@"studyTasks"])
-        {
-            sectionType = ORKConsentSectionTypeStudyTasks;
-        }
-        else if ([sectionTypeName isEqualToString:@"withdrawing"])
-        {
-            sectionType = ORKConsentSectionTypeWithdrawing;
-        }
-        else if ([sectionTypeName isEqualToString:@"custom"])
-        {
-            sectionType = ORKConsentSectionTypeCustom;
-        }
-        else if ([sectionTypeName isEqualToString:@"onlyInDocument"])
-        {
-            sectionType = ORKConsentSectionTypeOnlyInDocument;
-        }
-        
-        return sectionType;
-    };
-    NSString*   kDocumentHtml           = @"htmlDocument";
-    NSString*   kConsentSections        = @"sections";
-    NSString*   kSectionType            = @"sectionType";
-    NSString*   kSectionTitle           = @"sectionTitle";
-    NSString*   kSectionFormalTitle     = @"sectionFormalTitle";
-    NSString*   kSectionSummary         = @"sectionSummary";
-    NSString*   kSectionContent         = @"sectionContent";
-    NSString*   kSectionHtmlContent     = @"sectionHtmlContent";
-    NSString*   kSectionImage           = @"sectionImage";
-    NSString*   kSectionAnimationUrl    = @"sectionAnimationUrl";
-    
-    NSString*       resource = [[NSBundle mainBundle] pathForResource:self.initializationOptions[kConsentSectionFileNameKey] ofType:@"json"];
-    NSAssert(resource != nil, @"Unable to location file with Consent Section in main bundle");
-    
-    NSData*         consentSectionData = [NSData dataWithContentsOfFile:resource];
-    NSAssert(consentSectionData != nil, @"Unable to create NSData with Consent Section data");
-    
-    NSError*        error             = nil;
-    NSDictionary*   consentParameters = [NSJSONSerialization JSONObjectWithData:consentSectionData options:NSJSONReadingMutableContainers error:&error];
-    NSAssert(consentParameters != nil, @"badly formed Consent Section data - error", error);
-    
-    NSString*       documentHtmlContent = [consentParameters objectForKey:kDocumentHtml];
-    NSAssert(documentHtmlContent == nil || documentHtmlContent != nil && [documentHtmlContent isKindOfClass:[NSString class]], @"Improper Document HTML Content type");
-    
-    if (documentHtmlContent != nil && htmlContent != nil)
-    {
-        NSString*   path    = [[NSBundle mainBundle] pathForResource:documentHtmlContent ofType:@"html" inDirectory:@"HTMLContent"];
-        NSAssert(path != nil, @"Unable to locate HTML file: %@", documentHtmlContent);
-        
-        NSError*    error   = nil;
-        NSString*   content = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:&error];
-        
-        NSAssert(content != nil, @"Unable to load content of file \"%@\": %@", path, error);
-        
-        *htmlContent = content;
-    }
-    
-    NSArray*        parametersConsentSections = [consentParameters objectForKey:kConsentSections];
-    NSAssert(parametersConsentSections != nil && [parametersConsentSections isKindOfClass:[NSArray class]], @"Badly formed Consent Section data");
-    
-    NSMutableArray* consentSections = [NSMutableArray arrayWithCapacity:parametersConsentSections.count];
-    
-    for (NSDictionary* section in parametersConsentSections)
-    {
-        //  Custom typesdo not have predefiend title, summary, content, or animation
-        NSAssert([section isKindOfClass:[NSDictionary class]], @"Improper section type");
-        
-        NSString*   typeName     = [section objectForKey:kSectionType];
-        NSAssert(typeName != nil && [typeName isKindOfClass:[NSString class]],    @"Missing Section Type or improper type");
-        
-        ORKConsentSectionType   sectionType = toSectionType(typeName);
-        
-        NSString*   title        = [section objectForKey:kSectionTitle];
-        NSString*   formalTitle  = [section objectForKey:kSectionFormalTitle];
-        NSString*   summary      = [section objectForKey:kSectionSummary];
-        NSString*   content      = [section objectForKey:kSectionContent];
-        NSString*   htmlContent  = [section objectForKey:kSectionHtmlContent];
-        NSString*   image        = [section objectForKey:kSectionImage];
-        NSString*   animationUrl = [section objectForKey:kSectionAnimationUrl];
-        
-        NSAssert(title        == nil || title         != nil && [title isKindOfClass:[NSString class]],        @"Missing Section Title or improper type");
-        NSAssert(formalTitle  == nil || formalTitle   != nil && [formalTitle isKindOfClass:[NSString class]],  @"Missing Section Formal title or improper type");
-        NSAssert(summary      == nil || summary       != nil && [summary isKindOfClass:[NSString class]],      @"Missing Section Summary or improper type");
-        NSAssert(content      == nil || content       != nil && [content isKindOfClass:[NSString class]],      @"Missing Section Content or improper type");
-        NSAssert(htmlContent  == nil || htmlContent   != nil && [htmlContent isKindOfClass:[NSString class]],  @"Missing Section HTML Content or improper type");
-        NSAssert(image        == nil || image         != nil && [image isKindOfClass:[NSString class]],        @"Missing Section Image or improper typte");
-        NSAssert(animationUrl == nil || animationUrl  != nil && [animationUrl isKindOfClass:[NSString class]], @"Missing Animation URL or improper type");
-        
-        
-        ORKConsentSection*  section = [[ORKConsentSection alloc] initWithType:sectionType];
-        
-        if (title != nil)
-        {
-            section.title = title;
-        }
-        
-        if (formalTitle != nil)
-        {
-            section.formalTitle = formalTitle;
-        }
-        
-        if (summary != nil)
-        {
-            section.summary = summary;
-        }
-        
-        if (content != nil)
-        {
-            section.content = content;
-        }
-        
-        if (htmlContent != nil)
-        {
-            NSString*   path    = [[NSBundle mainBundle] pathForResource:htmlContent ofType:@"html" inDirectory:@"HTMLContent"];
-            NSAssert(path != nil, @"Unable to locate HTML file: %@", htmlContent);
-            
-            NSError*    error   = nil;
-            NSString*   content = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:&error];
-
-            NSAssert(content != nil, @"Unable to load content of file \"%@\": %@", path, error);
-            
-            section.htmlContent = content;
-        }
-        
-        if (image != nil)
-        {
-            section.customImage = [UIImage imageNamed:image];
-            NSAssert(section.customImage != nil, @"Unable to load image: %@", image);
-        }
-        
-        if (animationUrl != nil)
-        {
-            NSString * nameWithScaleFactor = animationUrl;
-            if ([[UIScreen mainScreen] scale] >= 3) {
-                nameWithScaleFactor = [nameWithScaleFactor stringByAppendingString:@"@3x"];
-            } else {
-                nameWithScaleFactor = [nameWithScaleFactor stringByAppendingString:@"@2x"];
-            }
-            NSURL*      url   = [[NSBundle mainBundle] URLForResource:nameWithScaleFactor withExtension:@"m4v"];
-            NSError*    error = nil;
-            
-            NSAssert([url checkResourceIsReachableAndReturnError:&error], @"Animation file--%@--not reachable: %@", animationUrl, error);
-            section.customAnimationURL = url;
-        }
-        
-        [consentSections addObject:section];
-    }
-    
-    return consentSections;
 }
 
 
@@ -570,16 +389,9 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
      */
 }
 
-
 - (APCConsentManager *)consentManager
 {
     return [APCConsentManager new];
-}
-
-// Review Consent Actions
-- (NSArray *)reviewConsentActions
-{
-    return nil;
 }
 
 // The block of text for the All Set
@@ -1005,17 +817,7 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
 }
 
 
-- (ORKTaskViewController *)consentViewController
-{
-    NSAssert(NO, @"Override this method to return a valid Consent Task View Controller.");
-    return nil;
-}
-
-
-- (id<APCUser>)userForOnboardingTask:(APCOnboardingTask *)__unused task
-{
-    return self.dataSubstrate.currentUser;
-}
+#pragma mark - Private Helper Methods
 
 - (NSString *) applicationDocumentsDirectory
 {

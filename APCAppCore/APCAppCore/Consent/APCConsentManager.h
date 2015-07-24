@@ -33,6 +33,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <ResearchKit/ResearchKit.h>
 
 @class APCConsentManager;
 
@@ -67,9 +68,11 @@
 #pragma mark Configuration File
 
 /** The name of the JSON file, not including the .json extension, of the consent configuration file in the app bundle. */
-- (NSString *)configurationFileName;
++ (NSString *)configurationFileName;
 
-/** Return the consent sections, as defined in `fileName`.json. */
-- (NSArray *)consentSectionsAndHtmlContent:(NSString **)htmlContent;
+
+#pragma mark View Controller
+
+- (ORKTaskViewController *)consentViewController;
 
 @end

@@ -35,8 +35,8 @@
 #import "APCAppDataSubstrate.h"
 #import "APCPasscodeViewController.h"
 #import "APCProfileViewController.h"
-#import "APCConsentManager.h"
 #import "APCOnboardingManager.h"
+#import "APCConsentManager.h"
 #import "APCConsentTask.h"
 #import "APCDataUploader.h"
 
@@ -59,7 +59,6 @@ static NSString*    const kDatabaseName                     = @"db.sqlite";
 @property (strong, nonatomic) APCTasksReminderManager * tasksReminder;
 @property (strong, nonatomic) APCPassiveDataCollector * passiveDataCollector;
 @property (strong, nonatomic) APCProfileViewController * profileViewController;
-@property (nonatomic) BOOL disableSignatureInConsent;
 @property (nonatomic, strong) APCDataUploader *dataUploader;
 
 //Initialization Methods
@@ -103,7 +102,6 @@ static NSString*    const kDatabaseName                     = @"db.sqlite";
 - (void) logOutNotification:(NSNotification *)notification;
 
 - (void)afterOnBoardProcessIsFinished;
-- (NSArray *)reviewConsentActions;
 - (NSArray *)allSetTextBlocks;
 - (NSDictionary *)configureTasksForActivities;
 - (BOOL)hideEmailOnWelcomeScreen;
@@ -114,8 +112,6 @@ static NSString*    const kDatabaseName                     = @"db.sqlite";
 - (id <APCProfileViewControllerDelegate>) profileExtenderDelegate;
 
 - (void)showPasscodeIfNecessary;
-
-- (ORKTaskViewController *)consentViewController;
 
 - (NSDate*)applicationBecameActiveDate;
 
