@@ -36,9 +36,9 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <BridgeSDK/BridgeSDK.h>
+//#import <BridgeSDK/BridgeSDK.h>
 
-@interface APCDataUploader : NSObject <SBBUploadManagerDelegate>
+@interface APCDataUploader : NSObject// <SBBUploadManagerDelegate>
 
 + (APCDataUploader *)sharedUploader;
 
