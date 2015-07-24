@@ -70,7 +70,6 @@
 #import "APCDemographicUploader.h"
 
 #import <ResearchKit/ResearchKit.h>
-#import <BridgeSDK/BridgeSDK.h>
 
 // the following dependencies should be removed when refactoring
 #import "APCAppDelegate.h"
