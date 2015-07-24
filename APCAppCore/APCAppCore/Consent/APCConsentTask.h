@@ -43,6 +43,8 @@
 @property (nonatomic, strong) id<APCConsentRedirector> redirector;
 @property (nonatomic, strong) NSString *failedMessageTag;
 
+@property (nonatomic, strong, readonly) NSArray *documentSections;
+
 @property (nonatomic, strong, readonly) ORKConsentSharingStep *sharingStep;
 
 - (instancetype)initWithIdentifier:(NSString*)identifier propertiesFileName:(NSString*)fileName;

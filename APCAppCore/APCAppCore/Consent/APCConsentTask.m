@@ -97,7 +97,7 @@ static NSString*    kStepIdentifierSuffixStart          = @"+X";
 @property (nonatomic, assign) NSInteger         indexOfFirstQuizStep;
 
 //  Consent
-@property (nonatomic, strong) NSArray*          documentSections;
+@property (nonatomic, strong, readwrite) NSArray *documentSections;
 
 //  Sharing
 @property (nonatomic, copy)   NSString*         investigatorShortDescription;

@@ -68,10 +68,7 @@
 #pragma mark Configuration File
 
 /** The name of the JSON file, not including the .json extension, of the consent configuration file in the app bundle. */
-- (NSString *)configurationFileName;
-
-/** Return the consent sections, as defined in `fileName`.json. */
-- (NSArray *)consentSectionsAndHtmlContent:(NSString **)htmlContent;
++ (NSString *)configurationFileName;
 
 
 #pragma mark View Controller

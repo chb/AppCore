@@ -1607,14 +1607,13 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
 
 - (void)showConsentSlides
 {
-    APCConsentManager *manager = [(id<APCConsentManagerProvider>)[UIApplication sharedApplication].delegate consentManager];
-    NSArray *sections = [manager consentSectionsAndHtmlContent:nil];
+    APCConsentTask *consentTask = [[APCConsentTask alloc] initWithIdentifier:@"Consent" propertiesFileName:[APCConsentManager configurationFileName]];
     
     ORKConsentDocument *consent = [[ORKConsentDocument alloc] init];
     consent.title = NSLocalizedString(@"Consent", nil);
     consent.signaturePageTitle = NSLocalizedString(@"Consent", nil);
     consent.signaturePageContent = NSLocalizedString(@"I agree to participate in this research Study.", nil);
-    consent.sections = sections;
+    consent.sections = consentTask.documentSections;
     
     ORKConsentSignature *signature = [ORKConsentSignature signatureForPersonWithTitle:NSLocalizedString(@"Participant", nil)
                                                                      dateFormatString:nil
