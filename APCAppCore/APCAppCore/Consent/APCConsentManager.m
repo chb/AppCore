@@ -33,14 +33,13 @@
 //
 
 #import "APCConsentManager.h"
-#import <ResearchKit/ResearchKit.h>
+#import "APCConsentTask.h"
 
 
 @implementation APCConsentManager
 
 
-- (instancetype)init
-{
+- (instancetype)init {
     if ((self = [super init])) {
         _canReviewConsentPDF = YES;
         _canReviewConsentSlides = YES;
@@ -50,13 +49,13 @@
 }
 
 
-- (NSString *)configurationFileName
-{
+#pragma mark: - Configuration
+
+- (NSString *)configurationFileName {
     return @"APHConsentSection";        // Keeping "APH" to not break backwards compatibility, should be "APC"
 }
 
-- (NSArray *)consentSectionsAndHtmlContent:(NSString **)htmlContent
-{
+- (NSArray *)consentSectionsAndHtmlContent:(NSString **)htmlContent {
     ORKConsentSectionType(^toSectionType)(NSString*) = ^(NSString* sectionTypeName) {
         ORKConsentSectionType   sectionType = ORKConsentSectionTypeCustom;
         
@@ -189,6 +188,16 @@
     }
     
     return consentSections;
+}
+
+
+#pragma mark: - View Controller
+
+- (ORKTaskViewController *)consentViewController {
+    APCConsentTask *task = [[APCConsentTask alloc] initWithIdentifier:@"Consent" propertiesFileName:[self configurationFileName]];
+    ORKTaskViewController *consentVC = [[ORKTaskViewController alloc] initWithTask:task taskRunUUID:[NSUUID UUID]];
+    
+    return consentVC;
 }
 
 

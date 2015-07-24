@@ -38,7 +38,7 @@
 #import "APCConsentInstructionQuestion.h"
 #import "APCConsentTextChoiceQuestion.h"
 #import "APCConsentRedirector.h"
-#import "APCAppDelegate.h"
+#import "APCConsentManager.h"
 #import <BridgeSDK/BridgeSDK.h>
 
 
@@ -119,9 +119,17 @@ static NSString*    kStepIdentifierSuffixStart          = @"+X";
 
 - (instancetype)initWithIdentifier:(NSString*)identifier propertiesFileName:(NSString*)fileName
 {
-    NSString*   reason      = @"By agreeing you confirm that you read the information and that you "
-                              @"wish to take part in this research study.";
-    NSArray*    consentSteps = [self commonInitWithPropertiesFileName:fileName customSteps:nil reasonForConsent:reason];
+    return [self initWithIdentifier:identifier propertiesFileName:fileName requiresSignature:YES];
+}
+
+- (instancetype)initWithIdentifier:(NSString*)identifier propertiesFileName:(NSString*)fileName requiresSignature:(BOOL)requiresSignature
+{
+    return [self initWithIdentifier:identifier propertiesFileName:fileName customSteps:nil requiresSignature:requiresSignature];
+}
+
+- (instancetype)initWithIdentifier:(NSString*)identifier propertiesFileName:(NSString*)fileName reasonForConsent:(NSString*)reason requiresSignature:(BOOL)requiresSignature
+{
+    NSArray*    consentSteps = [self commonInitWithPropertiesFileName:fileName customSteps:nil reasonForConsent:reason requiresSignature:requiresSignature];
     
     _consentSteps = [consentSteps mutableCopy];
     _identifier = identifier;
@@ -131,23 +139,11 @@ static NSString*    kStepIdentifierSuffixStart          = @"+X";
     return self;
 }
 
-- (instancetype)initWithIdentifier:(NSString*)identifier propertiesFileName:(NSString*)fileName reasonForConsent:(NSString*)reason
-{
-    NSArray*    consentSteps = [self commonInitWithPropertiesFileName:fileName customSteps:nil reasonForConsent:reason];
-    
-    _consentSteps = [consentSteps mutableCopy];
-    _identifier = identifier;
-    _steps      = [consentSteps mutableCopy];
-    _failedMessageTag = kFailedMessageTag;
-    
-    return self;
-}
-
-- (instancetype)initWithIdentifier:(NSString*)identifier propertiesFileName:(NSString*)fileName customSteps:(NSArray*)customSteps
+- (instancetype)initWithIdentifier:(NSString*)identifier propertiesFileName:(NSString*)fileName customSteps:(NSArray*)customSteps requiresSignature:(BOOL)requiresSignature
 {
     NSString*   reason      = @"By agreeing you confirm that you read the information and that you "
                               @"wish to take part in this research study.";
-    NSArray*    consentSteps = [self commonInitWithPropertiesFileName:fileName customSteps:customSteps reasonForConsent:reason];
+    NSArray*    consentSteps = [self commonInitWithPropertiesFileName:fileName customSteps:customSteps reasonForConsent:reason requiresSignature:requiresSignature];
 
     _consentSteps = [consentSteps mutableCopy];
     _identifier = identifier;
@@ -156,7 +152,7 @@ static NSString*    kStepIdentifierSuffixStart          = @"+X";
     return self;
 }
 
-- (NSArray*)commonInitWithPropertiesFileName:(NSString*)fileName customSteps:(NSArray*)customSteps reasonForConsent:(NSString*)reason
+- (NSArray*)commonInitWithPropertiesFileName:(NSString*)fileName customSteps:(NSArray*)customSteps reasonForConsent:(NSString*)reason requiresSignature:(BOOL)requiresSignature
 {
     _passedQuiz             = YES;
     _indexOfFirstCustomStep = NSNotFound;
@@ -170,8 +166,9 @@ static NSString*    kStepIdentifierSuffixStart          = @"+X";
     ORKConsentSignature*    signature = [ORKConsentSignature signatureForPersonWithTitle:@"Participant"
                                                                         dateFormatString:nil
                                                                               identifier:@"participant"];
-    ORKConsentDocument*     document  = [[ORKConsentDocument alloc] init];
+    signature.requiresSignatureImage = requiresSignature;
     
+    ORKConsentDocument *document  = [[ORKConsentDocument alloc] init];
     document.title                = NSLocalizedString(@"Consent", nil);
     document.signaturePageTitle   = NSLocalizedString(@"Consent", nil);
     document.signaturePageContent = NSLocalizedString(@"By agreeing you confirm that you read the consent and that you wish to take part in this research study.", nil);
@@ -190,17 +187,9 @@ static NSString*    kStepIdentifierSuffixStart          = @"+X";
                                          investigatorLongDescription:self.investigatorLongDescription
                                        localizedLearnMoreHTMLContent:self.sharingHtmlLearnMoreContent];
     
-    APCAppDelegate* delegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
-    BOOL disableSignatureInConsent = delegate.disableSignatureInConsent;
-    
-    if (disableSignatureInConsent) {
-        signature.requiresSignatureImage = NO;
-    }
-    
     ORKConsentReviewStep*   reviewStep  = [[ORKConsentReviewStep alloc] initWithIdentifier:@"reviewStep"
                                                                                  signature:signature
                                                                                 inDocument:_consentDocument];
-    
     reviewStep.reasonForConsent = reason;
     
     NSMutableArray* consentSteps = [[NSMutableArray alloc] init];

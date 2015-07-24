@@ -33,6 +33,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <ResearchKit/ResearchKit.h>
 
 @class APCConsentManager;
 
@@ -71,5 +72,10 @@
 
 /** Return the consent sections, as defined in `fileName`.json. */
 - (NSArray *)consentSectionsAndHtmlContent:(NSString **)htmlContent;
+
+
+#pragma mark View Controller
+
+- (ORKTaskViewController *)consentViewController;
 
 @end

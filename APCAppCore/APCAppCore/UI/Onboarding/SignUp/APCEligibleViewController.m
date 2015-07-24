@@ -102,7 +102,7 @@ static NSString *kreturnControlOfTaskDelegate = @"returnControlOfTaskDelegate";
 
 - (void)showConsent
 {
-    self.consentVC = [((APCAppDelegate *)[UIApplication sharedApplication].delegate) consentViewController];
+    self.consentVC = [((id<APCConsentManagerProvider>)[UIApplication sharedApplication].delegate) consentManager].consentViewController;
     
     self.consentVC.delegate = self;
     self.consentVC.navigationBar.topItem.title = NSLocalizedString(@"Consent", nil);

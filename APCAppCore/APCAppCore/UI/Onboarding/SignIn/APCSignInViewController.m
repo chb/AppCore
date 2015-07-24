@@ -237,7 +237,7 @@ static NSString * const kServerInvalidEmailErrorString = @"Invalid username or p
 
 - (void)showConsent
 {
-    ORKTaskViewController *consentViewController = [((APCAppDelegate*)[UIApplication sharedApplication].delegate) consentViewController];
+    ORKTaskViewController *consentViewController = [((id<APCConsentManagerProvider>)[UIApplication sharedApplication].delegate) consentManager].consentViewController;
     consentViewController.delegate = self;
     
     NSUInteger subviewsCount = consentViewController.view.subviews.count;

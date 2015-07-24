@@ -59,7 +59,6 @@ static NSString*    const kDatabaseName                     = @"db.sqlite";
 @property (strong, nonatomic) APCTasksReminderManager * tasksReminder;
 @property (strong, nonatomic) APCPassiveDataCollector * passiveDataCollector;
 @property (strong, nonatomic) APCProfileViewController * profileViewController;
-@property (nonatomic) BOOL disableSignatureInConsent;
 @property (nonatomic, strong) APCDataUploader *dataUploader;
 
 //Initialization Methods
@@ -113,8 +112,6 @@ static NSString*    const kDatabaseName                     = @"db.sqlite";
 - (id <APCProfileViewControllerDelegate>) profileExtenderDelegate;
 
 - (void)showPasscodeIfNecessary;
-
-- (ORKTaskViewController *)consentViewController;
 
 - (NSDate*)applicationBecameActiveDate;
 

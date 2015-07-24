@@ -46,7 +46,7 @@
 @property (nonatomic, strong, readonly) ORKConsentSharingStep *sharingStep;
 
 - (instancetype)initWithIdentifier:(NSString*)identifier propertiesFileName:(NSString*)fileName;
-- (instancetype)initWithIdentifier:(NSString*)identifier propertiesFileName:(NSString*)fileName reasonForConsent:(NSString*)reason;
-- (instancetype)initWithIdentifier:(NSString*)identifier propertiesFileName:(NSString*)fileName customSteps:(NSArray*)customSteps;
+- (instancetype)initWithIdentifier:(NSString*)identifier propertiesFileName:(NSString*)fileName reasonForConsent:(NSString*)reason requiresSignature:(BOOL)requiresSignature;
+- (instancetype)initWithIdentifier:(NSString*)identifier propertiesFileName:(NSString*)fileName customSteps:(NSArray*)customSteps requiresSignature:(BOOL)requiresSignature;
 
 @end
