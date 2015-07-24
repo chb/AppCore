@@ -36,7 +36,7 @@
 #import "APCAllSetTableViewCell.h"
 #import "APCDemographicUploader.h"
 
-static NSString *kAllSetCellIdentifier = @"AllSetCell";
+static  NSString *kAllSetCellIdentifier = @"AllSetCell";
 
 typedef NS_ENUM(NSUInteger, APCAllSetRows)
 {
@@ -51,9 +51,13 @@ typedef NS_ENUM(NSUInteger, APCAllSetRows)
 
 @property (strong, nonatomic) NSArray *textBlocks;
 
+@property (strong, nonatomic) APCDemographicUploader  *demographicUploader;
+
 @end
 
 @implementation APCAllSetContentViewController
+
+#pragma  mark  -  View Controller Methods
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -63,12 +67,13 @@ typedef NS_ENUM(NSUInteger, APCAllSetRows)
     self.tableView.estimatedRowHeight = 108.0;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     
-    [self configureTextBlocks];
+    [self configureTextBlocks];    
     
-    self.demographicUploader = [[APCDemographicUploader alloc] init];
+    APCAppDelegate *appDelegate = (APCAppDelegate *)[UIApplication sharedApplication].delegate;
+    APCUser  *user = appDelegate.dataSubstrate.currentUser;
+    
+    self.demographicUploader = [[APCDemographicUploader alloc] initWithUser:user];
     [self.demographicUploader uploadNonIdentifiableDemographicData];
-    
-    [(APCAppDelegate *)[UIApplication sharedApplication].delegate configureObserverQueries];
     
     [self.tableView reloadData];
 }
@@ -80,10 +85,11 @@ typedef NS_ENUM(NSUInteger, APCAllSetRows)
     self.textBlocks = [appDelegate allSetTextBlocks];
 }
 
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
+
+#pragma  mark  -  Table View Data Source Methods
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *) __unused tableView
 {

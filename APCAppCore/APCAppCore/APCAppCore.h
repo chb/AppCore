@@ -32,6 +32,8 @@
 // 
  
 #import <UIKit/UIKit.h>
+#import <BridgeSDK/BridgeSDK.h>
+
 
 //! Project version number for APCAppCore.
 FOUNDATION_EXPORT double APCAppCoreVersionNumber;
@@ -39,28 +41,32 @@ FOUNDATION_EXPORT double APCAppCoreVersionNumber;
 //! Project version string for APCAppCore.
 FOUNDATION_EXPORT const unsigned char APCAppCoreVersionString[];
 
-#import <BridgeSDK/BridgeSDK.h>
 
-//Headers
+/* -------------------------------------
+ Headers
+ --------------------------------------- */
+#import <APCAppCore/APCCMSSupport.h>
 #import <APCAppCore/APCConstants.h>
 #import <APCAppCore/APCAppDelegate.h>
 #import <APCAppCore/APCDataMonitor.h>
 #import <APCAppCore/APCDataMonitor+Bridge.h>
 #import <APCAppCore/APCDataSubstrate.h>
-#import <APCAppCore/APCDataSubstrate+CoreData.h>
 #import <APCAppCore/APCDataSubstrate+ResearchKit.h>
-#import <APCAppCore/APCDataSubstrate+HealthKit.h>
 #import <APCAppCore/APCModel.h>
 #import <APCAppCore/APCParameters.h>
 #import <APCAppCore/APCPermissionsManager.h>
 #import <APCAppCore/APCAssertionHandler.h>
 #import <APCAppCore/APCSignUpProgressing.h>
+#import <APCAppCore/APCOnboardingManager.h>
 #import <APCAppCore/APCOnboarding.h>
 #import <APCAppCore/APCDataResult.h>
 #import <APCAppCore/APCTasksReminderManager.h>
 #import <APCAppCore/APCUtilities.h>
+#import <APCAppCore/APCCorrelationsSelectorViewController.h>
 
-//  Tasks
+/* -------------------------------------
+ Tasks
+ --------------------------------------- */
 #import <APCAppCore/APCConsentManager.h>
 #import <APCAppCore/APCConsentTask.h>
 #import <APCAppCore/APCConsentQuestion.h>
@@ -74,18 +80,24 @@ FOUNDATION_EXPORT const unsigned char APCAppCoreVersionString[];
  --------------------------------------- */
 #import <APCAppCore/APCDataArchiverAndUploader.h>
 #import <APCAppCore/APCDataArchiver.h>
-#import <APCAppCore/APCPassiveDataCollector.h>
-#import <APCAppCore/APCDataTracker.h>
-#import <APCAppCore/APCHKDiscreteQuantityTracker.h>
-#import <APCAppCore/APCHKCumulativeQuantityTracker.h>
-#import <APCAppCore/APCCoreLocationTracker.h>
-#import <APCAppCore/APCCoreMotionTracker.h>
+#import <APCAppCore/APCDataArchive.h>
+#import <APCAppCore/APCDataEncryptor.h>
+#import <APCAppCore/APCDataUploader.h>
+#import <APCAppCore/APCDataArchiveUploader.h>
 #import <APCAppCore/zipzap.h>
 #import <APCAppCore/ZZArchive.h>
 #import "APCAppCore/ZZArchiveEntry.h"
 #import "APCAppCore/ZZConstants.h"
 #import "APCAppCore/ZZError.h"
 #import "APCAppCore/APCCMS.h"
+#import "APCAppCore/APCPassiveDataCollector.h"
+#import "APCAppCore/APCCollectorProtocol.h"
+#import "APCAppCore/APCHealthKitBackgroundDataCollector.h"
+#import "APCAppCore/APCDataCollector.h"
+#import "APCAppCore/APCPassiveDataSink.h"
+#import "APCAppCore/APCPassiveDisplacementTrackingDataUploader.h"
+#import "APCAppCore/APCCoreMotionBackgroundDataCollector.h"
+#import "APCAppCore/APCDisplacementTrackingCollector.h"
 
 /* -------------------------
  Logging
@@ -93,7 +105,6 @@ FOUNDATION_EXPORT const unsigned char APCAppCoreVersionString[];
 #import <APCAppCore/APCLog.h>
 #import <APCAppCore/APCDataVerificationClient.h>
 
-/* UI */
 /* -------------------------
  Onboarding ViewControllers
  ------------------------- */
@@ -130,6 +141,12 @@ FOUNDATION_EXPORT const unsigned char APCAppCoreVersionString[];
 #import <APCAppCore/APCDashboardMoreInfoViewController.h>
 
 /*--------------------------
+ NewsFeed ViewControllers
+ -------------------------*/
+#import <APCAppCore/APCNewsFeedViewController.h>
+
+
+/*--------------------------
  Learn ViewControllers
  -------------------------*/
 #import <APCAppCore/APCLearnMasterViewController.h>
@@ -161,7 +178,6 @@ FOUNDATION_EXPORT const unsigned char APCAppCoreVersionString[];
 /* -------------------------
  Medication Tracking Setup Controllers
  ------------------------- */
-
 #import <APCAppCore/APCMedicationTrackerSetupViewController.h>
 #import <APCAppCore/APCMedicationDosageViewController.h>
 #import <APCAppCore/APCFrequencyDayTableViewCell.h>
@@ -181,7 +197,6 @@ FOUNDATION_EXPORT const unsigned char APCAppCoreVersionString[];
 /* -------------------------
  Medication Tracking App Level Components
  ------------------------- */
-
 #import <APCAppCore/APCMedicationTrackerCalendarViewController.h>
 #import <APCAppCore/APCMedicationTrackerCalendarDailyView.h>
 #import <APCAppCore/APCMedicationDetailsTableViewCell.h>
@@ -213,7 +228,6 @@ FOUNDATION_EXPORT const unsigned char APCAppCoreVersionString[];
 /* -------------------------
  Views
  ------------------------- */
-	 
 #import <APCAppCore/APCHorizontalThinLineView.h>
 #import <APCAppCore/APCHorizontalBottomThinLineView.h>
 #import <APCAppCore/APCVerticalThinLineView.h>
@@ -266,6 +280,7 @@ FOUNDATION_EXPORT const unsigned char APCAppCoreVersionString[];
 #import <APCAppCore/APCActivitiesBasicTableViewCell.h>
 #import <APCAppCore/APCActivitiesTintedTableViewCell.h>
 #import <APCAppCore/APCActivitiesSectionHeaderView.h>
+#import <APCAppCore/APCFeedTableViewCell.h>
 
 /* -------------------------
  Objects
@@ -284,6 +299,8 @@ FOUNDATION_EXPORT const unsigned char APCAppCoreVersionString[];
 #import <APCAppCore/APCMotionHistoryReporter.h>
 #import <APCAppCore/APCJSONSerializer.h>
 #import <APCAppCore/APCTaskReminder.h>
+#import <APCAppCore/APCFeedParser.h>
+#import <APCAppCore/APCNewsFeedManager.h>
 
 /* -------------------------
  Categories
@@ -299,12 +316,16 @@ FOUNDATION_EXPORT const unsigned char APCAppCoreVersionString[];
 #import <APCAppCore/HKHealthStore+APCExtensions.h>
 #import <APCAppCore/UIImage+APCHelper.h>
 #import <APCAppCore/APCParameters+Settings.h>
-#import <APCAppCore/SBBGuidCreatedOnVersionHolder+APCAdditions.h>
 #import <APCAppCore/UIView+Helper.h>
 #import <APCAppCore/NSDictionary+APCAdditions.h>
 #import <APCAppCore/APCDeviceHardware+APCHelper.h>
+#import <APCAppCore/ORKFileResult+Filename.h>
 #import <APCAppCore/ORKQuestionResult+APCHelper.h>
 #import <APCAppCore/NSOperationQueue+Helper.h>
+#import <APCAppCore/CMMotionActivity+Helper.h>
+#import <APCAppCore/HKWorkout+APCHelper.h>
+#import <APCAppCore/CLLocation+APCAdditions.h>
+#import <APCAppCore/NSDictionary+APCStringify.h>
 
 /* -------------------------
  Appearance
@@ -315,16 +336,18 @@ FOUNDATION_EXPORT const unsigned char APCAppCoreVersionString[];
 #import <APCAppCore/APCStepProgressBar+Appearance.h>
 
 /* -------------------------
- Schedule and ScheduleExpression components
+ Scheduler
  ------------------------- */
 #import <APCAppCore/APCScheduler.h>
 #import <APCAppCore/APCScheduleExpression.h>
 #import <APCAppCore/APCDayOfMonthSelector.h>
 #import <APCAppCore/APCListSelector.h>
 #import <APCAppCore/APCPointSelector.h>
+#import <APCAppCore/APCPotentialScheduledTask.h>
 #import <APCAppCore/APCScheduleEnumerator.h>
 #import <APCAppCore/APCScheduleExpressionParser.h>
 #import <APCAppCore/APCScheduleExpressionToken.h>
 #import <APCAppCore/APCScheduleExpressionTokenizer.h>
 #import <APCAppCore/APCTimeSelector.h>
 #import <APCAppCore/APCTimeSelectorEnumerator.h>
+#import <APCAppCore/APCActivitiesDateState.h>

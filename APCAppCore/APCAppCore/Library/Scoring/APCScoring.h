@@ -37,6 +37,7 @@
 
 extern NSString *const kDatasetDateKey;
 extern NSString *const kDatasetValueKey;
+extern NSString *const kDatasetRawDataKey;
 
 typedef NS_ENUM(NSUInteger, APHTimelineGroups)
 {
@@ -47,10 +48,30 @@ typedef NS_ENUM(NSUInteger, APHTimelineGroups)
     APHTimelineGroupForInsights
 };
 
+@class APCScoring;
+
+@protocol APCScoringDelegate <NSObject>
+
+-(void)graphViewControllerShouldUpdateChartWithScoring: (APCScoring *)scoring;
+
+@end
+
 @interface APCScoring : NSEnumerator <APCLineGraphViewDataSource, APCDiscreteGraphViewDataSource>
 
 @property (nonatomic) CGFloat customMaximumPoint;
 @property (nonatomic) CGFloat customMinimumPoint;
+
+//APCScoring Delegate
+@property (weak, nonatomic) id<APCScoringDelegate> scoringDelegate;
+
+//Exposed for APCCorrelationsSelectorViewController
+@property (nonatomic, strong) NSString *caption;
+@property (nonatomic, strong) NSString *series1Name;
+@property (nonatomic, strong) NSString *series2Name;
+@property (nonatomic, strong) NSString *taskId;
+@property (nonatomic, strong) NSString *valueKey;
+@property (nonatomic, strong) HKQuantityType *quantityType;
+@property (nonatomic, strong) HKUnit *unit;
 
 - (instancetype)initWithHealthKitQuantityType:(HKQuantityType *)quantityType
                                          unit:(HKUnit *)unit
@@ -89,8 +110,9 @@ typedef NS_ENUM(NSUInteger, APHTimelineGroups)
                      groupBy:(APHTimelineGroups)groupBy;
 
 - (void)updatePeriodForDays:(NSInteger)numberOfDays
-                    groupBy:(APHTimelineGroups)groupBy
-      withCompletionHandler:(void (^)(void))completion;
+                    groupBy:(APHTimelineGroups)groupBy;
+
+-(void)correlateWithScoringObject:(APCScoring *)scoring;
 
 - (NSNumber *)minimumDataPoint;
 - (NSNumber *)maximumDataPoint;
@@ -98,5 +120,6 @@ typedef NS_ENUM(NSUInteger, APHTimelineGroups)
 - (id)nextObject;
 - (NSArray *)allObjects;
 - (NSNumber *)numberOfDataPoints;
+- (void)updateCharts;
 
 @end

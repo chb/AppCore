@@ -33,20 +33,24 @@
  
 #import <UIKit/UIKit.h>
 #import "APCDataSubstrate.h"
-#import "APCOnboarding.h"
 #import "APCPasscodeViewController.h"
 #import "APCProfileViewController.h"
+#import "APCOnboardingManager.h"
 #import "APCConsentManager.h"
 #import "APCConsentTask.h"
+#import "APCDataUploader.h"
 
 extern NSUInteger   const kTheEntireDataModelOfTheApp;
+static NSString*    const kDatabaseName                     = @"db.sqlite";
 
-@class APCDataSubstrate, APCDataMonitor, APCScheduler, APCOnboarding, APCPasscodeViewController, APCTasksReminderManager, APCPassiveDataCollector, APCFitnessAllocation;
+@class APCDataSubstrate, APCDataMonitor, APCScheduler, APCPasscodeViewController, APCTasksReminderManager, APCPassiveDataCollector, APCFitnessAllocation;
 
-@interface APCAppDelegate : UIResponder <UIApplicationDelegate, APCOnboardingDelegate, APCConsentManagerProvider, APCOnboardingTaskDelegate, APCPasscodeViewControllerDelegate>
+@interface APCAppDelegate : UIResponder <UIApplicationDelegate, APCOnboardingManagerProvider, APCConsentManagerProvider, APCPasscodeViewControllerDelegate>
 
 @property (nonatomic, strong) APCFitnessAllocation *sevenDayFitnessAllocationData;
-@property (strong, nonatomic) UITabBarController *tabster;
+@property (strong, nonatomic) UITabBarController *tabBarController;
+
++ (instancetype) sharedAppDelegate;
 
 //APC Related Properties & Methods
 @property (strong, nonatomic) APCDataSubstrate * dataSubstrate;
@@ -56,17 +60,19 @@ extern NSUInteger   const kTheEntireDataModelOfTheApp;
 @property (strong, nonatomic) APCPassiveDataCollector * passiveDataCollector;
 @property (strong, nonatomic) APCProfileViewController * profileViewController;
 @property (nonatomic) BOOL disableSignatureInConsent;
+@property (nonatomic, strong) APCDataUploader *dataUploader;
 
 //Initialization Methods
 @property (nonatomic, getter=doesPersisteStoreExist) BOOL persistentStoreExistence;
 @property (nonatomic, strong) NSDictionary * initializationOptions;
 - (NSMutableDictionary*) defaultInitializationOptions;
 
-@property (strong, nonatomic) APCOnboarding *onboarding;
+#pragma mark Onboarding
+
+@property (nonatomic, strong, readonly) APCOnboardingManager *onboardingManager;
 
 @property  (nonatomic, strong)  NSArray  *storyboardIdInfo;
 
-- (void)loadStaticTasksAndSchedulesIfNecessary;  //For resetting app
 - (void) updateDBVersionStatus;
 - (void) clearNSUserDefaults; //For resetting app
 
@@ -80,7 +86,7 @@ extern NSUInteger   const kTheEntireDataModelOfTheApp;
 - (void) showNeedsEmailVerification;
 - (void) setUpRootViewController: (UIViewController*) viewController;
 - (void) setUpTasksReminder;
-- (NSDictionary *) tasksAndSchedulesWillBeLoaded;
+- (void)performMigrationAfterFirstImport;
 - (void)performMigrationFrom:(NSInteger)previousVersion currentVersion:(NSInteger)currentVersion;
 - (void)performMigrationAfterDataSubstrateFrom:(NSInteger)previousVersion currentVersion:(NSInteger)currentVersion;
 - (NSString *) applicationDocumentsDirectory;
@@ -96,10 +102,10 @@ extern NSUInteger   const kTheEntireDataModelOfTheApp;
 - (void) signedUpNotification: (NSNotification*) notification;
 - (void) logOutNotification:(NSNotification *)notification;
 
-- (NSArray *)offsetForTaskSchedules;
 - (void)afterOnBoardProcessIsFinished;
 - (NSArray *)allSetTextBlocks;
 - (NSDictionary *)configureTasksForActivities;
+- (BOOL)hideEmailOnWelcomeScreen;
 
 //To be called from Datasubstrate
 - (void) setUpCollectors;
@@ -110,6 +116,8 @@ extern NSUInteger   const kTheEntireDataModelOfTheApp;
 
 - (ORKTaskViewController *)consentViewController;
 
-- (void)instantiateOnboardingForType:(APCOnboardingTaskType)type;
+- (NSDate*)applicationBecameActiveDate;
+
+- (void)updateNewsFeedBadgeCount;
 
 @end

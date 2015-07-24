@@ -36,13 +36,43 @@
 @protocol ORKTask;
 @interface APCTask (AddOn)
 
-//Synchronous Method Call
-+ (void) createTasksFromJSON: (NSArray*) tasksArray inContext: (NSManagedObjectContext*) context;
-+ (void) updateTasksFromJSON: (NSArray*) tasksArray inContext:(NSManagedObjectContext *)context;
+/**
+ Simple, statically-allocated list of sort descriptors we use in various
+ places to ensure tasks always appear on the screen, and in debug statements,
+ in the same sequence.
+ */
++ (NSArray *) defaultSortDescriptors;
 
-+ (APCTask*) taskWithTaskID: (NSString*) taskID inContext: (NSManagedObjectContext*) context;
+/**
+ Runs a CoreData query in the specified context, using that context's operation
+ queue, to retrieve a task with the specified ID.  Returns nil if there was an
+ error, or if there was no task with such an ID.
+ */
++ (APCTask *) taskWithTaskID: (NSString *) taskID
+                   inContext: (NSManagedObjectContext *) context;
 
+/**
+ Returns all *saved* tasks whose task ID is in the specified set of task IDs.
+ Meaning:  tasks that are in the process of being inserted into CoreData are
+ skipped.  Uses the specified context to run the query.  This query runs on the
+ calling method's thread.  Returns nil on error.
+ */
++ (NSSet *) querySavedTasksWithTaskIds: (NSSet *) setOfTaskIds
+                          usingContext: (NSManagedObjectContext *) context;
+
+/**
+ Stores and retrieves the binary, encoded content of the
+ survey itself represented by this task.
+ 
+ The data is stored in CoreData as an NSData blob.
+ */
 @property (nonatomic, strong) id<ORKTask> rkTask;
 
+/**
+ Sorts my schedules by their -startsOn field, and returns the first
+ resulting object.  Ignores temporary schedules (i.e., schedules in
+ the process of being imported).
+ */
+@property (readonly) APCSchedule *mostRecentSchedule;
 
 @end

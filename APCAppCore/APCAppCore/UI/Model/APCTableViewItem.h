@@ -186,6 +186,20 @@
 
 @property (nonatomic, strong) UIImage *averageImage;
 
+@property (nonatomic, strong) NSAttributedString *legend;
+
+@property (nonatomic) BOOL hidesUnitString;
+
+@property (nonatomic) BOOL hidesDetailText;
+
++ (NSAttributedString *)legendForSeries1:(NSString *)series1 series2:(NSString *)series2;
+
+- (NSString *)averageValueString;
+
+- (NSString *)minimumValueString;
+
+- (NSString *)maximumValueString;
+
 @end
 
 @interface APCTableViewDashboardMessageItem : APCTableViewDashboardItem

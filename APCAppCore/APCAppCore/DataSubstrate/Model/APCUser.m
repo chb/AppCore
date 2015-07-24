@@ -37,7 +37,7 @@
 #import "APCDataSubstrate.h"
 #import "APCKeychainStore.h"
 #import "APCLog.h"
-
+#import "APCUtilities.h"
 #import "NSManagedObject+APCHelper.h"
 #import "HKHealthStore+APCExtensions.h"
 
@@ -276,13 +276,65 @@ static NSString *const kSignedInKey = @"SignedIn";
     return password;
 }
 
+- (NSDate *) estimatedConsentDate
+{
+    NSDate *consentDate = self.consentSignatureDate;
+
+    if (! consentDate)
+    {
+        consentDate = [[self class] proxyForConsentDate];
+    }
+
+    return consentDate;
+}
+
++ (NSDate *) proxyForConsentDate
+{
+    NSDate *bestGuessConsentDate = [APCUtilities firstKnownFileAccessDate];
+
+    if (! bestGuessConsentDate)
+    {
+        bestGuessConsentDate = [NSDate date];
+    }
+
+    return bestGuessConsentDate;
+}
+
 
 /*********************************************************************************/
 #pragma mark - Setters for Properties in Core Data
 /*********************************************************************************/
 
+- (void)setSharingScope:(APCUserConsentSharingScope)sharingScope
+{
+    _sharingScope = sharingScope;
+    switch (sharingScope) {
+        case APCUserConsentSharingScopeNone:
+            self.sharedOptionSelection = [NSNumber numberWithInteger:0];    // SBBConsentShareScopeNone
+            break;
+        case APCUserConsentSharingScopeStudy:
+            self.sharedOptionSelection = [NSNumber numberWithInteger:1];    // SBBConsentShareScopeStudy
+            break;
+        case APCUserConsentSharingScopeAll:
+            self.sharedOptionSelection = [NSNumber numberWithInteger:2];    // SBBConsentShareScopeAll
+            break;
+    }
+}
+
 - (void)setSharedOptionSelection:(NSNumber *)sharedOptionSelection
 {
+    switch (sharedOptionSelection.integerValue) {
+        case 0:
+            _sharingScope = APCUserConsentSharingScopeNone;
+            break;
+        case 1:
+            _sharingScope = APCUserConsentSharingScopeStudy;
+            break;
+        case 2:
+            _sharingScope = APCUserConsentSharingScopeAll;
+            break;
+    }
+    
     _sharedOptionSelection = sharedOptionSelection;
     [self updateStoredProperty:kSharedOptionSelection withValue:sharedOptionSelection];
 }
@@ -333,9 +385,6 @@ static NSString *const kSignedInKey = @"SignedIn";
 {
     _consented = consented;
     [self updateStoredProperty:kConsentedPropertyName withValue:@(consented)];
-    if (consented) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:APCUserDidConsentNotification object:nil];
-    }
 }
 
 - (void)setUserConsented:(BOOL)userConsented
@@ -570,9 +619,6 @@ static NSString *const kSignedInKey = @"SignedIn";
 {
     [[NSUserDefaults standardUserDefaults] setBool:signedUp forKey:kSignedUpKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    if (signedUp) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:(NSString *)APCUserSignedUpNotification object:nil];
-    }
 }
 
 - (BOOL)isSignedUp
@@ -584,9 +630,6 @@ static NSString *const kSignedInKey = @"SignedIn";
 {
     [[NSUserDefaults standardUserDefaults] setBool:signedIn forKey:kSignedInKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    if (signedIn) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:(NSString *)APCUserSignedInNotification object:nil];
-    }
 }
 
 - (BOOL)isSignedIn

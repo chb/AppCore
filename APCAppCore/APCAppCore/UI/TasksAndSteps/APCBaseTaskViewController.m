@@ -35,12 +35,90 @@
 #import "APCAppDelegate.h"
 #import "APCAppCore.h"
 #import "APCDataVerificationClient.h"
+#import "APCDataVerificationServerAccessControl.h"
+#import "APCDataUploader.h"
+
+#import <objc/runtime.h>
+#import <ResearchKit/ResearchKit.h>
+
+static NSString * const kQuestionTypeKey            = @"questionType";
+static NSString * const kQuestionTypeNameKey        = @"questionTypeName";
+static NSString * const kTaskRunKey                 = @"taskRun";
+static NSString * const kItemKey                    = @"item";
+static NSString * const kAppNameKey                 = @"appName";
+static NSString * const kAppVersionKey              = @"appVersion";
+static NSString * const kPhoneInfoKey               = @"phoneInfo";
+static NSString * const kUploadTimeKey              = @"uploadTime";
+static NSString * const kFilesKey                   = @"files";
+static NSString * const kFileInfoNameKey            = @"filename";
+static NSString * const kFileInfoTimeStampKey       = @"timestamp";
+static NSString * const kFileInfoContentTypeKey     = @"contentType";
+
+//    ORK Result Base Class property keys
+//
+static NSString * const kIdentifierKey              = @"identifier";
+static NSString * const kStartDateKey               = @"startDate";
+static NSString * const kEndDateKey                 = @"endDate";
+static NSString * const kUserInfoKey                = @"userInfo";
 
 @interface APCBaseTaskViewController () <UIViewControllerRestoration>
-@property (strong, nonatomic) ORKStepViewController * stepVC;
-@property (nonatomic, strong) ORKStep * step;
-@property (nonatomic, strong) NSData * localRestorationData;
+
+@property (strong, nonatomic) ORKStepViewController *stepVC;
+@property (strong, nonatomic) ORKStep *step;
+@property (strong, nonatomic) NSData *localRestorationData;
+
 @end
+
+/**
+ Converts the ORKTaskViewControllerFinishReason enum
+ to a string.
+ 
+ Declared in this file because the enum itself is
+ declared in my ORK superclass, ORKTaskViewController.
+ 
+ Contains hard-coded strings because I think is their proper
+ place -- the place where there's a 1:1 mapping between
+ the enum and the string equivalent.
+ 
+ Problems:   Highly dependent on the definition of original
+ enum itself.  If the enum changes, this function instantly
+ starts delivering misleading strings.  Granted, I'm only
+ currently using them internally, but, still.  That's why
+ I'm only declaring this function inside this file, for now.
+ 
+ Suggested Future Changes:  push this function into
+ ResearchKit, making it a part of the same class or file
+ where the enum itself is declared.
+ 
+ This is a function, not a method, so that it can follow
+ Apple's convention for functions which convert various
+ objects to strings:  NSStringFromClassName(), etc.
+ 
+ @return A human-readable string for the FinishReason.
+ If the finishReason can't be identified -- if you pass
+ a random integer, for example, or if the source enum
+ definition is changed -- returns "Unknown FinishReason."
+ 
+ @see ORKTaskViewControllerFinishReason
+ */
+NSString * NSStringFromORKTaskViewControllerFinishReason (ORKTaskViewControllerFinishReason reason)
+{
+    NSString *result = nil;
+
+    switch (reason)
+    {
+        case ORKTaskViewControllerFinishReasonSaved:        result = @"Saved";                  break;
+        case ORKTaskViewControllerFinishReasonCompleted:    result = @"Completed";              break;
+        case ORKTaskViewControllerFinishReasonDiscarded:    result = @"Discarded";              break;
+        case ORKTaskViewControllerFinishReasonFailed:       result = @"Failed";                 break;
+        default:                                            result = @"Unknown FinishReason";   break;
+    }
+
+    return result;
+}
+
+
+
 
 @implementation APCBaseTaskViewController
 
@@ -48,14 +126,42 @@
 + (instancetype)customTaskViewController: (APCScheduledTask*) scheduledTask
 {
     [[UIView appearance] setTintColor:[UIColor appPrimaryColor]];
+    
     id<ORKTask> task = [self createTask: scheduledTask];
+    
     NSUUID * taskRunUUID = [NSUUID UUID];
+    
     APCBaseTaskViewController * controller = task ? [[self alloc] initWithTask:task taskRunUUID:taskRunUUID] : nil;
-//    controller.restorationIdentifier = [task identifier];
-//    controller.restorationClass = self;
     controller.scheduledTask = scheduledTask;
     controller.delegate = controller;
+    
     return  controller;
+}
+
++ (instancetype)configureTaskViewController:(APCTaskGroup *)taskGroup
+{
+    APCPotentialTask *potentialTask             = taskGroup.requiredRemainingTasks.firstObject;
+    APCBaseTaskViewController *viewController   = nil;
+    
+    /*
+     It's a fundamental business requirement that our users
+     can do *more* than the required number of tasks.  This
+     object lets us do that, if they've gone through all
+     the actually- required tasks for this date.
+     */
+    if (potentialTask == nil)
+    {
+        potentialTask = taskGroup.samplePotentialTask;
+    }
+    
+    if (potentialTask != nil) {
+        APCScheduledTask *scheduledTask = [[APCScheduler defaultScheduler] createScheduledTaskFromPotentialTask:potentialTask];
+        
+        viewController = [self customTaskViewController:scheduledTask];
+    }
+    
+    
+    return viewController;
 }
 
 + (id<ORKTask>)createTask: (APCScheduledTask*) __unused scheduledTask
@@ -68,6 +174,13 @@
 {
     //To be overridden by child classes
     return nil;
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    self.canGenerateResult = YES;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -84,85 +197,119 @@
                                        @"task_view_controller":NSStringFromClass([self class])
                                        }));
 }
+
+- (APCAppDelegate *) appDelegate
+{
+    return [APCAppDelegate sharedAppDelegate];
+}
+
+
 /*********************************************************************************/
 #pragma mark - ORKOrderedTaskDelegate
 /*********************************************************************************/
-- (void)taskViewController:(ORKTaskViewController *)taskViewController didFinishWithReason:(ORKTaskViewControllerFinishReason)reason error:(nullable NSError *)error
-{
-    
-    NSString *currentStepIdentifier = @"Step identifier not available";
-    
-    if ( self.currentStepViewController.step.identifier != nil)
-    {
-        currentStepIdentifier = self.currentStepViewController.step.identifier;
-    }
-    
-    if (reason == ORKTaskViewControllerFinishReasonCompleted)
-    {
-        [self processTaskResult];
-        
-        [self.scheduledTask completeScheduledTask];
-        APCAppDelegate* appDelegate = (APCAppDelegate*)[UIApplication sharedApplication].delegate;
-        [appDelegate.scheduler updateScheduledTasksIfNotUpdating:NO];
-        [taskViewController dismissViewControllerAnimated:YES completion:nil];
-        
-        APCLogEventWithData(kTaskEvent, (@{
-                                           @"task_status":@"ResultCompleted",
-                                           @"task_title": self.scheduledTask.task.taskTitle,
-                                           @"task_view_controller":NSStringFromClass([self class]),
-                                           @"task_step" : currentStepIdentifier
-                                           }));
-    }
-    else if (reason == ORKTaskViewControllerFinishReasonFailed)
-    {
-        if (error.code == 4 && error.domain == NSCocoaErrorDomain)
-        {
-            
-        }
-        else if (error.code == 260 && error.domain == NSCocoaErrorDomain)
-        {
-            //  Ignore this condition as it's due to no collected data.
-        }
-        else
-        {
-            [taskViewController dismissViewControllerAnimated:YES completion:nil];
-            APCLogEventWithData(kTaskEvent, (@{
-                                               @"task_status":@"ResultFailed",
-                                               @"task_title": self.scheduledTask.task.taskTitle,
-                                               @"task_view_controller":NSStringFromClass([self class]),
-                                               @"task_step" : currentStepIdentifier
-                                               }));
-            
 
-        }
-        
-        APCLogError2(error);
-    }
-    else if (reason == ORKTaskViewControllerFinishReasonDiscarded)
+- (void) taskViewController: (ORKTaskViewController *) taskViewController
+        didFinishWithReason: (ORKTaskViewControllerFinishReason) reason
+                      error: (nullable NSError *) error
+{
+    NSString *currentStepIdentifier = self.currentStepViewController.step.identifier;
+    NSString *taskTitle = self.scheduledTask.task.taskTitle;
+    BOOL shouldLogError = YES;
+
+    if (currentStepIdentifier == nil)
     {
-        [taskViewController dismissViewControllerAnimated:YES completion:nil];
-        APCLogEventWithData(kTaskEvent, (@{
-                                           @"task_status":@"ResultDiscarded",
-                                           @"task_title": self.scheduledTask.task.taskTitle,
-                                           @"task_view_controller":NSStringFromClass([self class]),
-                                           @"task_step" : currentStepIdentifier
-                                           }));
+        currentStepIdentifier = @"Step identifier not available";
     }
-    else if (reason == ORKTaskViewControllerFinishReasonSaved)
+
+    if (taskTitle == nil)
     {
-        [taskViewController dismissViewControllerAnimated:YES completion:nil];
-        APCLogEventWithData(kTaskEvent, (@{
-                                           @"task_status":@"ResultSaved",
-                                           @"task_title": self.scheduledTask.task.taskTitle,
-                                           @"task_view_controller":NSStringFromClass([self class]),
-                                           @"task_step" : currentStepIdentifier
-                                           }));
+        taskTitle = @"Task Title not available";
     }
-    else
+
+    /*
+     Most results have common behaviors, below this
+     switch() statement: log the fact that we're here, log
+     an error if needed, and close the window.  For those
+     with specific behaviors, add them to this switch().
+     */
+    switch (reason)
     {
-        APCLogError2(error);
-        APCLogEvent(@"The ORKTaskViewControllerFinishReason for this task is not set");
+        case ORKTaskViewControllerFinishReasonCompleted:
+            
+            // Only process results when the task is able to
+            // generate them.
+            if (self.canGenerateResult)
+            {
+                [self processTaskResult];
+            }
+            
+            [self.scheduledTask completeScheduledTask];
+            [[NSNotificationCenter defaultCenter]postNotificationName:APCActivityCompletionNotification object:nil];
+            break;
+
+        case ORKTaskViewControllerFinishReasonFailed:
+
+            if ([error.domain isEqualToString: NSCocoaErrorDomain])
+            {
+                if (error.code == 4)
+                {
+                    shouldLogError = NO;
+                }
+                else if (error.code == 260)
+                {
+                    // Ignore this condition as it's due to no collected data.
+                    shouldLogError = NO;
+                }
+                else
+                {
+                    // Log it and bug out, as usual.
+                }
+            }
+            
+            break;
+
+        case ORKTaskViewControllerFinishReasonDiscarded:
+            /*
+             The user cancelled the operation.  Delete the ScheduledTask.
+
+             In our new world, the theory is:  ScheduledTasks are only created
+             in the database when the user actually chooses to save them.
+             Unfortunately, a lot of existing code depends on ScheduledTasks
+             already having been created before a view appears.  So we'll run
+             with that:  save the task while the views are using it, but then
+             destroy it if the user cancels.
+
+             This should be asynchronous.  For now, it's not, so I can
+             figure out what threads this class (the one you're reading
+             now) is reliably using.  Then I'll fix it to be wholly-
+             asynchronous.
+             */
+            [self.appDelegate.scheduler deleteScheduledTask: self.scheduledTask];
+            break;
+
+        case ORKTaskViewControllerFinishReasonSaved:
+            // Nothing special to do.
+            break;
+
+        default:
+            // We don't recognize this reason.  We'll log an event saying so,
+            // but we don't have anything special to do aside from that.
+            break;
     }
+    
+    APCLogEventWithData (kTaskEvent, (@{
+                                        @"task_status"           : NSStringFromORKTaskViewControllerFinishReason (reason),
+                                        @"task_title"            : taskTitle,
+                                        @"task_view_controller"  : NSStringFromClass (self.class),
+                                        @"task_step"             : currentStepIdentifier
+                                        }));
+
+    if (shouldLogError)
+    {
+        APCLogError2 (error);
+    }
+
+    [taskViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
 
@@ -191,40 +338,117 @@
 {
     NSString * resultSummary = [self createResultSummary];
     
-    APCDataArchiver * archiver = [[APCDataArchiver alloc] initWithTaskResult:self.result];
-
-	/*
-	 See comment at bottom of this method.
-	 */
-	#ifdef USE_DATA_VERIFICATION_CLIENT
-
-		archiver.preserveUnencryptedFile = YES;
-
-	#endif
-
+    [self archiveResults];
     
-    NSString * archiveFileName = [archiver writeToOutputDirectory:self.taskResultsFilePath];
-    [self storeInCoreDataWithFileName:archiveFileName resultSummary:resultSummary];
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
+        
+        [self uploadResultSummary:resultSummary];
+        
+    });
+}
 
-	
-	/*
-	 This will COPY the unencrypted file to a local
-	 server.  (The code above here uploads it to Sage.)
-	 We're #if-ing it to make sure this code isn't
-	 accessible to Bad Guys in production.  Even if
-	 the code isn't called, if it's in RAM at all,
-     it can be exploited.
-	 */
-	#ifdef USE_DATA_VERIFICATION_CLIENT
+/*
+ Should be overridden by subclasses with specific behavior requirements, as their specific behavior
+ should not be in a superclass.
+ **/
+- (void) archiveResults
+{
+    //get a fresh archive
+    self.archive = [[APCDataArchive alloc]initWithReference:self.task.identifier];
+    
+    __weak typeof(self) weakSelf = self;
+    //add dictionaries or json data to the archive, calling completeArchive when done
+    [self.result.results enumerateObjectsUsingBlock:^(ORKStepResult *stepResult, NSUInteger __unused idx, BOOL * __unused stop) {
+        [stepResult.results enumerateObjectsUsingBlock:^(ORKResult *result, NSUInteger __unused idx, BOOL *__unused stop) {
+            __strong typeof(self) strongSelf = weakSelf;
+            //Update date if needed
+            if (!result.startDate) {
+                result.startDate = stepResult.startDate;
+                result.endDate = stepResult.endDate;
+            }
+            
+            //this is used in BreastCancer
+            if ([result isKindOfClass:[APCDataResult class]])
+            {
+                APCDataResult * dataResult = (APCDataResult*) result;
+                dataResult.identifier = dataResult.identifier ? : (stepResult.identifier ? : [NSUUID UUID].UUIDString);
+                NSString *fileName = [dataResult.identifier stringByAppendingString:@"_data"];
+                [strongSelf.archive insertJSONDataIntoArchive:dataResult.data filename:fileName];
+            }
+            
+            else if ([result isKindOfClass:[ORKFileResult class]])
+            {
+                ORKFileResult * fileResult = (ORKFileResult*) result;
+                NSString *translatedFilename = [ORKFileResult filenameForFileResultIdentifier:fileResult.identifier stepIdentifier:stepResult.identifier];
+                if (fileResult.fileURL) {
+                    [strongSelf.archive insertDataAtURLIntoArchive:fileResult.fileURL fileName:translatedFilename];
+                }
+            }
+            
+            else if ([result isKindOfClass:[ORKTappingIntervalResult class]])
+            {
+                ORKTappingIntervalResult  *tappingResult = (ORKTappingIntervalResult *)result;
+                [self addTappingResultsToArchive:tappingResult];
+            }
+            
+            else if ([result isKindOfClass:[ORKSpatialSpanMemoryResult class]])
+            {
+                ORKSpatialSpanMemoryResult  *spatialSpanMemoryResult = (ORKSpatialSpanMemoryResult *)result;
+                [self addSpatialSpanMemoryResultsToArchive:spatialSpanMemoryResult];
+            }
+            
+            
+            else if ([result isKindOfClass:[ORKQuestionResult class]])
+            {
+                [self addResultToArchive:result];
+            }
+            else
+            {
+                APCLogError(@"Result not processed for : %@", result.identifier);
+            }
+        }];
+    }];
+}
 
-		[APCDataVerificationClient uploadDataFromFileAtPath: archiver.unencryptedFilePath];
+/**
+ Subclasses should override these methods
+ */
 
-	#endif
+- (void)addSpatialSpanMemoryResultsToArchive:(ORKSpatialSpanMemoryResult *) __unused result
+{
+    
+}
+
+- (void)addTappingResultsToArchive:(ORKTappingIntervalResult *)__unused result
+{
+    
+}
+
+#pragma mark - Upload
+
+- (void)uploadResultSummary: (NSString *)resultSummary
+{
+    //Encrypt and Upload
+    APCDataArchiveUploader *archiveUploader = [[APCDataArchiveUploader alloc]init];
+    
+    __weak typeof(self) weakSelf = self;
+    [archiveUploader encryptAndUploadArchive:self.archive withCompletion:^(NSError *error) {
+        __strong typeof(self) strongSelf = weakSelf;
+        if (! error) {
+            if (resultSummary != nil) {
+                [strongSelf storeInCoreDataWithFileName:self.archive.unencryptedURL.absoluteString.lastPathComponent resultSummary:resultSummary];
+            }
+        }else{
+            APCLogError2(error);
+        }
+    }];
+    
 }
 
 - (void) storeInCoreDataWithFileName: (NSString *) fileName resultSummary: (NSString *) resultSummary
 {
-    NSManagedObjectContext * context = ((APCAppDelegate *)[UIApplication sharedApplication].delegate).dataSubstrate.mainContext;
+    
+    NSManagedObjectContext *context = [[APCScheduler defaultScheduler] managedObjectContext];
     
     [self storeInCoreDataWithFileName: fileName resultSummary: resultSummary usingContext: context];
 }
@@ -234,19 +458,27 @@
                         usingContext: (NSManagedObjectContext *) context
 {
     NSManagedObjectID * objectID = [APCResult storeTaskResult:self.result inContext:context];
+    APCScheduledTask *localContextScheduledTask = (APCScheduledTask *)[context objectWithID:self.scheduledTask.objectID];
+    
     APCResult * result = (APCResult*)[context objectWithID:objectID];
     result.archiveFilename = fileName;
     result.resultSummary = resultSummary;
-    result.scheduledTask = self.scheduledTask;
-    NSError * error;
-    [result saveToPersistentStore:&error];
-    APCLogError2 (error);
-    APCAppDelegate * appDelegate = (APCAppDelegate*)[UIApplication sharedApplication].delegate;
-    [appDelegate.dataMonitor batchUploadDataToBridgeOnCompletion:^(NSError *error) {
-        APCLogError2 (error);
-    }];
+    result.scheduledTask = localContextScheduledTask;
+    
+    NSError * resultSaveError = nil;
+    BOOL saveSuccess = [result saveToPersistentStore:&resultSaveError];
+    
+    if (!saveSuccess) {
+        APCLogError2 (resultSaveError);
+    }
+    
+    [self.appDelegate.dataMonitor batchUploadDataToBridgeOnCompletion:^(NSError *error)
+     {
+         APCLogError2 (error);
+     }];
+    
     if (self.createResultSummaryBlock) {
-        [((APCAppDelegate *)[UIApplication sharedApplication].delegate).dataMonitor performCoreDataBlockInBackground:self.createResultSummaryBlock];
+        [self.appDelegate.dataMonitor performCoreDataBlockInBackground:self.createResultSummaryBlock];
     }
 }
 
@@ -274,19 +506,82 @@
 {
     id<ORKTask> task = [coder decodeObjectForKey:@"task"];
     NSString * scheduledTaskID = [coder decodeObjectForKey:@"scheduledTask"];
-    NSManagedObjectID * objID = [((APCAppDelegate*)[UIApplication sharedApplication].delegate).dataSubstrate.persistentStoreCoordinator managedObjectIDForURIRepresentation:[NSURL URLWithString:scheduledTaskID]];
-    APCScheduledTask * scheduledTask = (APCScheduledTask*)[((APCAppDelegate*)[UIApplication sharedApplication].delegate).dataSubstrate.mainContext objectWithID:objID];
+    APCAppDelegate *appDelegate = [APCAppDelegate sharedAppDelegate];
+    NSManagedObjectID * objID = [appDelegate.dataSubstrate.persistentStoreCoordinator managedObjectIDForURIRepresentation:[NSURL URLWithString:scheduledTaskID]];
+    APCScheduledTask * scheduledTask = (APCScheduledTask*)[appDelegate.dataSubstrate.mainContext objectWithID:objID];
     id localRestorationData = [coder decodeObjectForKey:@"restorationData"];
     if (scheduledTask) {
         APCBaseTaskViewController * tvc =[[self alloc] initWithTask:task restorationData:localRestorationData];
         tvc.scheduledTask = scheduledTask;
         tvc.restorationIdentifier = [task identifier];
         tvc.restorationClass = self;
-
+        
         tvc.delegate = tvc;
         return tvc;
     }
     return nil;
+}
+
+#pragma mark - Utilities
+
+- (void) addResultToArchive: (ORKResult*) result
+{
+    NSMutableArray * propertyNames = [NSMutableArray array];
+    
+    /*
+     Get the names of all properties of our result's class
+     and all its superclasses.  Stop when we hit ORKResult.
+     */
+    Class klass = result.class;
+    BOOL done = NO;
+    NSArray *propertyNamesForOneClass = nil;
+    
+    while (klass != nil && ! done)
+    {
+        propertyNamesForOneClass = [self classPropsFor: klass];
+        
+        [propertyNames addObjectsFromArray: propertyNamesForOneClass];
+        
+        if (klass == [ORKResult class])
+        {
+            done = YES;
+        }
+        else
+        {
+            klass = [klass superclass];
+        }
+    }
+    
+    NSDictionary *propertiesToSave = [result dictionaryWithValuesForKeys: propertyNames];
+    NSDictionary *serializableData = [APCJSONSerializer serializableDictionaryFromSourceDictionary: propertiesToSave];
+    
+    APCLogDebug(@"%@", serializableData);
+    
+    NSString *filename = [result.identifier stringByAppendingString:@".json"];
+    [self.archive insertIntoArchive:serializableData filename:filename];
+}
+
+- (NSArray *)classPropsFor:(Class)klass
+{
+    if (klass == NULL) {
+        return nil;
+    }
+    
+    NSMutableArray *results = [NSMutableArray array];
+    
+    unsigned int outCount, i;
+    objc_property_t *properties = class_copyPropertyList(klass, &outCount);
+    for (i = 0; i < outCount; i++) {
+        objc_property_t property = properties[i];
+        const char *propName = property_getName(property);
+        if(propName) {
+            NSString *propertyName = [NSString stringWithUTF8String:propName];
+            [results addObject:propertyName];
+        }
+    }
+    free(properties);
+    
+    return [NSArray arrayWithArray:results];
 }
 
 @end
