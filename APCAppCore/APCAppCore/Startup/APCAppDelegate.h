@@ -36,7 +36,7 @@
 #import "APCPasscodeViewController.h"
 #import "APCProfileViewController.h"
 #import "APCOnboardingManager.h"
-#import "APCConsentManager.h"
+#import "APCConsentProvider.h"
 #import "APCConsentTask.h"
 #import "APCDataUploader.h"
 
@@ -45,7 +45,7 @@ static NSString*    const kDatabaseName                     = @"db.sqlite";
 
 @class APCDataMonitor, APCScheduler, APCPasscodeViewController, APCTasksReminderManager, APCPassiveDataCollector, APCFitnessAllocation;
 
-@interface APCAppDelegate : UIResponder <UIApplicationDelegate, APCOnboardingManagerProvider, APCConsentManagerProvider, APCPasscodeViewControllerDelegate>
+@interface APCAppDelegate : UIResponder <UIApplicationDelegate, APCOnboardingManagerProvider, APCConsentProvider, APCPasscodeViewControllerDelegate>
 
 @property (nonatomic, strong) APCFitnessAllocation *sevenDayFitnessAllocationData;
 @property (strong, nonatomic) UITabBarController *tabBarController;
@@ -112,6 +112,8 @@ static NSString*    const kDatabaseName                     = @"db.sqlite";
 - (id <APCProfileViewControllerDelegate>) profileExtenderDelegate;
 
 - (void)showPasscodeIfNecessary;
+
+- (ORKTaskViewController *)consentViewController;
 
 - (NSDate*)applicationBecameActiveDate;
 

@@ -389,11 +389,6 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
      */
 }
 
-- (APCConsentManager *)consentManager
-{
-    return [APCConsentManager new];
-}
-
 // The block of text for the All Set
 - (NSArray *)allSetTextBlocks
 {
@@ -813,6 +808,13 @@ static NSUInteger   const kIndexOfProfileTab                = 3;
 - (APCScene *)inclusionCriteriaSceneForOnboarding:(APCOnboarding *)__unused onboarding {
     NSAssert(NO, @"Cannot retun nil. Override this delegate method to return a valid APCScene.");
     return nil;
+}
+
+
+- (ORKTaskViewController *)consentViewController
+{
+	NSAssert(NO, @"Override this method to return a valid Consent Task View Controller.");
+	return nil;
 }
 
 

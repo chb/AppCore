@@ -35,6 +35,7 @@
 #import "APCSignInViewController.h"
 #import "APCEmailVerifyViewController.h"
 #import "APCOnboardingManager.h"
+#import "APCConsentProvider.h"
 #import "APCLog.h"
 
 #import "UIColor+APCAppearance.h"
@@ -238,7 +239,7 @@ static NSString * const kServerInvalidEmailErrorString = @"Invalid username or p
 
 - (void)showConsent
 {
-    ORKTaskViewController *consentViewController = [((id<APCConsentManagerProvider>)[UIApplication sharedApplication].delegate) consentManager].consentViewController;
+    ORKTaskViewController *consentViewController = [((id<APCConsentProvider>)[UIApplication sharedApplication].delegate) consentViewController];
     consentViewController.delegate = self;
     
     NSUInteger subviewsCount = consentViewController.view.subviews.count;

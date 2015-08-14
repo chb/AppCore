@@ -43,7 +43,7 @@
 #import "APCSettingsViewController.h"
 #import "APCSpinnerViewController.h"
 #import "APCTableViewItem.h"
-#import "APCConsentManager.h"
+#import "APCConsentProvider.h"
 #import "APCConsentTask.h"
 #import "APCTasksReminderManager.h"
 #import "APCOnboardingManager.h"
@@ -1557,52 +1557,63 @@ static NSString * const kAPCRightDetailTableViewCellIdentifier = @"APCRightDetai
 
 - (void)reviewConsent
 {
-    __weak typeof(self) weakSelf = self;
-    
-    APCConsentManager *manager = [(id<APCConsentManagerProvider>)[UIApplication sharedApplication].delegate consentManager];
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Review Consent" message:@"" preferredStyle:UIAlertControllerStyleActionSheet];
-    
-    if ([manager canReviewConsentPDF]) {
-        UIAlertAction *pdfAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"View PDF", @"View PDF") style:UIAlertActionStyleDefault handler:^(UIAlertAction * __unused action) {
-            
-            APCWebViewController *webViewController = [[UIStoryboard storyboardWithName:@"APCOnboarding" bundle:[NSBundle appleCoreBundle]] instantiateViewControllerWithIdentifier:@"APCWebViewController"];
-            NSString *filePath = [[NSBundle mainBundle] pathForResource:@"consent" ofType:@"pdf"];
-            NSData *data = [NSData dataWithContentsOfFile:filePath];
-            [webViewController.webView setDataDetectorTypes:UIDataDetectorTypeAll];
-            webViewController.title = NSLocalizedString(@"Consent", @"Consent");
-            
-            UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:webViewController];
-            [weakSelf.navigationController presentViewController:navController animated:YES completion:^{
-                [webViewController.webView loadData:data MIMEType:@"application/pdf" textEncodingName:@"utf-8" baseURL:nil];
-            }];
-        }];
-        [alertController addAction:pdfAction];
-    }
-    
-    if ([manager canReviewConsentVideo]) {
-        UIAlertAction *videoAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Watch Video", @"Watch Video") style:UIAlertActionStyleDefault handler:^(UIAlertAction * __unused action) {
-            
-            NSURL *fileURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Intro" ofType:@"mp4"]];
-            APCIntroVideoViewController *introVideoViewController = [[APCIntroVideoViewController alloc] initWithContentURL:fileURL];
-            
-            UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:introVideoViewController];
-            navController.navigationBarHidden = YES;
-            [weakSelf presentViewController:navController animated:YES completion:nil];
-        }];
-        [alertController addAction:videoAction];
-    }
-    
-    if ([manager canReviewConsentSlides]) {
-        UIAlertAction *slidesAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"View Slides", @"View Slides") style:UIAlertActionStyleDefault handler:^(UIAlertAction * __unused action) {
-            [weakSelf showConsentSlides];
-        }];
-        [alertController addAction:slidesAction];
-    }
-    
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"") style:UIAlertActionStyleCancel handler:nil];
-    [alertController addAction:cancelAction];
-    
-    [self presentViewController:alertController animated:YES completion:nil];
+	__weak typeof(self) weakSelf = self;
+	
+	APCAppDelegate * appDelegate = (APCAppDelegate*) [UIApplication sharedApplication].delegate;
+	NSArray *consentReviewActions = [appDelegate reviewConsentActions];
+	
+	if (!consentReviewActions) {
+		consentReviewActions = @[kReviewConsentActionPDF, kReviewConsentActionVideo, kReviewConsentActionSlides];
+	}
+	
+	UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Review Consent" message:@"" preferredStyle:UIAlertControllerStyleActionSheet];
+	
+	if ([consentReviewActions containsObject:kReviewConsentActionPDF]) {
+		UIAlertAction *pdfAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"View PDF", @"View PDF") style:UIAlertActionStyleDefault handler:^(UIAlertAction * __unused action) {
+			
+			APCWebViewController *webViewController = [[UIStoryboard storyboardWithName:@"APCOnboarding" bundle:[NSBundle appleCoreBundle]] instantiateViewControllerWithIdentifier:@"APCWebViewController"];
+			NSString *filePath = [[NSBundle mainBundle] pathForResource:@"consent" ofType:@"pdf"];
+			NSData *data = [NSData dataWithContentsOfFile:filePath];
+			[webViewController.webView setDataDetectorTypes:UIDataDetectorTypeAll];
+			webViewController.title = NSLocalizedString(@"Consent", @"Consent");
+			
+			UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:webViewController];
+			[weakSelf.navigationController presentViewController:navController animated:YES completion:^{
+				[webViewController.webView loadData:data MIMEType:@"application/pdf" textEncodingName:@"utf-8" baseURL:nil];
+			}];
+			
+		}];
+		[alertController addAction:pdfAction];
+	}
+	
+	if ([consentReviewActions containsObject:kReviewConsentActionVideo]) {
+		UIAlertAction *videoAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Watch Video", @"Watch Video") style:UIAlertActionStyleDefault handler:^(UIAlertAction * __unused action) {
+			
+			NSURL *fileURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Intro" ofType:@"mp4"]];
+			APCIntroVideoViewController *introVideoViewController = [[APCIntroVideoViewController alloc] initWithContentURL:fileURL];
+			
+			UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:introVideoViewController];
+			navController.navigationBarHidden = YES;
+			[weakSelf presentViewController:navController animated:YES completion:nil];
+		}];
+		[alertController addAction:videoAction];
+	}
+	
+	if ([consentReviewActions containsObject:kReviewConsentActionSlides]) {
+		UIAlertAction *slidesAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"View Slides", @"View Slides") style:UIAlertActionStyleDefault handler:^(UIAlertAction * __unused action) {
+			[weakSelf showConsentSlides];
+		}];
+		[alertController addAction:slidesAction];
+	}
+	
+	{
+		UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction * __unused action) {
+			
+		}];
+		[alertController addAction:cancelAction];
+	}
+	
+	[self presentViewController:alertController animated:YES completion:nil];
 }
 
 - (void)showConsentSlides

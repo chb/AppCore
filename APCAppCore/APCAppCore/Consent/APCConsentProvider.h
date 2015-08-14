@@ -1,5 +1,5 @@
 //
-//  APCConsentManager.m
+//  APCConsentManager.h
 //  APCAppCore
 //
 //  Copyright (c) 2015, Apple, Inc. All rights reserved.
@@ -32,38 +32,17 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import "APCConsentManager.h"
-#import "APCConsentTask.h"
+#import <Foundation/Foundation.h>
+#import <ResearchKit/ResearchKit.h>
 
 
-@implementation APCConsentManager
+/**
+ *  Protocol to be implemented by the app delegate.
+ */
+@protocol APCConsentProvider <NSObject>
 
-
-- (instancetype)init {
-    if ((self = [super init])) {
-        _canReviewConsentPDF = YES;
-        _canReviewConsentSlides = YES;
-        _canReviewConsentVideo = NO;
-    }
-    return self;
-}
-
-
-#pragma mark: - Configuration
-
-+ (NSString *)configurationFileName {
-    return @"APHConsentSection";        // Keeping "APH" to not break backwards compatibility, should be "APC"
-}
-
-
-#pragma mark: - View Controller
-
-- (ORKTaskViewController *)consentViewController {
-    APCConsentTask *task = [[APCConsentTask alloc] initWithIdentifier:@"Consent" propertiesFileName:[[self class] configurationFileName]];
-    ORKTaskViewController *consentVC = [[ORKTaskViewController alloc] initWithTask:task taskRunUUID:[NSUUID UUID]];
-    
-    return consentVC;
-}
-
+@required
+/// The step view controller guiding through consenting.
+- (ORKStepViewController *)consentViewController;
 
 @end
