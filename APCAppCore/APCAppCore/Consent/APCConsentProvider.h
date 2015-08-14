@@ -42,7 +42,7 @@
 @protocol APCConsentProvider <NSObject>
 
 @required
-/// The step view controller guiding through consenting.
-- (ORKStepViewController *)consentViewController;
+/// The task view controller guiding through consenting.
+- (ORKTaskViewController *)consentViewController;
 
 @end
