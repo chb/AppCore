@@ -69,7 +69,6 @@ static NSString *kConsentEmailSubject = @"Consent Document";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
     
     self.items = [NSMutableArray new];
     
@@ -152,7 +151,12 @@ static NSString *kConsentEmailSubject = @"Consent Document";
         self.joinButtonLeadingConstraint.constant = CGRectGetWidth(self.view.frame)/2;
         [self.view layoutIfNeeded];
     }
-    
+	
+	// update layout view controller to use the correct available bounds
+	UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
+	if ([layout isKindOfClass:[UICollectionViewFlowLayout class]]) {
+		layout.itemSize = self.collectionView.superview.frame.size;
+	}
 }
 
 - (void)setUpPageView
@@ -208,6 +212,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
     if (indexPath.row == 0) {
         APCStudyLandingCollectionViewCell *landingCell = (APCStudyLandingCollectionViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:kAPCStudyLandingCollectionViewCellIdentifier forIndexPath:indexPath];
         landingCell.delegate = self;
+		landingCell.titleLabel.numberOfLines = (collectionView.bounds.size.height > 280.f) ? 0 : 1;			// to force one line on iPhone 4S
         landingCell.titleLabel.text = studyDetails.caption;
         landingCell.subTitleLabel.text = studyDetails.detailText;
         landingCell.readConsentButton.hidden = YES;
@@ -247,13 +252,6 @@ static NSString *kConsentEmailSubject = @"Consent Document";
     }
     
     return cell;
-}
-
-- (CGSize) collectionView: (UICollectionView *) __unused collectionView
-				   layout: (UICollectionViewLayout*) __unused collectionViewLayout
-   sizeForItemAtIndexPath: (NSIndexPath *) __unused indexPath
-{
-    return self.collectionView.bounds.size;
 }
 
 #pragma mark - UIScrollViewDelegate methods
