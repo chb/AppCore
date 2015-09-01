@@ -471,15 +471,15 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1EE-D5-O3r" id="PZt-Ax-aBB">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="video_icon" translatesAutoresizingMaskIntoConstraints="NO" id="a81-fC-z9f">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="share_twitter" translatesAutoresizingMaskIntoConstraints="NO" id="a81-fC-z9f">
                                                     <rect key="frame" x="20" y="11" width="31" height="31"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="31" id="4K0-Ka-ICF"/>
                                                         <constraint firstAttribute="width" constant="31" id="N6u-Ld-fg8"/>
                                                     </constraints>
                                                 </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Share on Twitter" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MGi-6n-04M">
-                                                    <rect key="frame" x="70" y="16" width="192" height="21"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Share on Twitter" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MGi-6n-04M">
+                                                    <rect key="frame" x="70" y="16" width="225" height="21"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="21" id="2O4-HG-aLK"/>
                                                     </constraints>
@@ -2172,8 +2172,8 @@
                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="App Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gVA-FA-dsp">
-                                    <rect key="frame" x="8" y="151" width="304" height="21"/>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="App Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gVA-FA-dsp">
+                                    <rect key="frame" x="8" y="152" width="304" height="21"/>
                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                     <nil key="highlightedColor"/>
@@ -2268,6 +2268,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="share_twitter" width="28" height="28"/>
         <image name="video_icon" width="1260" height="720"/>
         <image name="video_screenshot" width="1260" height="720"/>
     </resources>
