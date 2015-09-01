@@ -51,9 +51,9 @@ NSString * const kAPCStudyVideoCollectionViewCellIdentifier = @"APCStudyVideoCol
     self.titleLabel.textColor = [UIColor appSecondaryColor1];
     self.titleLabel.font = [UIFont appLightFontWithSize:26.f];
     
-    self.videoMessageLabel.textColor = [UIColor appSecondaryColor1];
-    self.videoMessageLabel.font = [UIFont appRegularFontWithSize:22.f];
-    
+//    self.videoMessageLabel.textColor = [UIColor appSecondaryColor1];
+//    self.videoMessageLabel.font = [UIFont appRegularFontWithSize:22.f];
+	
     [self.videoButton setImage:[UIImage imageNamed:@"video_icon"] forState:UIControlStateNormal];
 
 }

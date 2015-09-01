@@ -311,7 +311,9 @@ static NSString *kConsentEmailSubject = @"Consent Document";
             APCTableViewStudyDetailsItem *studyDetails = [APCTableViewStudyDetailsItem new];
             studyDetails.caption = questionDict[@"title"];
             studyDetails.detailText = questionDict[@"details"];
-            studyDetails.iconImage = [[UIImage imageNamed:questionDict[@"icon_image"]] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+			if ([questionDict[@"icon_image"] length] > 0) {
+				studyDetails.iconImage = [[UIImage imageNamed:questionDict[@"icon_image"]] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+			}
             studyDetails.tintColor = [UIColor tertiaryColorForString:questionDict[@"tint_color"]];
             studyDetails.videoName = questionDict[@"video_name"];
             studyDetails.showsConsent = ((NSString *)questionDict[@"show_consent"]).length > 0;
