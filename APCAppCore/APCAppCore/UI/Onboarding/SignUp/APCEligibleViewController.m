@@ -140,6 +140,7 @@ static NSString *kreturnControlOfTaskDelegate = @"returnControlOfTaskDelegate";
                      error:(nullable NSError *)__unused error {
     if (reason == ORKTaskViewControllerFinishReasonCompleted) {
         ORKConsentSignatureResult *consentResult =  nil;
+		ORKConsentDocument *doc = [taskViewController.task performSelector:@selector(consentDocument)];
         
         if ([taskViewController respondsToSelector:@selector(signatureResult)]) {
             APCConsentTaskViewController *consentTaskViewController = (APCConsentTaskViewController *)taskViewController;
@@ -157,6 +158,18 @@ static NSString *kreturnControlOfTaskDelegate = @"returnControlOfTaskDelegate";
                 }
             }
         }
+		
+		[consentResult applyToDocument:doc];
+		[doc makePDFWithCompletionHandler:^(NSData * __nullable data, NSError * __nullable error) {
+			if (data) {
+				NSString *path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+				path = [path stringByAppendingPathComponent:@"consent-signed.pdf"];
+				[data writeToFile:path atomically:YES];
+			}
+			else {
+				NSLog(@"FAILED to write consent PDF: %@", error);
+			}
+		}];
         
         //  if no signature (no consent result) then assume the user failed the quiz
         if (consentResult != nil && consentResult.signature.requiresName && (consentResult.signature.givenName && consentResult.signature.familyName)) {
