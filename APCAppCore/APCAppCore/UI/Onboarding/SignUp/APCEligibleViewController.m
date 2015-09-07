@@ -165,9 +165,10 @@ static NSString *kreturnControlOfTaskDelegate = @"returnControlOfTaskDelegate";
 				NSString *path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
 				path = [path stringByAppendingPathComponent:@"consent-signed.pdf"];
 				[data writeToFile:path atomically:YES];
+				APCLogDebug(@"Consent written to «%@»", path);
 			}
 			else {
-				NSLog(@"FAILED to write consent PDF: %@", error);
+				APCLogDebug(@"FAILED to write consent PDF: %@", error);
 			}
 		}];
         
