@@ -35,6 +35,10 @@
 
 @interface APCWebViewController ()
 
+@property (strong, nonatomic) UIDocumentInteractionController *documentInteraction;
+
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *shareButtonItem;
+
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *backBarButtonItem;
 
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *refreshBarButtonItem;
@@ -47,10 +51,15 @@
 
 @implementation APCWebViewController
 
--(void)viewDidLoad{
-    
+-(void)viewDidLoad {
     self.webView.delegate = self;
     self.webView.scalesPageToFit = YES;
+	
+	// sharing
+	UIBarButtonItem *share = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(share:)];
+	share.enabled = NO;
+	self.navigationItem.leftBarButtonItem = share;
+	self.shareButtonItem = share;
     
     if (self.link.length > 0) {
         NSString *encodedURLString=[self.link stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
@@ -68,9 +77,28 @@
     return YES;
 }
 
-/*********************************************************************************/
+
+#pragma mark - Sharing
+
+- (void)share:(UIBarButtonItem *)sender {
+	NSParameterAssert([sender isKindOfClass:[UIBarButtonItem class]]);
+	if (_webView.request.URL) {
+		self.documentInteraction = [UIDocumentInteractionController interactionControllerWithURL:_webView.request.URL];
+		_documentInteraction.delegate = self;
+		_documentInteraction.name = self.title;
+		
+		[_documentInteraction presentOptionsMenuFromBarButtonItem:sender animated:YES];
+	}
+}
+
+- (void)documentInteractionControllerDidDismissOptionsMenu:(UIDocumentInteractionController *)controller {
+	if (controller == _documentInteraction) {
+		self.documentInteraction = nil;
+	}
+}
+
+
 #pragma mark - UIWebViewDelegate methods
-/*********************************************************************************/
 
 - (void)webViewDidStartLoad:(UIWebView *)__unused webView
 {
@@ -110,6 +138,8 @@
 
 - (void)updateToolbarButtons
 {
+	_shareButtonItem.enabled = (nil != _webView.request.URL);
+	
     self.refreshBarButtonItem.enabled = !self.webView.isLoading;
     self.stopBarButtonItem.enabled = !self.webView.isLoading;
     

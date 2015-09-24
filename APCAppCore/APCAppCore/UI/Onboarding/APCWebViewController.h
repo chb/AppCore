@@ -33,7 +33,7 @@
  
 #import <UIKit/UIKit.h>
 
-@interface APCWebViewController : UIViewController <UIWebViewDelegate>
+@interface APCWebViewController : UIViewController <UIWebViewDelegate, UIDocumentInteractionControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet UIWebView *webView;
 @property (weak, nonatomic) IBOutlet UIToolbar *webToolBar;
