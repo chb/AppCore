@@ -218,7 +218,7 @@ static NSString *kConsentEmailSubject = @"Consent Document";
         landingCell.readConsentButton.hidden = YES;
 //        landingCell.emailConsentButton.hidden = [((APCAppDelegate *)[UIApplication sharedApplication].delegate) hideEmailOnWelcomeScreen];
         
-        if ([MFMailComposeViewController canSendMail]) {
+        if (YES || [MFMailComposeViewController canSendMail]) {
             [landingCell.emailConsentButton setTitleColor:[UIColor appPrimaryColor] forState:UIControlStateNormal];
             [landingCell.emailConsentButton setUserInteractionEnabled:YES];
         } else {
@@ -391,7 +391,6 @@ static NSString *kConsentEmailSubject = @"Consent Document";
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:introVideoViewController];
     navController.navigationBarHidden = YES;
     [self presentViewController:navController animated:YES completion:nil];
-
 }
 
 - (void)studyVideoCollectionViewCellReadConsent:(APCStudyVideoCollectionViewCell *) __unused cell
@@ -402,9 +401,8 @@ static NSString *kConsentEmailSubject = @"Consent Document";
     
     UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:webViewController];
     [self.navigationController presentViewController:navController animated:YES completion:^{
-        [webViewController.webView loadData:[self PDFDataOfConsent] MIMEType:@"application/pdf" textEncodingName:@"utf-8" baseURL:nil];
+		[webViewController.webView loadRequest:[NSURLRequest requestWithURL:[self PDFDataURL]]];
     }];
-
 }
 
 - (void)studyVideoCollectionViewCellEmailConsent:(APCStudyVideoCollectionViewCell *) __unused cell
@@ -459,19 +457,34 @@ static NSString *kConsentEmailSubject = @"Consent Document";
     
     UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:webViewController];
     [self.navigationController presentViewController:navController animated:YES completion:^{
-        [webViewController.webView loadData:[self PDFDataOfConsent] MIMEType:@"application/pdf" textEncodingName:@"utf-8" baseURL:nil];
+		[webViewController.webView loadRequest:[NSURLRequest requestWithURL:[self PDFDataURL]]];
     }];
+}
+
+- (void)studyLandingCollectionViewCellWatchVideo:(APCStudyLandingCollectionViewCell *)cell {
+	APCTableViewStudyDetailsItem *studyDetails = (APCTableViewStudyDetailsItem *)[self itemForIndexPath:[self.collectionView indexPathForCell:cell]];
+	
+	NSURL *fileURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:studyDetails.videoName ofType:@"mp4"]];
+	NSAssert(fileURL, @"Must include the consent video with filename \"%@.mp4\" in the app bundle", studyDetails.videoName);
+	APCIntroVideoViewController *introVideoViewController = [[APCIntroVideoViewController alloc] initWithContentURL:fileURL];
+	
+	UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:introVideoViewController];
+	navController.navigationBarHidden = YES;
+	[self presentViewController:navController animated:YES completion:nil];
 }
 
 #pragma mark - Utilities
 
-- (NSData *)PDFDataOfConsent
-{
-    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"consent" ofType:@"pdf"];
-    NSAssert(filePath, @"Must include the consent PDF with filename \"consent.pdf\" in the app bundle");
-    NSData *fileData = [NSData dataWithContentsOfFile:filePath];
+- (NSData *)PDFDataOfConsent {
+    NSData *fileData = [NSData dataWithContentsOfURL:[self PDFDataURL]];
     NSAssert(fileData, @"Failed to create an NSData representation of \"consent.pdf\"");
     return fileData;
+}
+
+- (NSURL *)PDFDataURL {
+	NSURL *pdfURL = [[NSBundle mainBundle] URLForResource:@"consent" withExtension:@"pdf"];
+	NSAssert(pdfURL, @"Must include the consent PDF with filename \"consent.pdf\" in the app bundle");
+	return pdfURL;
 }
 
 @end

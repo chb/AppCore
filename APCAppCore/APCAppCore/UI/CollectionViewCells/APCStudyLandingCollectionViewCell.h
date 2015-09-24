@@ -51,6 +51,7 @@ FOUNDATION_EXPORT NSString *const kAPCStudyLandingCollectionViewCellIdentifier;
 
 - (IBAction)readConsent:(id)sender;
 - (IBAction)emailConsent:(id)sender;
+- (IBAction)watchVideo:(id)sender;
 
 @end
 
@@ -59,5 +60,7 @@ FOUNDATION_EXPORT NSString *const kAPCStudyLandingCollectionViewCellIdentifier;
 - (void)studyLandingCollectionViewCellReadConsent:(APCStudyLandingCollectionViewCell *)cell;
 
 - (void)studyLandingCollectionViewCellEmailConsent:(APCStudyLandingCollectionViewCell *)cell;
+
+- (void)studyLandingCollectionViewCellWatchVideo:(APCStudyLandingCollectionViewCell *)cell;
 
 @end

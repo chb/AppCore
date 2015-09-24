@@ -62,7 +62,8 @@ NSString *const kAPCStudyLandingCollectionViewCellIdentifier = @"APCStudyLanding
     self.swipeLabel.textColor = [UIColor appSecondaryColor3];
     self.swipeLabel.font = [UIFont appMediumFontWithSize:15.f];
     
-    [self.emailConsentButton setTitle:NSLocalizedString(@"Email Consent Document", @"Email Consent Document") forState:UIControlStateNormal];
+	//[self.emailConsentButton setTitle:NSLocalizedString(@"Email Consent Document", @"Email Consent Document") forState:UIControlStateNormal];
+	[self.emailConsentButton setTitle:NSLocalizedString(@"Watch Our Video", @"Watch Our Video") forState:UIControlStateNormal];
     
     [self.readConsentButton setTitle:NSLocalizedString(@"Read Consent Document", @"Read Consent Document") forState:UIControlStateNormal];
     [self.readConsentButton setTitleColor:[UIColor appPrimaryColor] forState:UIControlStateNormal];
@@ -82,6 +83,13 @@ NSString *const kAPCStudyLandingCollectionViewCellIdentifier = @"APCStudyLanding
     if ([self.delegate respondsToSelector:@selector(studyLandingCollectionViewCellEmailConsent:)]) {
         [self.delegate studyLandingCollectionViewCellEmailConsent:self];
     }
+}
+
+- (IBAction)watchVideo:(id) __unused sender
+{
+	if ([self.delegate respondsToSelector:@selector(studyLandingCollectionViewCellWatchVideo:)]) {
+		[self.delegate studyLandingCollectionViewCellWatchVideo:self];
+	}
 }
 
 @end
