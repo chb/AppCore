@@ -160,6 +160,7 @@ static APCMotionHistoryReporter __strong *sharedInstance = nil;
             if (error) {
                 APCLogError2(error);
             }
+			[weakSelf callDoneCallbackWithReports:nil error:error];
         }
         else {
             NSDate*        lastActivity_started        = nil;
@@ -290,7 +291,8 @@ static APCMotionHistoryReporter __strong *sharedInstance = nil;
             motionHistoryDataSleeping.activityType = ActivityTypeSleeping;
             motionHistoryDataSleeping.timeInterval = totalSleepTime;
             [motionDayValues addObject:motionHistoryDataSleeping];
-
+			
+			// TODO: well great, using "weakSelf" like a pro but using an ivar directly here. Congrats. :P
             [motionReport addObject:motionDayValues];
 
             //Different start date and end date
