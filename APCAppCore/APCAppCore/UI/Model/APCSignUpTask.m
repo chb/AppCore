@@ -47,7 +47,7 @@ static NSInteger const kMinimumNumberOfSteps = 3; //Gen Info + MedicalInfo + Pas
     if (!step) {
         nextStep = self.inclusionCriteriaStep;
     }
-    if (!nextStep || [step.identifier isEqualToString:kAPCSignUpInclusionCriteriaStepIdentifier]) {
+    if ([step.identifier isEqualToString:kAPCSignUpInclusionCriteriaStepIdentifier]) {
         if (self.eligible) {
             nextStep = self.eligibleStep;
         }
@@ -55,22 +55,22 @@ static NSInteger const kMinimumNumberOfSteps = 3; //Gen Info + MedicalInfo + Pas
             nextStep = self.ineligibleStep;
         }
     }
-    if (!nextStep || [step.identifier isEqualToString:kAPCSignUpEligibleStepIdentifier]) {
+    if ([step.identifier isEqualToString:kAPCSignUpEligibleStepIdentifier]) {
         self.currentStepNumber += 1;
         nextStep = self.permissionsPrimingStep;
         
     }
-    if (!nextStep || [step.identifier isEqualToString:kAPCSignUpPermissionsPrimingStepIdentifier]) {
+    if ([step.identifier isEqualToString:kAPCSignUpPermissionsPrimingStepIdentifier]) {
         self.currentStepNumber += 1;
         nextStep = self.generalInfoStep;
         
     }
-    if (!nextStep || [step.identifier isEqualToString:kAPCSignUpGeneralInfoStepIdentifier]) {
+    if ([step.identifier isEqualToString:kAPCSignUpGeneralInfoStepIdentifier]) {
         self.currentStepNumber += 1;
         nextStep = self.medicalInfoStep;
         
     }
-    if (!nextStep || [step.identifier isEqualToString:kAPCSignUpMedicalInfoStepIdentifier]) {
+    if ([step.identifier isEqualToString:kAPCSignUpMedicalInfoStepIdentifier]) {
         if (self.customStepIncluded) {
             nextStep = self.customInfoStep;
         }
@@ -80,22 +80,22 @@ static NSInteger const kMinimumNumberOfSteps = 3; //Gen Info + MedicalInfo + Pas
         }
         self.currentStepNumber += 1;
     }
-    if (!nextStep || [step.identifier isEqualToString:kAPCSignUpCustomInfoStepIdentifier]) {
+    if ([step.identifier isEqualToString:kAPCSignUpCustomInfoStepIdentifier]) {
         nextStep = self.passcodeStep;
         self.user.secondaryInfoSaved = YES;
         self.currentStepNumber += 1;
     }
-    if (!nextStep || [step.identifier isEqualToString:kAPCSignUpPasscodeStepIdentifier]) {
+    if ([step.identifier isEqualToString:kAPCSignUpPasscodeStepIdentifier]) {
         if (!self.permissionScreenSkipped) {
             nextStep = self.permissionsStep;
             self.currentStepNumber += 1;
         }
     }
-	if (!nextStep || [step.identifier isEqualToString:kAPCSignUpPermissionsStepIdentifier]) {
+	if ([step.identifier isEqualToString:kAPCSignUpPermissionsStepIdentifier]) {
 		nextStep = self.thankyouStep;
 		self.currentStepNumber += 1;
 	}
-	if (!nextStep || [step.identifier isEqualToString:kAPCSignUpThankYouStepIdentifier]) {
+	if ([step.identifier isEqualToString:kAPCSignUpThankYouStepIdentifier]) {
 		nextStep = nil;
 	}
 	
